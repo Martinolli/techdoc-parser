@@ -1,0 +1,296 @@
+# TODO.md — Technical Document Parsing Library
+
+## Project Working Name
+
+**techdoc-parser**  
+A Python library for parsing complex technical documents into structured, traceable, RAG-ready representations.
+
+---
+
+## 0. Project Initialization
+
+- [ ] Choose final project name
+  - Candidate names:
+    - `techdoc-parser`
+    - `ragdoc-parser`
+    - `aerodoc-parser`
+    - `traceparse`
+    - `technical-document-parser`
+- [ ] Create GitHub repository
+- [ ] Choose license
+  - Recommended initial choice: MIT or Apache-2.0
+- [ ] Create local Python project structure
+- [ ] Configure virtual environment
+- [ ] Create `pyproject.toml`
+- [ ] Create initial `README.md`
+- [ ] Add `.gitignore`
+- [ ] Add `TODO.md`
+- [ ] Add `PROJECTPLAN.md`
+- [ ] Make first commit
+
+---
+
+## 1. High-Level Requirements
+
+- [ ] Define mission statement
+- [ ] Define target users
+- [ ] Define target document types
+- [ ] Define input formats for MVP
+- [ ] Define output formats for MVP
+- [ ] Define non-goals for MVP
+- [ ] Define traceability requirements
+- [ ] Define verification requirements
+- [ ] Define quality attributes
+  - [ ] Accuracy
+  - [ ] Traceability
+  - [ ] Extensibility
+  - [ ] Testability
+  - [ ] Reproducibility
+  - [ ] Performance
+
+---
+
+## 2. System Architecture
+
+- [ ] Define system boundary
+- [ ] Define external dependencies
+- [ ] Define major capability domains
+- [ ] Define package/module structure
+- [ ] Define internal document model
+- [ ] Define processing pipeline
+- [ ] Define adapter strategy for external parsers
+- [ ] Define confidence scoring approach
+- [ ] Define validation strategy
+- [ ] Define export strategy
+
+---
+
+## 3. Core Data Model
+
+- [ ] Define `Document` model
+- [ ] Define `Page` model
+- [ ] Define `Block` model
+- [ ] Define `TextBlock` model
+- [ ] Define `HeadingBlock` model
+- [ ] Define `TableBlock` model
+- [ ] Define `FormulaBlock` model
+- [ ] Define `FigureBlock` model
+- [ ] Define `Reference` model
+- [ ] Define `SourceLocation` model
+- [ ] Define `BoundingBox` model
+- [ ] Define `ConfidenceScore` model
+- [ ] Define JSON serialization format
+- [ ] Define Markdown export format
+
+---
+
+## 4. MVP Scope
+
+The first MVP shall focus on:
+
+```text
+PDF → structured document model → JSON export → Markdown export → RAG-ready chunks
+```
+
+- [ ] Support PDF input
+- [ ] Extract document metadata
+- [ ] Extract page-level structure
+- [ ] Extract text blocks
+- [ ] Preserve page numbers
+- [ ] Preserve bounding boxes where available
+- [ ] Detect headings using heuristic methods
+- [ ] Detect paragraphs
+- [ ] Detect basic tables
+- [ ] Preserve table row/column structure where possible
+- [ ] Detect potential formula blocks
+- [ ] Export structured JSON
+- [ ] Export readable Markdown
+- [ ] Create simple RAG chunks with source references
+
+---
+
+## 5. Ingestion Layer
+
+- [ ] Create `PDFLoader` interface
+- [ ] Implement initial PyMuPDF-based loader
+- [ ] Extract pages
+- [ ] Extract text spans
+- [ ] Extract bounding boxes
+- [ ] Extract metadata
+- [ ] Detect native PDF text versus scanned page
+- [ ] Add basic error handling
+- [ ] Add logging
+
+---
+
+## 6. Layout Analysis Layer
+
+- [ ] Implement page layout object
+- [ ] Detect text blocks
+- [ ] Detect reading order
+- [ ] Detect headers and footers
+- [ ] Detect page numbers
+- [ ] Detect multi-column layout
+- [ ] Detect captions
+- [ ] Detect footnotes
+- [ ] Add layout confidence score
+
+---
+
+## 7. Content Extraction Layer
+
+- [ ] Implement text block extraction
+- [ ] Implement heading detection
+- [ ] Implement paragraph grouping
+- [ ] Implement table detection
+- [ ] Implement simple table extraction
+- [ ] Implement formula candidate detection
+- [ ] Implement figure/image candidate detection
+- [ ] Attach source location to every extracted object
+
+---
+
+## 8. Semantic Structuring Layer
+
+- [ ] Build section hierarchy
+- [ ] Link headings to child blocks
+- [ ] Detect definitions
+- [ ] Detect warnings, cautions, and notes
+- [ ] Detect numbered procedures
+- [ ] Detect requirement-like statements
+- [ ] Detect cross-references
+- [ ] Detect table and figure references
+
+---
+
+## 9. Normalization Layer
+
+- [ ] Normalize whitespace
+- [ ] Normalize hyphenation across line breaks
+- [ ] Normalize Unicode symbols
+- [ ] Normalize units where safe
+- [ ] Preserve original text
+- [ ] Store normalized text separately from raw text
+- [ ] Normalize references
+- [ ] Normalize table headers
+
+---
+
+## 10. Chunking Layer
+
+- [ ] Define `Chunk` model
+- [ ] Implement section-aware chunking
+- [ ] Implement paragraph-aware chunking
+- [ ] Implement table-aware chunking
+- [ ] Implement formula-aware chunking
+- [ ] Preserve source references in chunks
+- [ ] Preserve parent-child hierarchy
+- [ ] Export vector-database-friendly payload
+
+---
+
+## 11. Validation Layer
+
+- [ ] Define validation checks
+- [ ] Validate document model completeness
+- [ ] Validate page sequence
+- [ ] Validate table integrity
+- [ ] Validate missing source references
+- [ ] Validate low-confidence extractions
+- [ ] Flag pages requiring human review
+- [ ] Generate parsing quality report
+
+---
+
+## 12. Export Layer
+
+- [ ] JSON exporter
+- [ ] Markdown exporter
+- [ ] RAG chunk exporter
+- [ ] Debug HTML exporter
+- [ ] Optional SQLite exporter
+- [ ] Optional YAML exporter
+
+---
+
+## 13. Testing Strategy
+
+- [ ] Create test document set
+- [ ] Add simple generated PDFs for unit tests
+- [ ] Add real-world technical PDF samples where legally permitted
+- [ ] Unit tests for data models
+- [ ] Unit tests for PDF loader
+- [ ] Unit tests for layout analysis
+- [ ] Unit tests for exporters
+- [ ] Integration test for full PDF pipeline
+- [ ] Golden-file tests for JSON output
+- [ ] Regression tests for difficult documents
+
+---
+
+## 14. Documentation
+
+- [ ] Write README overview
+- [ ] Write installation instructions
+- [ ] Write quick-start example
+- [ ] Write architecture overview
+- [ ] Write data model documentation
+- [ ] Write pipeline documentation
+- [ ] Write contribution guide
+- [ ] Write verification approach
+
+---
+
+## 15. Tooling and Quality
+
+- [ ] Configure `ruff`
+- [ ] Configure `pytest`
+- [ ] Configure `mypy` or `pyright`
+- [ ] Configure `pre-commit`
+- [ ] Configure GitHub Actions CI
+- [ ] Add code coverage reporting
+- [ ] Add type hints across core models
+- [ ] Add docstrings for public APIs
+
+---
+
+## 16. Future Enhancements
+
+- [ ] OCR support
+- [ ] DOCX support
+- [ ] HTML support
+- [ ] Formula-to-LaTeX extraction
+- [ ] Advanced table reconstruction
+- [ ] LLM-assisted document cleanup
+- [ ] Human-in-the-loop review workflow
+- [ ] Knowledge graph export
+- [ ] Aviation-specific parser profiles
+- [ ] Standards-specific parser profiles
+- [ ] Certification requirement extraction
+- [ ] Interface with vector databases
+- [ ] Interface with LangChain/LlamaIndex
+
+---
+
+## 17. First Practical Milestone
+
+**Milestone 1 objective:**  
+Create a minimal package that can load a PDF, extract page text with page numbers, represent it in an internal `Document` object, and export it to JSON.
+
+Acceptance criteria:
+
+- [ ] Project installs locally with `pip install -e .`
+- [ ] CLI command exists:
+
+```bash
+techdoc-parse input.pdf --output output.json
+```
+
+- [ ] Output JSON contains:
+  - [ ] document metadata
+  - [ ] pages
+  - [ ] page numbers
+  - [ ] text blocks
+  - [ ] source references
+- [ ] Unit tests pass
+- [ ] README contains basic usage example
