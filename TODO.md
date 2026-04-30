@@ -76,12 +76,12 @@ High-level requirements are defined in PROJECTPLAN.md section 5 as HLR-001 throu
 
 - [x] Define `Document` model
 - [x] Define `Page` model
-- [ ] Define `Block` model
+- [x] Define `Block` model
 - [x] Define `TextBlock` model
-- [ ] Define `HeadingBlock` model
-- [ ] Define `TableBlock` model
-- [ ] Define `FormulaBlock` model
-- [ ] Define `FigureBlock` model
+- [x] Define `HeadingBlock` model
+- [x] Define `TableBlock` model
+- [x] Define `FormulaBlock` model
+- [x] Define `FigureBlock` model
 - [ ] Define `Reference` model
 - [x] Define `SourceLocation` model
 - [x] Define `BoundingBox` model
@@ -90,6 +90,8 @@ High-level requirements are defined in PROJECTPLAN.md section 5 as HLR-001 throu
 - [ ] Define Markdown export format
 
 Initial dataclass models implemented for `Document`, `Page`, `TextBlock`, `DocumentMetadata`, `SourceLocation`, and `BoundingBox`. JSON serialization is available through `to_dict()` and `Document.to_json()`.
+
+Phase 1B structured block models completed with unit tests. Tests, ruff, and mypy pass.
 
 ---
 
