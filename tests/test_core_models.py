@@ -5,11 +5,16 @@ import json
 import pytest
 
 from techdoc_parser.core import (
+    Block,
     BoundingBox,
     Document,
     DocumentMetadata,
+    FigureBlock,
+    FormulaBlock,
+    HeadingBlock,
     Page,
     SourceLocation,
+    TableBlock,
     TextBlock,
 )
 
@@ -77,6 +82,26 @@ def test_source_location_rejects_invalid_confidence() -> None:
         SourceLocation(document_path="sample.pdf", confidence=1.1)
 
 
+def test_block_serialization() -> None:
+    """Block should serialize common block fields."""
+    source = SourceLocation(document_path="sample.pdf", page_number=1)
+    block = Block(
+        id="block-1",
+        source=source,
+        block_type="custom",
+        text="Example text",
+        normalized_text="Example text",
+    )
+
+    assert block.to_dict() == {
+        "id": "block-1",
+        "source": source.to_dict(),
+        "block_type": "custom",
+        "text": "Example text",
+        "normalized_text": "Example text",
+    }
+
+
 def test_text_block_serialization() -> None:
     """TextBlock should serialize its text and source."""
     source = SourceLocation(document_path="sample.pdf", page_number=1)
@@ -93,6 +118,101 @@ def test_text_block_serialization() -> None:
         "source": source.to_dict(),
         "block_type": "text",
         "normalized_text": "Example text",
+    }
+
+
+def test_heading_block_serialization() -> None:
+    """HeadingBlock should serialize heading-specific fields."""
+    source = SourceLocation(document_path="sample.pdf", page_number=1)
+    block = HeadingBlock(
+        id="heading-1",
+        source=source,
+        text="Introduction",
+        normalized_text="Introduction",
+        level=2,
+    )
+
+    assert block.to_dict() == {
+        "id": "heading-1",
+        "source": source.to_dict(),
+        "block_type": "heading",
+        "text": "Introduction",
+        "normalized_text": "Introduction",
+        "level": 2,
+    }
+
+
+def test_heading_block_rejects_invalid_level() -> None:
+    """HeadingBlock should reject levels less than one."""
+    source = SourceLocation(document_path="sample.pdf", page_number=1)
+
+    with pytest.raises(ValueError, match="level"):
+        HeadingBlock(id="heading-1", source=source, level=0)
+
+
+def test_table_block_serialization() -> None:
+    """TableBlock should serialize table-specific fields."""
+    source = SourceLocation(document_path="sample.pdf", page_number=1)
+    rows = [["A", "B"], ["1", "2"]]
+    block = TableBlock(
+        id="table-1",
+        source=source,
+        text="A B\n1 2",
+        caption="Example table",
+        rows=rows,
+    )
+
+    assert block.to_dict() == {
+        "id": "table-1",
+        "source": source.to_dict(),
+        "block_type": "table",
+        "text": "A B\n1 2",
+        "normalized_text": None,
+        "caption": "Example table",
+        "rows": rows,
+    }
+
+
+def test_formula_block_serialization() -> None:
+    """FormulaBlock should serialize formula-specific fields."""
+    source = SourceLocation(document_path="sample.pdf", page_number=1)
+    block = FormulaBlock(
+        id="formula-1",
+        source=source,
+        text="E = mc^2",
+        latex="E = mc^2",
+        variables=["E", "m", "c"],
+    )
+
+    assert block.to_dict() == {
+        "id": "formula-1",
+        "source": source.to_dict(),
+        "block_type": "formula",
+        "text": "E = mc^2",
+        "normalized_text": None,
+        "latex": "E = mc^2",
+        "variables": ["E", "m", "c"],
+    }
+
+
+def test_figure_block_serialization() -> None:
+    """FigureBlock should serialize figure-specific fields."""
+    source = SourceLocation(document_path="sample.pdf", page_number=1)
+    block = FigureBlock(
+        id="figure-1",
+        source=source,
+        caption="Example figure",
+        image_path="images/figure-1.png",
+    )
+
+    assert block.to_dict() == {
+        "id": "figure-1",
+        "source": source.to_dict(),
+        "block_type": "figure",
+        "text": None,
+        "normalized_text": None,
+        "caption": "Example figure",
+        "image_path": "images/figure-1.png",
     }
 
 

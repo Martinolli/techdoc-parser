@@ -84,24 +84,113 @@ class DocumentMetadata:
 
 
 @dataclass
-class TextBlock:
-    """A text block extracted from a document page."""
+class Block:
+    """A generic extracted document block."""
 
     id: str
-    text: str
     source: SourceLocation
-    block_type: str = "text"
+    block_type: str
+    text: str | None = None
     normalized_text: str | None = None
 
     def to_dict(self) -> dict[str, object]:
         """Return a JSON-serializable dictionary."""
         return {
             "id": self.id,
-            "text": self.text,
             "source": self.source.to_dict(),
             "block_type": self.block_type,
+            "text": self.text,
             "normalized_text": self.normalized_text,
         }
+
+
+@dataclass(init=False)
+class TextBlock(Block):
+    """A regular text block extracted from a document page."""
+
+    def __init__(
+        self,
+        id: str,
+        text: str,
+        source: SourceLocation,
+        block_type: str = "text",
+        normalized_text: str | None = None,
+    ) -> None:
+        """Create a text block."""
+        super().__init__(
+            id=id,
+            source=source,
+            block_type=block_type,
+            text=text,
+            normalized_text=normalized_text,
+        )
+
+
+@dataclass
+class HeadingBlock(Block):
+    """A heading block extracted from a document page."""
+
+    block_type: str = field(default="heading", init=False)
+    level: int = 1
+
+    def __post_init__(self) -> None:
+        """Validate heading level."""
+        if self.level < 1:
+            raise ValueError("HeadingBlock level must be greater than or equal to 1.")
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-serializable dictionary."""
+        data = super().to_dict()
+        data["level"] = self.level
+        return data
+
+
+@dataclass
+class TableBlock(Block):
+    """A table block extracted from a document page."""
+
+    block_type: str = field(default="table", init=False)
+    caption: str | None = None
+    rows: list[list[str]] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-serializable dictionary."""
+        data = super().to_dict()
+        data["caption"] = self.caption
+        data["rows"] = self.rows
+        return data
+
+
+@dataclass
+class FormulaBlock(Block):
+    """A formula block extracted from a document page."""
+
+    block_type: str = field(default="formula", init=False)
+    latex: str | None = None
+    variables: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-serializable dictionary."""
+        data = super().to_dict()
+        data["latex"] = self.latex
+        data["variables"] = self.variables
+        return data
+
+
+@dataclass
+class FigureBlock(Block):
+    """A figure block extracted from a document page."""
+
+    block_type: str = field(default="figure", init=False)
+    caption: str | None = None
+    image_path: str | None = None
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-serializable dictionary."""
+        data = super().to_dict()
+        data["caption"] = self.caption
+        data["image_path"] = self.image_path
+        return data
 
 
 @dataclass
