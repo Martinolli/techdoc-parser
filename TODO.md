@@ -72,20 +72,22 @@ Phase 0 package foundation completed. Tests, ruff, and mypy passed.
 
 ## 3. Core Data Model
 
-- [ ] Define `Document` model
-- [ ] Define `Page` model
+- [x] Define `Document` model
+- [x] Define `Page` model
 - [ ] Define `Block` model
-- [ ] Define `TextBlock` model
+- [x] Define `TextBlock` model
 - [ ] Define `HeadingBlock` model
 - [ ] Define `TableBlock` model
 - [ ] Define `FormulaBlock` model
 - [ ] Define `FigureBlock` model
 - [ ] Define `Reference` model
-- [ ] Define `SourceLocation` model
-- [ ] Define `BoundingBox` model
+- [x] Define `SourceLocation` model
+- [x] Define `BoundingBox` model
 - [ ] Define `ConfidenceScore` model
-- [ ] Define JSON serialization format
+- [x] Define JSON serialization format
 - [ ] Define Markdown export format
+
+Initial dataclass models implemented for `Document`, `Page`, `TextBlock`, `DocumentMetadata`, `SourceLocation`, and `BoundingBox`. JSON serialization is available through `to_dict()` and `Document.to_json()`.
 
 ---
 
@@ -223,7 +225,7 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 - [ ] Create test document set
 - [ ] Add simple generated PDFs for unit tests
 - [ ] Add real-world technical PDF samples where legally permitted
-- [ ] Unit tests for data models
+- [x] Unit tests for data models
 - [ ] Unit tests for PDF loader
 - [ ] Unit tests for layout analysis
 - [ ] Unit tests for exporters
@@ -248,14 +250,16 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 
 ## 15. Tooling and Quality
 
-- [ ] Configure `ruff`
-- [ ] Configure `pytest`
-- [ ] Configure `mypy` or `pyright`
+- [x] Configure `ruff`
+- [x] Configure `pytest`
+- [x] Configure `mypy` or `pyright`
 - [ ] Configure `pre-commit`
 - [ ] Configure GitHub Actions CI
 - [ ] Add code coverage reporting
-- [ ] Add type hints across core models
-- [ ] Add docstrings for public APIs
+- [x] Add type hints across core models
+- [x] Add docstrings for public APIs
+
+Current checks pass: `pytest`, `ruff check .`, `ruff format --check .`, and `mypy src`.
 
 ---
 
@@ -284,7 +288,7 @@ Create a minimal package that can load a PDF, extract page text with page number
 
 Acceptance criteria:
 
-- [ ] Project installs locally with `pip install -e .`
+- [x] Project installs locally with `pip install -e .`
 - [ ] CLI command exists:
 
 ```bash
@@ -297,5 +301,5 @@ techdoc-parse input.pdf --output output.json
   - [ ] page numbers
   - [ ] text blocks
   - [ ] source references
-- [ ] Unit tests pass
+- [x] Unit tests pass
 - [ ] README contains basic usage example
