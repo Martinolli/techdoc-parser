@@ -37,21 +37,23 @@ Phase 0 package foundation completed. Tests, ruff, and mypy passed.
 
 ## 1. High-Level Requirements
 
-- [ ] Define mission statement
-- [ ] Define target users
-- [ ] Define target document types
-- [ ] Define input formats for MVP
-- [ ] Define output formats for MVP
-- [ ] Define non-goals for MVP
-- [ ] Define traceability requirements
-- [ ] Define verification requirements
-- [ ] Define quality attributes
-  - [ ] Accuracy
-  - [ ] Traceability
-  - [ ] Extensibility
-  - [ ] Testability
-  - [ ] Reproducibility
-  - [ ] Performance
+- [x] Define mission statement
+- [x] Define target users
+- [x] Define target document types
+- [x] Define input formats for MVP
+- [x] Define output formats for MVP
+- [x] Define non-goals for MVP
+- [x] Define traceability requirements
+- [x] Define verification requirements
+- [x] Define quality attributes
+  - [x] Accuracy
+  - [x] Traceability
+  - [x] Extensibility
+  - [x] Testability
+  - [x] Reproducibility
+  - [x] Performance
+
+High-level requirements are defined in PROJECTPLAN.md section 5 as HLR-001 through HLR-012.
 
 ---
 
