@@ -20,6 +20,18 @@ document = parse_document("manual.pdf")
 export_document_json(document, "output/manual.json")
 ```
 
+Markdown export:
+
+```python
+from techdoc_parser import parse_document
+from techdoc_parser.exporters import export_document_markdown
+
+document = parse_document("manual.pdf")
+export_document_markdown(document, "output/manual.md")
+```
+
+Markdown export is currently simple and text-block based.
+
 ## CLI Usage
 
 ```bash
