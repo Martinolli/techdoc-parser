@@ -216,7 +216,7 @@ def test_figure_block_serialization() -> None:
     }
 
 
-def test_page_serialization() -> None:
+def test_page_serialization_with_text_blocks() -> None:
     """Page should serialize its dimensions and text blocks."""
     source = SourceLocation(document_path="sample.pdf", page_number=1)
     block = TextBlock(id="block-1", text="Example text", source=source)
@@ -226,8 +226,42 @@ def test_page_serialization() -> None:
         "page_number": 1,
         "width": 612.0,
         "height": 792.0,
+        "blocks": [],
         "text_blocks": [block.to_dict()],
     }
+
+
+def test_page_serialization_with_generic_blocks() -> None:
+    """Page should serialize generic document blocks."""
+    source = SourceLocation(document_path="sample.pdf", page_number=1)
+    block = Block(id="block-1", source=source, block_type="custom")
+    page = Page(page_number=1, width=612.0, height=792.0, blocks=[block])
+
+    assert page.to_dict() == {
+        "page_number": 1,
+        "width": 612.0,
+        "height": 792.0,
+        "blocks": [block.to_dict()],
+        "text_blocks": [],
+    }
+
+
+def test_page_blocks_can_contain_heading_block() -> None:
+    """Page blocks should support heading blocks."""
+    source = SourceLocation(document_path="sample.pdf", page_number=1)
+    block = HeadingBlock(id="heading-1", source=source, text="Overview", level=1)
+    page = Page(page_number=1, blocks=[block])
+
+    assert page.to_dict()["blocks"] == [block.to_dict()]
+
+
+def test_page_blocks_can_contain_table_block() -> None:
+    """Page blocks should support table blocks."""
+    source = SourceLocation(document_path="sample.pdf", page_number=1)
+    block = TableBlock(id="table-1", source=source, rows=[["A", "B"]])
+    page = Page(page_number=1, blocks=[block])
+
+    assert page.to_dict()["blocks"] == [block.to_dict()]
 
 
 def test_page_rejects_invalid_page_number() -> None:
