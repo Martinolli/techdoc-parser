@@ -129,11 +129,13 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 - [x] Extract native text blocks
 - [x] Extract bounding boxes
 - [x] Extract metadata
-- [ ] Detect native PDF text versus scanned page
+- [x] Detect native PDF text versus scanned page
 - [x] Add basic error handling
-- [ ] Add logging
+- [x] Add logging
 
 Phase 2A basic PDF ingestion completed. PyMuPDF is now a runtime dependency, `PDFLoader` loads native-text PDFs into `Document`, `parse_document()` supports PDF input, and generated-PDF ingestion tests pass with pytest, ruff, and mypy.
+
+Phase 2D native-text page detection completed. `Page` now includes `has_native_text` and `requires_ocr`, `PDFLoader` flags blank/no-text pages as requiring OCR, JSON output includes the flags, and standard library logging is used for load status and OCR warnings. Tests, ruff, and mypy pass.
 
 ---
 
@@ -307,7 +309,7 @@ Acceptance criteria:
 techdoc-parse input.pdf --output output.json
 ```
 
-- [ ] Output JSON contains:
+- [x] Output JSON contains:
   - [x] document metadata
   - [x] pages
   - [x] page numbers
