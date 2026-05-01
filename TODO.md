@@ -77,6 +77,7 @@ High-level requirements are defined in PROJECTPLAN.md section 5 as HLR-001 throu
 - [x] Define `Document` model
 - [x] Define `Page` model
 - [x] Define `Block` model
+- [x] Add generic `Page.blocks` collection
 - [x] Define `TextBlock` model
 - [x] Define `HeadingBlock` model
 - [x] Define `TableBlock` model
@@ -91,7 +92,7 @@ High-level requirements are defined in PROJECTPLAN.md section 5 as HLR-001 throu
 
 Initial dataclass models implemented for `Document`, `Page`, `TextBlock`, `DocumentMetadata`, `SourceLocation`, and `BoundingBox`. JSON serialization is available through `to_dict()` and `Document.to_json()`.
 
-Phase 1B structured block models completed with unit tests. Tests, ruff, and mypy pass.
+Phase 1B structured block models completed with unit tests. `Page` now supports generic `Block` objects through `blocks` while preserving `text_blocks` for backward compatibility. Tests, ruff, and mypy pass.
 
 ---
 
