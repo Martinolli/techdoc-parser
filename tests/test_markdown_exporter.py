@@ -52,6 +52,17 @@ def test_document_to_markdown_renders_document_content() -> None:
     assert "requires_ocr: False" in markdown
 
 
+def test_document_to_markdown_notes_distinct_normalized_text() -> None:
+    """Markdown rendering should mention when normalized text is available."""
+    document = _document()
+    document.pages[0].text_blocks[0].text = "Example   text block"
+    document.pages[0].text_blocks[0].normalized_text = "Example text block"
+
+    markdown = document_to_markdown(document)
+
+    assert "Normalized text available: yes" in markdown
+
+
 def test_document_to_markdown_uses_document_id_when_title_missing() -> None:
     """Markdown rendering should fall back to document id when title is missing."""
     document = _document()

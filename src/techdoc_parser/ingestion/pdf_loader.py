@@ -16,6 +16,7 @@ from techdoc_parser.core import (
     SourceLocation,
     TextBlock,
 )
+from techdoc_parser.normalization import normalize_text
 
 logger = logging.getLogger(__name__)
 
@@ -94,6 +95,7 @@ class PDFLoader:
                 id=f"page-{page.page_number}-text-{text_block_index}",
                 text=text,
                 source=source,
+                normalized_text=normalize_text(text),
             )
             page.text_blocks.append(block)
             page.blocks.append(block)

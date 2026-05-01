@@ -35,14 +35,10 @@ def document_to_markdown(document: Document) -> str:
         )
 
         for block in page.text_blocks:
-            lines.extend(
-                [
-                    _source_line(block.source),
-                    "",
-                    block.text or "",
-                    "",
-                ]
-            )
+            lines.append(_source_line(block.source))
+            if _has_distinct_normalized_text(block.text, block.normalized_text):
+                lines.append("Normalized text available: yes")
+            lines.extend(["", block.text or "", ""])
 
     return "\n".join(lines).rstrip() + "\n"
 
@@ -87,3 +83,10 @@ def _format_bbox(bbox: BoundingBox | None) -> str:
         return "None"
 
     return f"({bbox.x0}, {bbox.y0}, {bbox.x1}, {bbox.y1})"
+
+
+def _has_distinct_normalized_text(
+    text: str | None,
+    normalized_text: str | None,
+) -> bool:
+    return normalized_text is not None and normalized_text != (text or "")

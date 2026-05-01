@@ -8,6 +8,7 @@ import pytest
 from techdoc_parser import parse_document
 from techdoc_parser.core import Document, TextBlock
 from techdoc_parser.ingestion import PDFLoader
+from techdoc_parser.normalization import normalize_text
 
 
 def _create_test_pdf(path: Path, text: str = "Hello from PyMuPDF") -> None:
@@ -61,6 +62,9 @@ def test_pdf_loader_loads_generated_one_page_pdf(tmp_path: Path) -> None:
     assert matching_blocks
 
     text_block = matching_blocks[0]
+    assert text_block.text is not None
+    assert "Hello from PyMuPDF" in text_block.text
+    assert text_block.normalized_text == normalize_text(text_block.text)
     assert text_block.source.document_path == str(pdf_path)
     assert text_block.source.page_number == 1
     assert text_block.source.extraction_method == "pymupdf"
