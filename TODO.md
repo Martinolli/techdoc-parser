@@ -238,6 +238,7 @@ Phase 2B JSON export support completed. Added `export_document_json()`, exporter
 - [x] Unit tests for PDF loader
 - [ ] Unit tests for layout analysis
 - [x] Unit tests for exporters
+- [x] Unit tests for CLI
 - [ ] Integration test for full PDF pipeline
 - [ ] Golden-file tests for JSON output
 - [ ] Regression tests for difficult documents
@@ -270,6 +271,8 @@ Phase 2B JSON export support completed. Added `export_document_json()`, exporter
 
 Current checks pass: `pytest`, `ruff check .`, `ruff format --check .`, and `mypy src`.
 
+Phase 2C CLI support completed. Added `techdoc-parse`, PDF-to-JSON CLI output, `--output`/`-o`, `--indent`, user-facing error handling, generated-PDF CLI tests, and README CLI usage. Tests, ruff, and mypy pass.
+
 ---
 
 ## 16. Future Enhancements
@@ -298,7 +301,7 @@ Create a minimal package that can load a PDF, extract page text with page number
 Acceptance criteria:
 
 - [x] Project installs locally with `pip install -e .`
-- [ ] CLI command exists:
+- [x] CLI command exists:
 
 ```bash
 techdoc-parse input.pdf --output output.json
