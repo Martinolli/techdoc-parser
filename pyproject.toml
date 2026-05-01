@@ -23,6 +23,9 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.scripts]
+techdoc-parse = "techdoc_parser.cli:main"
+
 [project.optional-dependencies]
 dev = [
     "mypy>=1.10",

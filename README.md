@@ -20,6 +20,14 @@ document = parse_document("manual.pdf")
 export_document_json(document, "output/manual.json")
 ```
 
+## CLI Usage
+
+```bash
+techdoc-parse manual.pdf --output output/manual.json
+```
+
+The current CLI supports PDF to JSON only.
+
 ## Current Limitations
 
 - Native-text PDFs only
