@@ -1,7 +1,5 @@
 """Tests for the public package API."""
 
-import pytest
-
 import techdoc_parser
 from techdoc_parser import parse_document
 
@@ -14,9 +12,3 @@ def test_package_can_be_imported() -> None:
 def test_parse_document_exists() -> None:
     """The public parse_document function should be exported."""
     assert callable(parse_document)
-
-
-def test_parse_document_raises_not_implemented() -> None:
-    """PDF parsing should remain unimplemented for now."""
-    with pytest.raises(NotImplementedError, match="PDF parsing is not implemented yet"):
-        parse_document("example.pdf")

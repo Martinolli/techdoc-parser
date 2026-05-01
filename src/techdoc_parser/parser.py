@@ -1,15 +1,22 @@
 """Public parsing entry points."""
 
+from pathlib import Path
 
-def parse_document(path: str) -> None:
+from techdoc_parser.core import Document
+from techdoc_parser.ingestion import PDFLoader
+
+
+def parse_document(path: str) -> Document:
     """Parse a technical document.
 
     Args:
         path: Path to the document to parse.
 
     Raises:
-        NotImplementedError: PDF parsing is not implemented yet.
+        ValueError: The document file type is not supported.
     """
-    raise NotImplementedError(
-        f"PDF parsing is not implemented yet for document path: {path}"
-    )
+    document_path = Path(path)
+    if document_path.suffix.lower() == ".pdf":
+        return PDFLoader(path).load()
+
+    raise ValueError(f"Unsupported file type: {document_path.suffix or '<none>'}")
