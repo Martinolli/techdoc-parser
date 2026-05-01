@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Any, cast
 
@@ -16,6 +17,8 @@ from techdoc_parser.core import (
     TextBlock,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class PDFLoader:
     """Load a native-text PDF into the core document model."""
@@ -27,6 +30,7 @@ class PDFLoader:
 
     def load(self) -> Document:
         """Load the PDF into a Document."""
+        logger.info("Loading PDF: %s", self.path)
         with fitz.open(self.path) as pdf_document:
             metadata = self._extract_metadata(pdf_document.metadata)
             document = Document(
@@ -42,8 +46,14 @@ class PDFLoader:
                     height=float(pdf_page.rect.height),
                 )
                 self._add_text_blocks(page=page, pdf_page=pdf_page)
+                self._update_page_text_status(page)
                 document.pages.append(page)
 
+        logger.info(
+            "Finished loading PDF: %s (%s pages)",
+            self.path,
+            len(document.pages),
+        )
         return document
 
     def _validate_path(self) -> None:
@@ -88,6 +98,17 @@ class PDFLoader:
             page.text_blocks.append(block)
             page.blocks.append(block)
             text_block_index += 1
+
+    def _update_page_text_status(self, page: Page) -> None:
+        page.has_native_text = len(page.text_blocks) > 0
+        page.requires_ocr = not page.has_native_text
+
+        if page.requires_ocr:
+            logger.warning(
+                "Page %s in %s appears to have no native text and may require OCR.",
+                page.page_number,
+                self.path,
+            )
 
     @staticmethod
     def _extract_metadata(metadata: dict[str, Any]) -> DocumentMetadata:

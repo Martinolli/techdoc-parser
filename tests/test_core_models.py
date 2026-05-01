@@ -226,6 +226,8 @@ def test_page_serialization_with_text_blocks() -> None:
         "page_number": 1,
         "width": 612.0,
         "height": 792.0,
+        "has_native_text": False,
+        "requires_ocr": False,
         "blocks": [],
         "text_blocks": [block.to_dict()],
     }
@@ -241,6 +243,8 @@ def test_page_serialization_with_generic_blocks() -> None:
         "page_number": 1,
         "width": 612.0,
         "height": 792.0,
+        "has_native_text": False,
+        "requires_ocr": False,
         "blocks": [block.to_dict()],
         "text_blocks": [],
     }

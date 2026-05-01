@@ -28,6 +28,13 @@ def _create_test_pdf(path: Path, text: str = "Hello from PyMuPDF") -> None:
     document.close()
 
 
+def _create_blank_pdf(path: Path) -> None:
+    document = fitz.open()
+    document.new_page(width=200.0, height=100.0)
+    document.save(path)
+    document.close()
+
+
 def test_pdf_loader_loads_generated_one_page_pdf(tmp_path: Path) -> None:
     """PDFLoader should load native text from a generated PDF."""
     pdf_path = tmp_path / "manual.pdf"
@@ -45,6 +52,8 @@ def test_pdf_loader_loads_generated_one_page_pdf(tmp_path: Path) -> None:
     assert page.page_number == 1
     assert page.width is not None
     assert page.height is not None
+    assert page.has_native_text is True
+    assert page.requires_ocr is False
 
     matching_blocks = [
         block for block in page.text_blocks if "Hello from PyMuPDF" in block.text
@@ -60,6 +69,23 @@ def test_pdf_loader_loads_generated_one_page_pdf(tmp_path: Path) -> None:
     assert text_block in page.text_blocks
     assert text_block in page.blocks
     assert isinstance(page.blocks[0], TextBlock)
+
+    page_data = page.to_dict()
+    assert page_data["has_native_text"] is True
+    assert page_data["requires_ocr"] is False
+
+
+def test_pdf_loader_marks_blank_page_as_requiring_ocr(tmp_path: Path) -> None:
+    """PDFLoader should mark blank pages as OCR candidates."""
+    pdf_path = tmp_path / "blank.pdf"
+    _create_blank_pdf(pdf_path)
+
+    document = PDFLoader(str(pdf_path)).load()
+    page = document.pages[0]
+
+    assert page.text_blocks == []
+    assert page.has_native_text is False
+    assert page.requires_ocr is True
 
 
 def test_parse_document_loads_generated_pdf(tmp_path: Path) -> None:

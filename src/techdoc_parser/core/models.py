@@ -200,6 +200,8 @@ class Page:
     page_number: int
     width: float | None = None
     height: float | None = None
+    has_native_text: bool = False
+    requires_ocr: bool = False
     blocks: list[Block] = field(default_factory=list)
     text_blocks: list[TextBlock] = field(default_factory=list)
 
@@ -214,6 +216,8 @@ class Page:
             "page_number": self.page_number,
             "width": self.width,
             "height": self.height,
+            "has_native_text": self.has_native_text,
+            "requires_ocr": self.requires_ocr,
             "blocks": [block.to_dict() for block in self.blocks],
             "text_blocks": [block.to_dict() for block in self.text_blocks],
         }
