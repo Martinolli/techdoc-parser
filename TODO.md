@@ -115,7 +115,7 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 - [ ] Detect basic tables
 - [ ] Preserve table row/column structure where possible
 - [ ] Detect potential formula blocks
-- [ ] Export structured JSON
+- [x] Export structured JSON
 - [ ] Export readable Markdown
 - [ ] Create simple RAG chunks with source references
 
@@ -218,12 +218,14 @@ Phase 2A basic PDF ingestion completed. PyMuPDF is now a runtime dependency, `PD
 
 ## 12. Export Layer
 
-- [ ] JSON exporter
+- [x] JSON exporter
 - [ ] Markdown exporter
 - [ ] RAG chunk exporter
 - [ ] Debug HTML exporter
 - [ ] Optional SQLite exporter
 - [ ] Optional YAML exporter
+
+Phase 2B JSON export support completed. Added `export_document_json()`, exporter unit tests, and README usage for local development, PDF parsing, JSON export, and current limitations. Tests, ruff, and mypy pass.
 
 ---
 
@@ -235,7 +237,7 @@ Phase 2A basic PDF ingestion completed. PyMuPDF is now a runtime dependency, `PD
 - [x] Unit tests for data models
 - [x] Unit tests for PDF loader
 - [ ] Unit tests for layout analysis
-- [ ] Unit tests for exporters
+- [x] Unit tests for exporters
 - [ ] Integration test for full PDF pipeline
 - [ ] Golden-file tests for JSON output
 - [ ] Regression tests for difficult documents
@@ -245,8 +247,8 @@ Phase 2A basic PDF ingestion completed. PyMuPDF is now a runtime dependency, `PD
 ## 14. Documentation
 
 - [ ] Write README overview
-- [ ] Write installation instructions
-- [ ] Write quick-start example
+- [x] Write installation instructions
+- [x] Write quick-start example
 - [ ] Write architecture overview
 - [ ] Write data model documentation
 - [ ] Write pipeline documentation
@@ -309,4 +311,4 @@ techdoc-parse input.pdf --output output.json
   - [x] text blocks
   - [x] source references
 - [x] Unit tests pass
-- [ ] README contains basic usage example
+- [x] README contains basic usage example
