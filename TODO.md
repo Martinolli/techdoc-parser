@@ -88,7 +88,7 @@ High-level requirements are defined in PROJECTPLAN.md section 5 as HLR-001 throu
 - [x] Define `BoundingBox` model
 - [ ] Define `ConfidenceScore` model
 - [x] Define JSON serialization format
-- [ ] Define Markdown export format
+- [x] Define Markdown export format
 
 Initial dataclass models implemented for `Document`, `Page`, `TextBlock`, `DocumentMetadata`, `SourceLocation`, and `BoundingBox`. JSON serialization is available through `to_dict()` and `Document.to_json()`.
 
@@ -116,7 +116,7 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 - [ ] Preserve table row/column structure where possible
 - [ ] Detect potential formula blocks
 - [x] Export structured JSON
-- [ ] Export readable Markdown
+- [x] Export readable Markdown
 - [ ] Create simple RAG chunks with source references
 
 ---
@@ -221,13 +221,15 @@ Phase 2D native-text page detection completed. `Page` now includes `has_native_t
 ## 12. Export Layer
 
 - [x] JSON exporter
-- [ ] Markdown exporter
+- [x] Markdown exporter
 - [ ] RAG chunk exporter
 - [ ] Debug HTML exporter
 - [ ] Optional SQLite exporter
 - [ ] Optional YAML exporter
 
 Phase 2B JSON export support completed. Added `export_document_json()`, exporter unit tests, and README usage for local development, PDF parsing, JSON export, and current limitations. Tests, ruff, and mypy pass.
+
+Phase 3A Markdown export support completed. Added `document_to_markdown()` and `export_document_markdown()`, exported them from the exporters package, documented usage in README, and covered title/id, source path, metadata, page status, text blocks, and source traceability in tests. Tests, ruff, and mypy pass.
 
 ---
 
