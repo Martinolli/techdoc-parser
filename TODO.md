@@ -104,12 +104,12 @@ The first MVP shall focus on:
 PDF → structured document model → JSON export → Markdown export → RAG-ready chunks
 ```
 
-- [ ] Support PDF input
-- [ ] Extract document metadata
-- [ ] Extract page-level structure
-- [ ] Extract text blocks
-- [ ] Preserve page numbers
-- [ ] Preserve bounding boxes where available
+- [x] Support PDF input
+- [x] Extract document metadata
+- [x] Extract page-level structure
+- [x] Extract text blocks
+- [x] Preserve page numbers
+- [x] Preserve bounding boxes where available
 - [ ] Detect headings using heuristic methods
 - [ ] Detect paragraphs
 - [ ] Detect basic tables
@@ -123,15 +123,17 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 
 ## 5. Ingestion Layer
 
-- [ ] Create `PDFLoader` interface
-- [ ] Implement initial PyMuPDF-based loader
-- [ ] Extract pages
-- [ ] Extract text spans
-- [ ] Extract bounding boxes
-- [ ] Extract metadata
+- [x] Create `PDFLoader` interface
+- [x] Implement initial PyMuPDF-based loader
+- [x] Extract pages
+- [x] Extract native text blocks
+- [x] Extract bounding boxes
+- [x] Extract metadata
 - [ ] Detect native PDF text versus scanned page
-- [ ] Add basic error handling
+- [x] Add basic error handling
 - [ ] Add logging
+
+Phase 2A basic PDF ingestion completed. PyMuPDF is now a runtime dependency, `PDFLoader` loads native-text PDFs into `Document`, `parse_document()` supports PDF input, and generated-PDF ingestion tests pass with pytest, ruff, and mypy.
 
 ---
 
@@ -228,10 +230,10 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 ## 13. Testing Strategy
 
 - [ ] Create test document set
-- [ ] Add simple generated PDFs for unit tests
+- [x] Add simple generated PDFs for unit tests
 - [ ] Add real-world technical PDF samples where legally permitted
 - [x] Unit tests for data models
-- [ ] Unit tests for PDF loader
+- [x] Unit tests for PDF loader
 - [ ] Unit tests for layout analysis
 - [ ] Unit tests for exporters
 - [ ] Integration test for full PDF pipeline
@@ -301,10 +303,10 @@ techdoc-parse input.pdf --output output.json
 ```
 
 - [ ] Output JSON contains:
-  - [ ] document metadata
-  - [ ] pages
-  - [ ] page numbers
-  - [ ] text blocks
-  - [ ] source references
+  - [x] document metadata
+  - [x] pages
+  - [x] page numbers
+  - [x] text blocks
+  - [x] source references
 - [x] Unit tests pass
 - [ ] README contains basic usage example
