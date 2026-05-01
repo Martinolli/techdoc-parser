@@ -181,14 +181,16 @@ Phase 2D native-text page detection completed. `Page` now includes `has_native_t
 
 ## 9. Normalization Layer
 
-- [ ] Normalize whitespace
+- [x] Normalize whitespace
 - [ ] Normalize hyphenation across line breaks
-- [ ] Normalize Unicode symbols
+- [x] Normalize Unicode symbols
 - [ ] Normalize units where safe
-- [ ] Preserve original text
-- [ ] Store normalized text separately from raw text
+- [x] Preserve original text
+- [x] Store normalized text separately from raw text
 - [ ] Normalize references
 - [ ] Normalize table headers
+
+Phase 4A text normalization completed. Added the normalization package and `normalize_text()`, covered normalization behavior with unit tests, preserved raw PDF text while storing `normalized_text` separately, and updated Markdown export to indicate when normalized text is available. Tests, ruff, and mypy pass.
 
 ---
 
