@@ -49,6 +49,21 @@ def _create_heading_pdf(path: Path) -> None:
     document.close()
 
 
+def _create_embedded_heading_pdf(path: Path) -> None:
+    document = fitz.open()
+    page = document.new_page(width=400.0, height=240.0)
+    page.insert_textbox(
+        fitz.Rect(20.0, 20.0, 380.0, 180.0),
+        (
+            "This paragraph introduces applicable document references.\n\n"
+            "2. APPLICABLE DOCUMENTS"
+        ),
+        fontsize=10.0,
+    )
+    document.save(path)
+    document.close()
+
+
 def test_pdf_loader_loads_generated_one_page_pdf(tmp_path: Path) -> None:
     """PDFLoader should load native text from a generated PDF."""
     pdf_path = tmp_path / "manual.pdf"
@@ -126,6 +141,28 @@ def test_pdf_loader_adds_heading_blocks_without_changing_text_blocks(
     assert heading_blocks[0].text is not None
     assert heading_blocks[0].text.strip() == "CHAPTER 1 - Introduction"
     assert heading_blocks[0].level == 1
+
+
+def test_pdf_loader_adds_embedded_heading_blocks_from_text_block(
+    tmp_path: Path,
+) -> None:
+    """PDFLoader should detect headings embedded inside a text block."""
+    pdf_path = tmp_path / "embedded-heading.pdf"
+    _create_embedded_heading_pdf(pdf_path)
+
+    document = PDFLoader(str(pdf_path)).load()
+    page = document.pages[0]
+
+    assert page.text_blocks
+    assert all(isinstance(block, TextBlock) for block in page.text_blocks)
+    assert all(block in page.blocks for block in page.text_blocks)
+
+    heading_blocks = [block for block in page.blocks if isinstance(block, HeadingBlock)]
+
+    assert any(
+        block.normalized_text == "2. APPLICABLE DOCUMENTS" for block in heading_blocks
+    )
+    assert all(block not in page.text_blocks for block in heading_blocks)
 
 
 def test_parse_document_loads_generated_pdf(tmp_path: Path) -> None:

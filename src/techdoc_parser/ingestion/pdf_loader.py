@@ -17,7 +17,7 @@ from techdoc_parser.core import (
     TextBlock,
 )
 from techdoc_parser.normalization import normalize_text
-from techdoc_parser.structure import create_heading_block_from_text_block
+from techdoc_parser.structure import extract_heading_blocks_from_text_block
 
 logger = logging.getLogger(__name__)
 
@@ -100,8 +100,7 @@ class PDFLoader:
             )
             page.text_blocks.append(block)
             page.blocks.append(block)
-            heading_block = create_heading_block_from_text_block(block)
-            if heading_block is not None:
+            for heading_block in extract_heading_blocks_from_text_block(block):
                 page.blocks.append(heading_block)
             text_block_index += 1
 
