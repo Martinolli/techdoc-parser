@@ -46,6 +46,51 @@ _SENTENCE_END_RE = re.compile(r"[.!?]$")
 _HEADER_RE = re.compile(r"^MIL-STD-\d+[A-Z]?$", re.IGNORECASE)
 _ROMAN_NUMERAL_RE = re.compile(r"^[IVXLCDM]+$", re.IGNORECASE)
 _ACRONYM_RE = re.compile(r"^[A-Z][A-Z0-9-]{1,7}$")
+_LINE_ENDS_WITH_PAGE_NUMBER_RE = re.compile(r"\s+(?:[ivxlcdm]+|\d+)$", re.IGNORECASE)
+_DOT_LEADER_PAGE_RE = re.compile(r"\.{5,}\s*(?:[ivxlcdm]+|\d+)$", re.IGNORECASE)
+_TASK_TOC_ENTRY_RE = re.compile(r"^TASK\s+\d+.+\.{5,}.+\d+$", re.IGNORECASE)
+_APPENDIX_TOC_ENTRY_RE = re.compile(r"^APPENDIX\s+[A-Z].+\.{5,}.+\d+$", re.IGNORECASE)
+_KNOWN_NUMBERED_HEADINGS = {
+    "APPLICABLE DOCUMENTS",
+    "DEFINITIONS",
+    "DETAILED REQUIREMENTS",
+    "GENERAL REQUIREMENTS",
+    "NOTES",
+    "SCOPE",
+}
+_BODY_PARAGRAPH_STARTERS = {
+    "A",
+    "AN",
+    "COMMENTS",
+    "DOD",
+    "IF",
+    "SINCE",
+    "THE",
+    "THESE",
+    "THIS",
+    "WHEN",
+}
+_LOWERCASE_STOP_WORDS = {
+    "a",
+    "an",
+    "and",
+    "are",
+    "as",
+    "be",
+    "by",
+    "for",
+    "from",
+    "in",
+    "is",
+    "of",
+    "on",
+    "or",
+    "that",
+    "the",
+    "this",
+    "to",
+    "with",
+}
 
 
 def is_heading_text(text: str) -> bool:
@@ -54,7 +99,7 @@ def is_heading_text(text: str) -> bool:
     if not candidate:
         return False
 
-    if _is_rejected_candidate(candidate):
+    if should_reject_heading_candidate(candidate):
         return False
 
     normalized = _normalize_spaces(candidate)
@@ -135,6 +180,7 @@ def extract_heading_blocks_from_text_block(text_block: TextBlock) -> list[Headin
     headings: list[HeadingBlock] = []
     seen_normalized: set[str] = set()
 
+    full_block_text = source_text
     whole_block_heading = create_heading_block_from_text_block(text_block)
     if whole_block_heading is not None:
         headings.append(whole_block_heading)
@@ -146,6 +192,8 @@ def extract_heading_blocks_from_text_block(text_block: TextBlock) -> list[Headin
     for raw_line in source_text.splitlines():
         line = _normalize_spaces(raw_line.strip())
         if not line or not is_heading_text(line):
+            continue
+        if should_reject_heading_candidate(line, full_block_text=full_block_text):
             continue
 
         key = _dedupe_key(line)
@@ -167,11 +215,130 @@ def extract_heading_blocks_from_text_block(text_block: TextBlock) -> list[Headin
     return headings
 
 
+def is_table_of_contents_text(text: str) -> bool:
+    """Return whether a block looks like a table of contents."""
+    normalized = _normalize_spaces(text)
+    upper = normalized.upper()
+    lines = [_normalize_spaces(line.strip()) for line in text.splitlines()]
+    non_empty_lines = [line for line in lines if line]
+
+    score = 0
+    if "CONTENTS" in upper:
+        score += 1
+    if "PARAGRAPH" in upper:
+        score += 1
+    if "PAGE" in upper:
+        score += 1
+    if "....." in text:
+        score += 1
+
+    page_number_lines = sum(
+        1 for line in non_empty_lines if _LINE_ENDS_WITH_PAGE_NUMBER_RE.search(line)
+    )
+    if page_number_lines >= 3:
+        score += 1
+
+    toc_entry_lines = sum(
+        1 for line in non_empty_lines if is_table_of_contents_entry(line)
+    )
+    if toc_entry_lines >= 2:
+        score += 1
+
+    return score >= 3
+
+
+def is_table_of_contents_entry(text: str) -> bool:
+    """Return whether a line looks like a table-of-contents entry."""
+    normalized = _normalize_spaces(text.strip())
+    if "....." not in normalized:
+        return False
+    return _DOT_LEADER_PAGE_RE.search(normalized) is not None
+
+
+def is_numbered_body_paragraph(text: str) -> bool:
+    """Return whether a numbered candidate looks like body prose."""
+    normalized = _normalize_spaces(text.strip())
+    prefix = _numbered_heading_prefix(normalized)
+    if prefix is None or "." in prefix:
+        return False
+
+    title = _numbered_heading_title(normalized, prefix)
+    if title is None:
+        return False
+
+    title = title.strip()
+    if not title:
+        return True
+
+    if _is_known_numbered_heading_title(title):
+        return False
+    if _is_mostly_uppercase(title):
+        return False
+    if _is_short_title_like(title):
+        return False
+
+    first_word = _first_word(title).upper()
+    if first_word in _BODY_PARAGRAPH_STARTERS:
+        return True
+
+    words = title.split()
+    lowercase_stop_words = sum(
+        1 for word in words if word.lower() in _LOWERCASE_STOP_WORDS
+    )
+    if len(words) >= 10 and lowercase_stop_words >= 3:
+        return True
+
+    return len(title) > 70 and lowercase_stop_words >= 2
+
+
+def is_sentence_like_appendix_reference(text: str) -> bool:
+    """Return whether text refers to an appendix instead of naming a heading."""
+    normalized = _normalize_spaces(text.strip())
+    words = normalized.split()
+    if len(words) < 3:
+        return False
+
+    upper = normalized.upper()
+    if _APPENDIX_RE.fullmatch(normalized) and _is_mostly_uppercase(normalized):
+        return False
+    if re.fullmatch(r"APPENDIX\s+[A-Z]\s+-\s+\S.+", normalized, re.IGNORECASE):
+        return False
+
+    if upper.startswith(("SEE APPENDIX ", "REFER TO APPENDIX ")):
+        return True
+    return re.fullmatch(r"Appendix\s+[A-Z]\s+for\s+\S.+", normalized) is not None
+
+
+def should_reject_heading_candidate(
+    text: str,
+    *,
+    full_block_text: str | None = None,
+) -> bool:
+    """Return whether a candidate should be rejected using local context."""
+    normalized = _normalize_spaces(text.strip())
+    if not normalized:
+        return True
+
+    if full_block_text is not None and is_table_of_contents_text(full_block_text):
+        return normalized.upper() != "CONTENTS"
+
+    if is_table_of_contents_entry(normalized):
+        return True
+    if is_numbered_body_paragraph(normalized):
+        return True
+    if is_sentence_like_appendix_reference(normalized):
+        return True
+
+    return _is_rejected_candidate(normalized)
+
+
 def _is_rejected_candidate(text: str) -> bool:
     upper = _normalize_spaces(text).upper()
     if upper in _FRONT_MATTER_HEADINGS | _SHORT_TITLE_HEADINGS:
         return False
-    if _is_task_or_appendix_heading(text):
+    if _is_task_or_appendix_heading(text) and not is_sentence_like_appendix_reference(
+        text
+    ):
         return False
 
     if text.startswith(("•", "-", "*")):
@@ -232,6 +399,9 @@ def _is_conservative_numbered_heading(text: str) -> bool:
     if title is None or not title.strip():
         return False
 
+    if "." not in prefix and is_numbered_body_paragraph(text):
+        return False
+
     if len(title) > 100:
         return False
 
@@ -283,6 +453,33 @@ def _is_task_or_appendix_heading(text: str) -> bool:
 
 def _dedupe_key(text: str | None) -> str:
     return _normalize_spaces(text or "").casefold()
+
+
+def _is_known_numbered_heading_title(title: str) -> bool:
+    normalized = _normalize_spaces(title).rstrip(".:").upper()
+    return normalized in _KNOWN_NUMBERED_HEADINGS
+
+
+def _is_mostly_uppercase(text: str) -> bool:
+    letters = [char for char in text if char.isalpha()]
+    if not letters:
+        return False
+    uppercase_letters = sum(1 for char in letters if char.isupper())
+    return uppercase_letters / len(letters) >= 0.75
+
+
+def _is_short_title_like(title: str) -> bool:
+    words = title.rstrip(".:").split()
+    if not words or len(words) > 6:
+        return False
+    if title.endswith("."):
+        return False
+    return all(word[:1].isupper() or word.isupper() for word in words)
+
+
+def _first_word(text: str) -> str:
+    match = re.match(r"[A-Za-z]+", text)
+    return match.group(0) if match is not None else ""
 
 
 def _heading_id_from_text_block_id(text_block_id: str) -> str:

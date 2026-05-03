@@ -7,6 +7,7 @@ from techdoc_parser.structure import (
     extract_heading_blocks_from_text_block,
     is_heading_text,
 )
+from techdoc_parser.structure.headings import is_table_of_contents_text
 
 
 def test_is_heading_text_detects_known_heading_patterns() -> None:
@@ -68,6 +69,25 @@ def test_is_heading_text_rejects_false_positives() -> None:
             "3.2.1 Acceptable Risk. Risk that the appropriate acceptance "
             "authority has accepted."
         ),
+        (
+            "1. This Standard is approved for use by all Military Departments "
+            "and Defense Agencies"
+        ),
+        (
+            "2. This system safety standard practice is a key element of Systems "
+            "Engineering (SE) that"
+        ),
+        (
+            "3. DoD is committed to protecting personnel from accidental death, "
+            "injury, or occupational"
+        ),
+        (
+            "6. Comments, suggestions, or questions on this document should be "
+            "addressed to"
+        ),
+        "Appendix A for an example of quantitative probability levels",
+        "See Appendix B for software safety analysis guidance",
+        "Refer to Appendix A for additional information",
     ]
 
     for text in false_positives:
@@ -90,6 +110,28 @@ def test_detect_heading_level() -> None:
     assert detect_heading_level("101.2.8 As a minimum, report the following:") == 3
     assert detect_heading_level("2.2 Government documents") == 2
     assert detect_heading_level("2.2.1 Specifications, standards, and handbooks") == 3
+
+
+def test_true_standard_headings_are_preserved() -> None:
+    """Context-aware filtering should preserve known true technical headings."""
+    headings = {
+        "1. SCOPE": 1,
+        "2. APPLICABLE DOCUMENTS": 1,
+        "3. DEFINITIONS": 1,
+        "4. GENERAL REQUIREMENTS": 1,
+        "5. DETAILED REQUIREMENTS": 1,
+        "6. NOTES": 1,
+        "2.2 Government documents": 2,
+        "2.2.1 Specifications, standards, and handbooks": 3,
+        "4.3 System safety process": 2,
+        "TASK SECTION 100 - MANAGEMENT": 1,
+        "TASK 101": 1,
+        "APPENDIX A GUIDANCE FOR THE SYSTEM SAFETY EFFORT": 1,
+    }
+
+    for heading, level in headings.items():
+        assert is_heading_text(heading)
+        assert detect_heading_level(heading) == level
 
 
 def test_create_heading_block_from_text_block_returns_heading() -> None:
@@ -292,3 +334,104 @@ def test_extract_heading_blocks_from_text_block_rejects_line_false_positives() -
     )
 
     assert extract_heading_blocks_from_text_block(text_block) == []
+
+
+def test_is_table_of_contents_text_detects_toc_like_block() -> None:
+    """TOC-like blocks should be identified from headings, columns, and dot leaders."""
+    text = (
+        "CONTENTS\n"
+        "PARAGRAPH PAGE\n"
+        "FOREWORD ................................................................ ii\n"
+        "1. SCOPE ................................................................ 1\n"
+        "TASK 102 SYSTEM SAFETY PROGRAM PLAN .............................. 24\n"
+        "TASK 201 PRELIMINARY HAZARD LIST ................................. 44\n"
+    )
+
+    assert is_table_of_contents_text(text)
+
+
+def test_extract_heading_blocks_from_toc_like_block_returns_only_contents() -> None:
+    """Only the Contents heading should survive within TOC-like blocks."""
+    source = SourceLocation(document_path="mil_std_882e.pdf", page_number=3)
+    text_block = TextBlock(
+        id="page-3-text-1",
+        text=(
+            "CONTENTS\n"
+            "PARAGRAPH PAGE\n"
+            "FOREWORD .......................................................... ii\n"
+            "1. SCOPE .......................................................... 1\n"
+            "TASK 102 SYSTEM SAFETY PROGRAM PLAN .............................. 24\n"
+            "APPENDIX A GUIDANCE FOR THE SYSTEM SAFETY EFFORT ................. 90"
+        ),
+        source=source,
+        normalized_text=(
+            "CONTENTS\n"
+            "PARAGRAPH PAGE\n"
+            "FOREWORD .......................................................... ii\n"
+            "1. SCOPE .......................................................... 1\n"
+            "TASK 102 SYSTEM SAFETY PROGRAM PLAN .............................. 24\n"
+            "APPENDIX A GUIDANCE FOR THE SYSTEM SAFETY EFFORT ................. 90"
+        ),
+    )
+
+    headings = extract_heading_blocks_from_text_block(text_block)
+
+    assert [heading.normalized_text for heading in headings] == ["CONTENTS"]
+
+
+def test_toc_task_and_appendix_entries_are_not_headings() -> None:
+    """TOC task and appendix entries with dot leaders should be rejected."""
+    false_positives = [
+        (
+            "TASK 102 SYSTEM SAFETY PROGRAM PLAN "
+            "........................................................ 24"
+        ),
+        (
+            "TASK 201 PRELIMINARY HAZARD LIST "
+            "........................................................ 44"
+        ),
+        (
+            "APPENDIX A GUIDANCE FOR THE SYSTEM SAFETY EFFORT "
+            "....................................90"
+        ),
+    ]
+
+    for text in false_positives:
+        assert not is_heading_text(text)
+
+
+def test_numbered_body_paragraphs_are_not_headings() -> None:
+    """Foreword/body numbered paragraphs should not become headings."""
+    false_positives = [
+        (
+            "1. This Standard is approved for use by all Military Departments "
+            "and Defense Agencies"
+        ),
+        (
+            "2. This system safety standard practice is a key element of Systems "
+            "Engineering (SE) that"
+        ),
+        (
+            "3. DoD is committed to protecting personnel from accidental death, "
+            "injury, or occupational"
+        ),
+        (
+            "6. Comments, suggestions, or questions on this document should be "
+            "addressed to"
+        ),
+    ]
+
+    for text in false_positives:
+        assert not is_heading_text(text)
+
+
+def test_sentence_like_appendix_references_are_not_headings() -> None:
+    """Appendix references inside prose should not become headings."""
+    false_positives = [
+        "Appendix A for an example of quantitative probability levels",
+        "See Appendix B for software safety analysis guidance",
+        "Refer to Appendix A for additional information",
+    ]
+
+    for text in false_positives:
+        assert not is_heading_text(text)

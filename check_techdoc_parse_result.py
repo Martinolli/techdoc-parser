@@ -1,6 +1,9 @@
 from techdoc_parser import parse_document
+from techdoc_parser.exporters import export_document_json, export_document_markdown
 
 document = parse_document("MIL-STD-882E.pdf")
+export_document_json(document, "output/mil-std-882e.json")
+export_document_markdown(document, "output/mil-std-882e.md")
 
 heading_count = sum(
     1
