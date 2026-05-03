@@ -6,7 +6,7 @@ import fitz
 import pytest
 
 from techdoc_parser import parse_document
-from techdoc_parser.core import Document, TextBlock
+from techdoc_parser.core import Document, HeadingBlock, TextBlock
 from techdoc_parser.ingestion import PDFLoader
 from techdoc_parser.normalization import normalize_text
 
@@ -32,6 +32,19 @@ def _create_test_pdf(path: Path, text: str = "Hello from PyMuPDF") -> None:
 def _create_blank_pdf(path: Path) -> None:
     document = fitz.open()
     document.new_page(width=200.0, height=100.0)
+    document.save(path)
+    document.close()
+
+
+def _create_heading_pdf(path: Path) -> None:
+    document = fitz.open()
+    page = document.new_page(width=400.0, height=200.0)
+    page.insert_text((20.0, 40.0), "CHAPTER 1 - Introduction", fontsize=16.0)
+    page.insert_text(
+        (20.0, 120.0),
+        "This is a normal paragraph ending with punctuation.",
+        fontsize=10.0,
+    )
     document.save(path)
     document.close()
 
@@ -90,6 +103,29 @@ def test_pdf_loader_marks_blank_page_as_requiring_ocr(tmp_path: Path) -> None:
     assert page.text_blocks == []
     assert page.has_native_text is False
     assert page.requires_ocr is True
+
+
+def test_pdf_loader_adds_heading_blocks_without_changing_text_blocks(
+    tmp_path: Path,
+) -> None:
+    """PDFLoader should add HeadingBlock objects only to generic page blocks."""
+    pdf_path = tmp_path / "heading.pdf"
+    _create_heading_pdf(pdf_path)
+
+    document = PDFLoader(str(pdf_path)).load()
+    page = document.pages[0]
+
+    assert page.text_blocks
+    assert all(isinstance(block, TextBlock) for block in page.text_blocks)
+    assert all(block in page.blocks for block in page.text_blocks)
+
+    heading_blocks = [block for block in page.blocks if isinstance(block, HeadingBlock)]
+
+    assert heading_blocks
+    assert all(block not in page.text_blocks for block in heading_blocks)
+    assert heading_blocks[0].text is not None
+    assert heading_blocks[0].text.strip() == "CHAPTER 1 - Introduction"
+    assert heading_blocks[0].level == 1
 
 
 def test_parse_document_loads_generated_pdf(tmp_path: Path) -> None:
