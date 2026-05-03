@@ -127,14 +127,16 @@ Phase 4C is a first-pass candidate heading detector, not final semantic heading 
 
 Phase 4D — Context-aware heading filtering:
 
-- [ ] Reject numbered body paragraphs incorrectly detected as headings
-- [ ] Reject table-of-contents entries with dot leaders and page numbers
-- [ ] Reject heading candidates from Contents pages, except the "Contents" heading itself
-- [ ] Reject sentence-like Appendix references
-- [ ] Improve MIL-STD-882E heading precision
-- [ ] Improve AC-120-92 heading precision
-- [ ] Preserve detected true headings such as 1. SCOPE, 2. APPLICABLE DOCUMENTS, TASK 101, and APPENDIX A actual section headings
-- [ ] Add regression tests based on observed MIL-STD-882E and AC-120-92 false positives
+- [x] Reject numbered body paragraphs incorrectly detected as headings
+- [x] Reject table-of-contents entries with dot leaders and page numbers
+- [x] Reject heading candidates from Contents pages, except the "Contents" heading itself
+- [x] Reject sentence-like Appendix references
+- [x] Improve MIL-STD-882E heading precision
+- [x] Improve AC-120-92 heading precision
+- [x] Preserve detected true headings such as 1. SCOPE, 2. APPLICABLE DOCUMENTS, TASK 101, and APPENDIX A actual section headings
+- [x] Add regression tests based on observed MIL-STD-882E and AC-120-92 false positives
+
+Phase 4D context-aware heading filtering completed with regression tests for observed MIL-STD-882E and AC-120-92 false positives. Heading detection remains heuristic and should still be treated as candidate semantic structure until validated against more real documents. Tests, ruff, and mypy pass.
 
 ---
 
