@@ -110,7 +110,7 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 - [x] Extract text blocks
 - [x] Preserve page numbers
 - [x] Preserve bounding boxes where available
-- [x] Detect headings using heuristic methods
+- [ ] Detect headings using heuristic methods
 - [ ] Detect paragraphs
 - [ ] Detect basic tables
 - [ ] Preserve table row/column structure where possible
@@ -122,6 +122,19 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 Phase 4B basic heading detection completed. Added the structure package, conservative heading heuristics, `is_heading_text()`, `detect_heading_level()`, and `create_heading_block_from_text_block()`. `PDFLoader` now adds obvious `HeadingBlock` objects to `page.blocks` while preserving original `TextBlock` objects in both `page.text_blocks` and `page.blocks`. Tests, ruff, and mypy pass.
 
 Phase 4C line-level heading extraction completed. Added `extract_heading_blocks_from_text_block()`, MIL-STD-style task and appendix heading patterns, embedded multiline `TextBlock` heading extraction, duplicate suppression, and false-positive tests. `PDFLoader` now appends all detected `HeadingBlock` objects while preserving original `TextBlock` objects unchanged. Tests, ruff, and mypy pass.
+
+Phase 4C is a first-pass candidate heading detector, not final semantic heading classification. Real-document validation showed that content capture is good, but semantic heading classification still needs refinement before it should be used for final RAG chunk hierarchy.
+
+Phase 4D — Context-aware heading filtering:
+
+- [ ] Reject numbered body paragraphs incorrectly detected as headings
+- [ ] Reject table-of-contents entries with dot leaders and page numbers
+- [ ] Reject heading candidates from Contents pages, except the "Contents" heading itself
+- [ ] Reject sentence-like Appendix references
+- [ ] Improve MIL-STD-882E heading precision
+- [ ] Improve AC-120-92 heading precision
+- [ ] Preserve detected true headings such as 1. SCOPE, 2. APPLICABLE DOCUMENTS, TASK 101, and APPENDIX A actual section headings
+- [ ] Add regression tests based on observed MIL-STD-882E and AC-120-92 false positives
 
 ---
 
@@ -160,7 +173,7 @@ Phase 2D native-text page detection completed. `Page` now includes `has_native_t
 ## 7. Content Extraction Layer
 
 - [ ] Implement text block extraction
-- [x] Implement heading detection
+- [ ] Implement heading detection
 - [ ] Implement paragraph grouping
 - [ ] Implement table detection
 - [ ] Implement simple table extraction
