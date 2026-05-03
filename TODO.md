@@ -110,7 +110,7 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 - [x] Extract text blocks
 - [x] Preserve page numbers
 - [x] Preserve bounding boxes where available
-- [ ] Detect headings using heuristic methods
+- [x] Detect headings using heuristic methods
 - [ ] Detect paragraphs
 - [ ] Detect basic tables
 - [ ] Preserve table row/column structure where possible
@@ -118,6 +118,8 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 - [x] Export structured JSON
 - [x] Export readable Markdown
 - [ ] Create simple RAG chunks with source references
+
+Phase 4B basic heading detection completed. Added the structure package, conservative heading heuristics, `is_heading_text()`, `detect_heading_level()`, and `create_heading_block_from_text_block()`. `PDFLoader` now adds obvious `HeadingBlock` objects to `page.blocks` while preserving original `TextBlock` objects in both `page.text_blocks` and `page.blocks`. Tests, ruff, and mypy pass.
 
 ---
 
@@ -156,7 +158,7 @@ Phase 2D native-text page detection completed. `Page` now includes `has_native_t
 ## 7. Content Extraction Layer
 
 - [ ] Implement text block extraction
-- [ ] Implement heading detection
+- [x] Implement heading detection
 - [ ] Implement paragraph grouping
 - [ ] Implement table detection
 - [ ] Implement simple table extraction
@@ -243,6 +245,7 @@ Phase 3A Markdown export support completed. Added `document_to_markdown()` and `
 - [x] Unit tests for data models
 - [x] Unit tests for PDF loader
 - [ ] Unit tests for layout analysis
+- [x] Unit tests for heading detection
 - [x] Unit tests for exporters
 - [x] Unit tests for CLI
 - [ ] Integration test for full PDF pipeline
