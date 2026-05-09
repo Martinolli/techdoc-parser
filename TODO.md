@@ -113,7 +113,7 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 - [x] Preserve bounding boxes where available
 - [ ] Detect headings using heuristic methods
 - [x] Detect paragraphs
-- [ ] Detect basic tables
+- [x] Detect basic tables
 - [ ] Preserve table row/column structure where possible
 - [ ] Detect potential formula blocks
 - [x] Export structured JSON
@@ -144,6 +144,8 @@ Phase 4E page-furniture detection completed. Added `TextBlock` flags for page he
 Phase 5A paragraph grouping completed. Added `ParagraphBlock`, `create_paragraph_blocks_for_page()`, JSON output for paragraph blocks in `page.blocks`, and tests for paragraph grouping. `PDFLoader` now creates `ParagraphBlock` objects for meaningful body text while preserving original `TextBlock` objects unchanged; page furniture and heading text blocks do not create duplicate paragraphs. Phase 5A creates one `ParagraphBlock` per meaningful `TextBlock`; cross-block paragraph merging remains future work. Tests, ruff, and mypy pass.
 
 Phase 5B full pipeline integration testing completed. Added a generated-PDF integration test that verifies the `PDFLoader` pipeline creates `TextBlock`, `HeadingBlock`, and `ParagraphBlock` objects; validates page-furniture behavior; confirms furniture and heading text do not create duplicate semantic blocks; and checks JSON export for text, heading, paragraph, page-furniture flags, and paragraph `source_text_block_ids`. Stable JSON sanity assertions are inline in tests; no generated golden output files are committed. Tests, ruff, and mypy pass.
+
+Phase 6A basic table candidate detection completed. Added table detection helpers, `is_table_candidate_text()`, `create_table_blocks_for_page()`, and `TableBlock` candidate metadata including `source_text_block_ids` and `is_candidate`. `PDFLoader` now creates `TableBlock` candidates for likely table text blocks while preserving original `TextBlock` objects; table candidates appear in `page.blocks` but not `page.text_blocks`, and JSON output includes candidate metadata. Phase 6A only detects table candidates; it does not reconstruct rows and columns or perform advanced table extraction yet. Tests, ruff, and mypy pass.
 
 ---
 
@@ -184,7 +186,7 @@ Phase 2D native-text page detection completed. `Page` now includes `has_native_t
 - [ ] Implement text block extraction
 - [ ] Implement heading detection
 - [x] Implement paragraph grouping
-- [ ] Implement table detection
+- [x] Implement table detection
 - [ ] Implement simple table extraction
 - [ ] Implement formula candidate detection
 - [ ] Implement figure/image candidate detection
@@ -271,6 +273,7 @@ Phase 3A Markdown export support completed. Added `document_to_markdown()` and `
 - [ ] Unit tests for layout analysis
 - [x] Unit tests for heading detection
 - [x] Unit tests for paragraph grouping
+- [x] Unit tests for table detection
 - [x] Unit tests for exporters
 - [x] Unit tests for CLI
 - [x] Integration test for full PDF pipeline
