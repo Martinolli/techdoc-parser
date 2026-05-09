@@ -174,6 +174,8 @@ def test_table_block_serialization() -> None:
         "normalized_text": None,
         "caption": "Example table",
         "rows": rows,
+        "source_text_block_ids": [],
+        "is_candidate": True,
     }
 
 

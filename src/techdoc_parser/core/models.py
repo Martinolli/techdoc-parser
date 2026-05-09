@@ -202,12 +202,16 @@ class TableBlock(Block):
     block_type: str = field(default="table", init=False)
     caption: str | None = None
     rows: list[list[str]] = field(default_factory=list)
+    source_text_block_ids: list[str] = field(default_factory=list)
+    is_candidate: bool = True
 
     def to_dict(self) -> dict[str, object]:
         """Return a JSON-serializable dictionary."""
         data = super().to_dict()
         data["caption"] = self.caption
         data["rows"] = self.rows
+        data["source_text_block_ids"] = self.source_text_block_ids
+        data["is_candidate"] = self.is_candidate
         return data
 
 

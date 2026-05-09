@@ -6,7 +6,13 @@ import fitz
 import pytest
 
 from techdoc_parser import parse_document
-from techdoc_parser.core import Document, HeadingBlock, ParagraphBlock, TextBlock
+from techdoc_parser.core import (
+    Document,
+    HeadingBlock,
+    ParagraphBlock,
+    TableBlock,
+    TextBlock,
+)
 from techdoc_parser.ingestion import PDFLoader
 from techdoc_parser.normalization import normalize_text
 
@@ -75,6 +81,18 @@ def _create_page_furniture_pdf(path: Path) -> None:
         fontsize=10.0,
     )
     page.insert_text((200.0, 205.0), "1", fontsize=9.0)
+    document.save(path)
+    document.close()
+
+
+def _create_table_candidate_pdf(path: Path) -> None:
+    document = fitz.open()
+    page = document.new_page(width=420.0, height=240.0)
+    page.insert_textbox(
+        fitz.Rect(20.0, 40.0, 400.0, 180.0),
+        "Category    Description\nHigh        Severe impact\nLow         Minor impact",
+        fontsize=10.0,
+    )
     document.save(path)
     document.close()
 
@@ -251,6 +269,26 @@ def test_pdf_loader_does_not_create_paragraphs_for_page_furniture(
         "normal body text" in (block.normalized_text or block.text or "")
         for block in paragraphs
     )
+
+
+def test_pdf_loader_adds_table_candidates_without_changing_text_blocks(
+    tmp_path: Path,
+) -> None:
+    """PDFLoader should add table candidates to page.blocks only."""
+    pdf_path = tmp_path / "table-candidate.pdf"
+    _create_table_candidate_pdf(pdf_path)
+
+    document = PDFLoader(str(pdf_path)).load()
+    page = document.pages[0]
+
+    tables = [block for block in page.blocks if isinstance(block, TableBlock)]
+
+    assert tables
+    assert all(block not in page.text_blocks for block in tables)
+    assert all(isinstance(block, TextBlock) for block in page.text_blocks)
+    assert tables[0].is_candidate is True
+    assert tables[0].source_text_block_ids
+    assert tables[0].rows
 
 
 def test_parse_document_loads_generated_pdf(tmp_path: Path) -> None:

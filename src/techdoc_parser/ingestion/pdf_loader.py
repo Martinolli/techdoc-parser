@@ -20,6 +20,7 @@ from techdoc_parser.normalization import normalize_text
 from techdoc_parser.structure import (
     classify_text_block_page_furniture,
     create_paragraph_blocks_for_page,
+    create_table_blocks_for_page,
     extract_heading_blocks_from_text_block,
 )
 
@@ -53,6 +54,7 @@ class PDFLoader:
                 )
                 self._add_text_blocks(page=page, pdf_page=pdf_page)
                 page.blocks.extend(create_paragraph_blocks_for_page(page))
+                page.blocks.extend(create_table_blocks_for_page(page))
                 self._update_page_text_status(page)
                 document.pages.append(page)
 

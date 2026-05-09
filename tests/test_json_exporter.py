@@ -9,6 +9,7 @@ from techdoc_parser.core import (
     Page,
     ParagraphBlock,
     SourceLocation,
+    TableBlock,
     TextBlock,
 )
 from techdoc_parser.exporters import export_document_json
@@ -72,3 +73,35 @@ def test_export_document_json_includes_paragraph_blocks_only_in_blocks(
 
     assert any(block["block_type"] == "paragraph" for block in page["blocks"])
     assert all(block["block_type"] == "text" for block in page["text_blocks"])
+
+
+def test_export_document_json_includes_table_candidate_metadata(
+    tmp_path: Path,
+) -> None:
+    """TableBlock JSON should include candidate metadata."""
+    source = SourceLocation(document_path="manual.pdf", page_number=1)
+    table = TableBlock(
+        id="table-1",
+        source=source,
+        text="Category    Description\nHigh        Severe impact",
+        normalized_text="Category Description\nHigh Severe impact",
+        rows=[["Category Description"], ["High Severe impact"]],
+        source_text_block_ids=["text-1"],
+        is_candidate=True,
+    )
+    document = Document(
+        id="doc-1",
+        source_path="manual.pdf",
+        metadata=DocumentMetadata(title="Manual"),
+        pages=[Page(page_number=1, blocks=[table])],
+    )
+    output_path = tmp_path / "manual.json"
+
+    export_document_json(document, str(output_path))
+
+    data = json.loads(output_path.read_text(encoding="utf-8"))
+    table_data = data["pages"][0]["blocks"][0]
+
+    assert table_data["block_type"] == "table"
+    assert table_data["is_candidate"] is True
+    assert table_data["source_text_block_ids"] == ["text-1"]
