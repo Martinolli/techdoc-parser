@@ -143,6 +143,8 @@ Phase 4E page-furniture detection completed. Added `TextBlock` flags for page he
 
 Phase 5A paragraph grouping completed. Added `ParagraphBlock`, `create_paragraph_blocks_for_page()`, JSON output for paragraph blocks in `page.blocks`, and tests for paragraph grouping. `PDFLoader` now creates `ParagraphBlock` objects for meaningful body text while preserving original `TextBlock` objects unchanged; page furniture and heading text blocks do not create duplicate paragraphs. Phase 5A creates one `ParagraphBlock` per meaningful `TextBlock`; cross-block paragraph merging remains future work. Tests, ruff, and mypy pass.
 
+Phase 5B full pipeline integration testing completed. Added a generated-PDF integration test that verifies the `PDFLoader` pipeline creates `TextBlock`, `HeadingBlock`, and `ParagraphBlock` objects; validates page-furniture behavior; confirms furniture and heading text do not create duplicate semantic blocks; and checks JSON export for text, heading, paragraph, page-furniture flags, and paragraph `source_text_block_ids`. Stable JSON sanity assertions are inline in tests; no generated golden output files are committed. Tests, ruff, and mypy pass.
+
 ---
 
 ## 5. Ingestion Layer
@@ -271,7 +273,7 @@ Phase 3A Markdown export support completed. Added `document_to_markdown()` and `
 - [x] Unit tests for paragraph grouping
 - [x] Unit tests for exporters
 - [x] Unit tests for CLI
-- [ ] Integration test for full PDF pipeline
+- [x] Integration test for full PDF pipeline
 - [ ] Golden-file tests for JSON output
 - [ ] Regression tests for difficult documents
 
