@@ -88,7 +88,7 @@ class Block:
     """A generic extracted document block."""
 
     id: str
-    source: SourceLocation
+    source: SourceLocation | None
     block_type: str
     text: str | None = None
     normalized_text: str | None = None
@@ -97,7 +97,7 @@ class Block:
         """Return a JSON-serializable dictionary."""
         return {
             "id": self.id,
-            "source": self.source.to_dict(),
+            "source": self.source.to_dict() if self.source is not None else None,
             "block_type": self.block_type,
             "text": self.text,
             "normalized_text": self.normalized_text,
@@ -140,6 +140,39 @@ class TextBlock(Block):
         data["is_page_footer"] = self.is_page_footer
         data["is_page_number"] = self.is_page_number
         data["is_page_furniture"] = self.is_page_furniture
+        return data
+
+
+@dataclass(init=False)
+class ParagraphBlock(Block):
+    """A paragraph derived from one or more source text blocks."""
+
+    source_text_block_ids: list[str] = field(default_factory=list)
+
+    def __init__(
+        self,
+        id: str,
+        text: str,
+        source: SourceLocation | None,
+        normalized_text: str | None = None,
+        source_text_block_ids: list[str] | None = None,
+    ) -> None:
+        """Create a paragraph block."""
+        super().__init__(
+            id=id,
+            source=source,
+            block_type="paragraph",
+            text=text,
+            normalized_text=normalized_text,
+        )
+        self.source_text_block_ids = (
+            source_text_block_ids if source_text_block_ids is not None else []
+        )
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-serializable dictionary."""
+        data = super().to_dict()
+        data["source_text_block_ids"] = self.source_text_block_ids
         return data
 
 

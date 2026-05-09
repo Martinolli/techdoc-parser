@@ -3,7 +3,14 @@
 import json
 from pathlib import Path
 
-from techdoc_parser.core import Document, DocumentMetadata, Page
+from techdoc_parser.core import (
+    Document,
+    DocumentMetadata,
+    Page,
+    ParagraphBlock,
+    SourceLocation,
+    TextBlock,
+)
 from techdoc_parser.exporters import export_document_json
 
 
@@ -30,3 +37,38 @@ def test_export_document_json_writes_valid_json(tmp_path: Path) -> None:
     assert data["source_path"] == "manual.pdf"
     assert data["metadata"]["title"] == "Manual"
     assert len(data["pages"]) == 1
+
+
+def test_export_document_json_includes_paragraph_blocks_only_in_blocks(
+    tmp_path: Path,
+) -> None:
+    """ParagraphBlock objects should serialize under page.blocks only."""
+    source = SourceLocation(document_path="manual.pdf", page_number=1)
+    text_block = TextBlock(id="text-1", text="Example text.", source=source)
+    paragraph = ParagraphBlock(
+        id="paragraph-1",
+        text="Example text.",
+        source=source,
+        source_text_block_ids=["text-1"],
+    )
+    document = Document(
+        id="doc-1",
+        source_path="manual.pdf",
+        metadata=DocumentMetadata(title="Manual"),
+        pages=[
+            Page(
+                page_number=1,
+                blocks=[text_block, paragraph],
+                text_blocks=[text_block],
+            )
+        ],
+    )
+    output_path = tmp_path / "manual.json"
+
+    export_document_json(document, str(output_path))
+
+    data = json.loads(output_path.read_text(encoding="utf-8"))
+    page = data["pages"][0]
+
+    assert any(block["block_type"] == "paragraph" for block in page["blocks"])
+    assert all(block["block_type"] == "text" for block in page["text_blocks"])

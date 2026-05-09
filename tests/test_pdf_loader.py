@@ -6,7 +6,7 @@ import fitz
 import pytest
 
 from techdoc_parser import parse_document
-from techdoc_parser.core import Document, HeadingBlock, TextBlock
+from techdoc_parser.core import Document, HeadingBlock, ParagraphBlock, TextBlock
 from techdoc_parser.ingestion import PDFLoader
 from techdoc_parser.normalization import normalize_text
 
@@ -201,6 +201,56 @@ def test_pdf_loader_preserves_page_furniture_without_heading_blocks(
     assert any(block.normalized_text == "1. SCOPE" for block in heading_blocks)
     assert not any(block.normalized_text == "MIL-STD-882E" for block in heading_blocks)
     assert "is_page_furniture" in page_data["text_blocks"][0]
+
+
+def test_pdf_loader_adds_paragraph_blocks_without_changing_text_blocks(
+    tmp_path: Path,
+) -> None:
+    """PDFLoader should add paragraphs to page.blocks only for body text."""
+    pdf_path = tmp_path / "paragraphs.pdf"
+    _create_heading_pdf(pdf_path)
+
+    document = PDFLoader(str(pdf_path)).load()
+    page = document.pages[0]
+
+    paragraphs = [block for block in page.blocks if isinstance(block, ParagraphBlock)]
+    heading_texts = [
+        block.normalized_text
+        for block in page.blocks
+        if isinstance(block, HeadingBlock)
+    ]
+
+    assert paragraphs
+    assert all(block not in page.text_blocks for block in paragraphs)
+    assert all(isinstance(block, TextBlock) for block in page.text_blocks)
+    assert any(
+        "normal paragraph" in (block.normalized_text or block.text or "")
+        for block in paragraphs
+    )
+    assert not any(
+        block.normalized_text == "CHAPTER 1 - Introduction" for block in paragraphs
+    )
+    assert "CHAPTER 1 - Introduction" in heading_texts
+
+
+def test_pdf_loader_does_not_create_paragraphs_for_page_furniture(
+    tmp_path: Path,
+) -> None:
+    """PDFLoader should not create paragraphs from page-furniture text."""
+    pdf_path = tmp_path / "page-furniture-paragraphs.pdf"
+    _create_page_furniture_pdf(pdf_path)
+
+    document = PDFLoader(str(pdf_path)).load()
+    page = document.pages[0]
+
+    paragraphs = [block for block in page.blocks if isinstance(block, ParagraphBlock)]
+
+    assert not any(block.normalized_text == "MIL-STD-882E" for block in paragraphs)
+    assert not any(block.normalized_text == "1" for block in paragraphs)
+    assert any(
+        "normal body text" in (block.normalized_text or block.text or "")
+        for block in paragraphs
+    )
 
 
 def test_parse_document_loads_generated_pdf(tmp_path: Path) -> None:

@@ -106,6 +106,8 @@ def _is_generic_footer_text(text: str) -> bool:
 
 
 def _is_near_top(text_block: TextBlock, page: Page) -> bool:
+    if text_block.source is None:
+        return False
     bbox = text_block.source.bbox
     if bbox is None or page.height is None or page.height <= 0:
         return False
@@ -113,6 +115,8 @@ def _is_near_top(text_block: TextBlock, page: Page) -> bool:
 
 
 def _is_near_bottom(text_block: TextBlock, page: Page) -> bool:
+    if text_block.source is None:
+        return False
     bbox = text_block.source.bbox
     if bbox is None or page.height is None or page.height <= 0:
         return False

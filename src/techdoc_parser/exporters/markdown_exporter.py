@@ -35,7 +35,8 @@ def document_to_markdown(document: Document) -> str:
         )
 
         for block in page.text_blocks:
-            lines.append(_source_line(block.source))
+            if block.source is not None:
+                lines.append(_source_line(block.source))
             lines.extend(_page_furniture_lines(block))
             if _has_distinct_normalized_text(block.text, block.normalized_text):
                 lines.append("Normalized text available: yes")
