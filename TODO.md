@@ -86,6 +86,7 @@ High-level requirements are defined in PROJECTPLAN.md section 5 as HLR-001 throu
 - [ ] Define `Reference` model
 - [x] Define `SourceLocation` model
 - [x] Define `BoundingBox` model
+- [x] Define `ParagraphBlock` model
 - [ ] Define `ConfidenceScore` model
 - [x] Define JSON serialization format
 - [x] Define Markdown export format
@@ -111,7 +112,7 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 - [x] Preserve page numbers
 - [x] Preserve bounding boxes where available
 - [ ] Detect headings using heuristic methods
-- [ ] Detect paragraphs
+- [x] Detect paragraphs
 - [ ] Detect basic tables
 - [ ] Preserve table row/column structure where possible
 - [ ] Detect potential formula blocks
@@ -139,6 +140,8 @@ Phase 4D — Context-aware heading filtering:
 Phase 4D context-aware heading filtering completed with regression tests for observed MIL-STD-882E and AC-120-92 false positives. Heading detection remains heuristic and should still be treated as candidate semantic structure until validated against more real documents. Tests, ruff, and mypy pass.
 
 Phase 4E page-furniture detection completed. Added `TextBlock` flags for page headers, footers, page numbers, and page furniture; added conservative page-furniture classification; prevented page furniture from creating `HeadingBlock` objects; preserved original `TextBlock` objects; and updated Markdown export to show page-furniture status when applicable. Page furniture detection is conservative and should be validated against real documents such as MIL-STD-882E, AC-120-92, and FTIAS Manual. Tests, ruff, and mypy pass.
+
+Phase 5A paragraph grouping completed. Added `ParagraphBlock`, `create_paragraph_blocks_for_page()`, JSON output for paragraph blocks in `page.blocks`, and tests for paragraph grouping. `PDFLoader` now creates `ParagraphBlock` objects for meaningful body text while preserving original `TextBlock` objects unchanged; page furniture and heading text blocks do not create duplicate paragraphs. Phase 5A creates one `ParagraphBlock` per meaningful `TextBlock`; cross-block paragraph merging remains future work. Tests, ruff, and mypy pass.
 
 ---
 
@@ -178,7 +181,7 @@ Phase 2D native-text page detection completed. `Page` now includes `has_native_t
 
 - [ ] Implement text block extraction
 - [ ] Implement heading detection
-- [ ] Implement paragraph grouping
+- [x] Implement paragraph grouping
 - [ ] Implement table detection
 - [ ] Implement simple table extraction
 - [ ] Implement formula candidate detection
@@ -265,6 +268,7 @@ Phase 3A Markdown export support completed. Added `document_to_markdown()` and `
 - [x] Unit tests for PDF loader
 - [ ] Unit tests for layout analysis
 - [x] Unit tests for heading detection
+- [x] Unit tests for paragraph grouping
 - [x] Unit tests for exporters
 - [x] Unit tests for CLI
 - [ ] Integration test for full PDF pipeline
