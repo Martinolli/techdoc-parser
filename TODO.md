@@ -138,6 +138,8 @@ Phase 4D — Context-aware heading filtering:
 
 Phase 4D context-aware heading filtering completed with regression tests for observed MIL-STD-882E and AC-120-92 false positives. Heading detection remains heuristic and should still be treated as candidate semantic structure until validated against more real documents. Tests, ruff, and mypy pass.
 
+Phase 4E page-furniture detection completed. Added `TextBlock` flags for page headers, footers, page numbers, and page furniture; added conservative page-furniture classification; prevented page furniture from creating `HeadingBlock` objects; preserved original `TextBlock` objects; and updated Markdown export to show page-furniture status when applicable. Page furniture detection is conservative and should be validated against real documents such as MIL-STD-882E, AC-120-92, and FTIAS Manual. Tests, ruff, and mypy pass.
+
 ---
 
 ## 5. Ingestion Layer
@@ -163,8 +165,8 @@ Phase 2D native-text page detection completed. `Page` now includes `has_native_t
 - [ ] Implement page layout object
 - [ ] Detect text blocks
 - [ ] Detect reading order
-- [ ] Detect headers and footers
-- [ ] Detect page numbers
+- [x] Detect headers and footers
+- [x] Detect page numbers
 - [ ] Detect multi-column layout
 - [ ] Detect captions
 - [ ] Detect footnotes
