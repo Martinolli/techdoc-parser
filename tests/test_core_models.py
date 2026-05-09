@@ -114,10 +114,14 @@ def test_text_block_serialization() -> None:
 
     assert block.to_dict() == {
         "id": "block-1",
-        "text": "Example text",
         "source": source.to_dict(),
         "block_type": "text",
+        "text": "Example text",
         "normalized_text": "Example text",
+        "is_page_header": False,
+        "is_page_footer": False,
+        "is_page_number": False,
+        "is_page_furniture": False,
     }
 
 

@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from techdoc_parser.core import BoundingBox, Document, SourceLocation
+from techdoc_parser.core import BoundingBox, Document, SourceLocation, TextBlock
 
 
 def document_to_markdown(document: Document) -> str:
@@ -36,6 +36,7 @@ def document_to_markdown(document: Document) -> str:
 
         for block in page.text_blocks:
             lines.append(_source_line(block.source))
+            lines.extend(_page_furniture_lines(block))
             if _has_distinct_normalized_text(block.text, block.normalized_text):
                 lines.append("Normalized text available: yes")
             lines.extend(["", block.text or "", ""])
@@ -76,6 +77,19 @@ def _source_line(source: SourceLocation) -> str:
         f"method {source.extraction_method}, "
         f"confidence {source.confidence}"
     )
+
+
+def _page_furniture_lines(block: TextBlock) -> list[str]:
+    lines: list[str] = []
+    if block.is_page_furniture:
+        lines.append("Page furniture: yes")
+    if block.is_page_header:
+        lines.append("Header: yes")
+    if block.is_page_footer:
+        lines.append("Footer: yes")
+    if block.is_page_number:
+        lines.append("Page number: yes")
+    return lines
 
 
 def _format_bbox(bbox: BoundingBox | None) -> str:

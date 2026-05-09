@@ -64,6 +64,21 @@ def _create_embedded_heading_pdf(path: Path) -> None:
     document.close()
 
 
+def _create_page_furniture_pdf(path: Path) -> None:
+    document = fitz.open()
+    page = document.new_page(width=400.0, height=220.0)
+    page.insert_text((20.0, 20.0), "MIL-STD-882E", fontsize=9.0)
+    page.insert_text((20.0, 80.0), "1. SCOPE", fontsize=14.0)
+    page.insert_text(
+        (20.0, 120.0),
+        "This is normal body text for the section.",
+        fontsize=10.0,
+    )
+    page.insert_text((200.0, 205.0), "1", fontsize=9.0)
+    document.save(path)
+    document.close()
+
+
 def test_pdf_loader_loads_generated_one_page_pdf(tmp_path: Path) -> None:
     """PDFLoader should load native text from a generated PDF."""
     pdf_path = tmp_path / "manual.pdf"
@@ -163,6 +178,29 @@ def test_pdf_loader_adds_embedded_heading_blocks_from_text_block(
         block.normalized_text == "2. APPLICABLE DOCUMENTS" for block in heading_blocks
     )
     assert all(block not in page.text_blocks for block in heading_blocks)
+
+
+def test_pdf_loader_preserves_page_furniture_without_heading_blocks(
+    tmp_path: Path,
+) -> None:
+    """PDFLoader should preserve furniture text but not create headings from it."""
+    pdf_path = tmp_path / "page-furniture.pdf"
+    _create_page_furniture_pdf(pdf_path)
+
+    document = PDFLoader(str(pdf_path)).load()
+    page = document.pages[0]
+
+    furniture_blocks = [block for block in page.text_blocks if block.is_page_furniture]
+    heading_blocks = [block for block in page.blocks if isinstance(block, HeadingBlock)]
+    page_data = page.to_dict()
+
+    assert furniture_blocks
+    assert all(block in page.blocks for block in furniture_blocks)
+    assert any(block.is_page_header for block in furniture_blocks)
+    assert any(block.is_page_number for block in furniture_blocks)
+    assert any(block.normalized_text == "1. SCOPE" for block in heading_blocks)
+    assert not any(block.normalized_text == "MIL-STD-882E" for block in heading_blocks)
+    assert "is_page_furniture" in page_data["text_blocks"][0]
 
 
 def test_parse_document_loads_generated_pdf(tmp_path: Path) -> None:

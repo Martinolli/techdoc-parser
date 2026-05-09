@@ -115,6 +115,10 @@ class TextBlock(Block):
         source: SourceLocation,
         block_type: str = "text",
         normalized_text: str | None = None,
+        is_page_header: bool = False,
+        is_page_footer: bool = False,
+        is_page_number: bool = False,
+        is_page_furniture: bool = False,
     ) -> None:
         """Create a text block."""
         super().__init__(
@@ -124,6 +128,19 @@ class TextBlock(Block):
             text=text,
             normalized_text=normalized_text,
         )
+        self.is_page_header = is_page_header
+        self.is_page_footer = is_page_footer
+        self.is_page_number = is_page_number
+        self.is_page_furniture = is_page_furniture
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-serializable dictionary."""
+        data = super().to_dict()
+        data["is_page_header"] = self.is_page_header
+        data["is_page_footer"] = self.is_page_footer
+        data["is_page_number"] = self.is_page_number
+        data["is_page_furniture"] = self.is_page_furniture
+        return data
 
 
 @dataclass

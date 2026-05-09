@@ -17,7 +17,10 @@ from techdoc_parser.core import (
     TextBlock,
 )
 from techdoc_parser.normalization import normalize_text
-from techdoc_parser.structure import extract_heading_blocks_from_text_block
+from techdoc_parser.structure import (
+    classify_text_block_page_furniture,
+    extract_heading_blocks_from_text_block,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -98,10 +101,12 @@ class PDFLoader:
                 source=source,
                 normalized_text=normalize_text(text),
             )
+            classify_text_block_page_furniture(block, page)
             page.text_blocks.append(block)
             page.blocks.append(block)
-            for heading_block in extract_heading_blocks_from_text_block(block):
-                page.blocks.append(heading_block)
+            if not block.is_page_furniture:
+                for heading_block in extract_heading_blocks_from_text_block(block):
+                    page.blocks.append(heading_block)
             text_block_index += 1
 
     def _update_page_text_status(self, page: Page) -> None:

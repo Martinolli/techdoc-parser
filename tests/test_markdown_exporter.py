@@ -63,6 +63,23 @@ def test_document_to_markdown_notes_distinct_normalized_text() -> None:
     assert "Normalized text available: yes" in markdown
 
 
+def test_document_to_markdown_notes_page_furniture() -> None:
+    """Markdown rendering should include page-furniture flags when true."""
+    document = _document()
+    block = document.pages[0].text_blocks[0]
+    block.is_page_furniture = True
+    block.is_page_header = True
+    block.is_page_footer = True
+    block.is_page_number = True
+
+    markdown = document_to_markdown(document)
+
+    assert "Page furniture: yes" in markdown
+    assert "Header: yes" in markdown
+    assert "Footer: yes" in markdown
+    assert "Page number: yes" in markdown
+
+
 def test_document_to_markdown_uses_document_id_when_title_missing() -> None:
     """Markdown rendering should fall back to document id when title is missing."""
     document = _document()
