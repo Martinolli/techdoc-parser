@@ -23,7 +23,7 @@ _ROMAN_PAGE_NUMERALS = {
 _GENERIC_FOOTER_RE = re.compile(r"\|\s*Page\s+\d+\b", re.IGNORECASE)
 _SOURCE_URL_RE = re.compile(r"source:\s*https?://", re.IGNORECASE)
 _DOCUMENT_HEADER_RE = re.compile(
-    r"^(?:MIL-STD-\d+[A-Z]?(?:\s+w/CHANGE\s+\d+)?|FTIAS\s+Manual)$",
+    r"^(?:MIL-STD-[A-Z0-9]+(?:\s+w/CHANGE\s+\d+)?|FTIAS\s+Manual)$",
     re.IGNORECASE,
 )
 _SECTION_HEADING_RE = re.compile(
