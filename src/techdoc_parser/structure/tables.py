@@ -13,8 +13,9 @@ _TABLE_TITLE_RE = re.compile(
 )
 _ROMAN_TABLE_LABEL_RE = re.compile(
     r"^(?:[IVXLCDM]+|[A-Z]-[IVXLCDM]+)\.\s+\S.+$",
-    re.IGNORECASE,
 )
+_LETTERED_LIST_ITEM_RE = re.compile(r"^[a-z]\.\s+\S.+$", re.IGNORECASE)
+_PAREN_NUMBERED_ITEM_RE = re.compile(r"^\(\d+\)$")
 _NUMBERED_PROSE_START_RE = re.compile(
     r"^\d+\.\s+(?:This|These|The|DoD|Comments|Since|When|If|A|An)\b",
     re.IGNORECASE,
@@ -32,13 +33,24 @@ _TABLE_HEADER_WORDS = {
     "probability",
     "purpose",
     "severity",
+    "specific individual item",
+    "fleet or inventory",
     "why it matters",
 }
 _SEVERITY_ROW_TERMS = {
     "catastrophic",
     "critical",
+    "frequent",
     "marginal",
     "negligible",
+    "probable",
+    "occasional",
+    "remote",
+    "improbable",
+}
+_KNOWN_TABLE_HEADING_LINES = {
+    "probability levels",
+    "severity categories",
 }
 
 
@@ -69,6 +81,8 @@ def has_table_header_terms(text: str) -> bool:
     if not normalized_text:
         return False
     lines = _non_empty_lines(text)
+    if len(lines) == 1:
+        return _is_known_table_heading_line(normalized_text)
     if len(lines) > 12 or len(normalized_text) > 240:
         return False
     if _has_table_header_words(normalized_text):
@@ -114,6 +128,21 @@ def is_long_prose_paragraph(text: str) -> bool:
     return len(words) >= 18 and average_line_length >= 65 and lowercase_ratio >= 0.4
 
 
+def is_lettered_or_numbered_list_item(text: str) -> bool:
+    """Return whether text is a lettered or parenthesized numbered list item."""
+    lines = _non_empty_lines(text)
+    if not lines:
+        return False
+    if _LETTERED_LIST_ITEM_RE.match(lines[0]):
+        return True
+    parenthesized_markers = sum(
+        1 for line in lines if _PAREN_NUMBERED_ITEM_RE.match(line)
+    )
+    if parenthesized_markers >= 2:
+        return True
+    return parenthesized_markers == 1 and len(lines) <= 3
+
+
 def should_reject_table_candidate(text: str) -> bool:
     """Return whether a table candidate should be rejected as a false positive."""
     normalized_text = _normalize_for_match(text)
@@ -129,6 +158,8 @@ def should_reject_table_candidate(text: str) -> bool:
         return True
     if is_table_caption_text(normalized_text):
         return False
+    if is_lettered_or_numbered_list_item(text):
+        return True
     if is_heading_text(normalized_text):
         return True
     return is_long_prose_paragraph(text)
@@ -188,6 +219,10 @@ def _is_roman_table_label(line: str) -> bool:
     return _ROMAN_TABLE_LABEL_RE.fullmatch(line) is not None
 
 
+def _is_known_table_heading_line(text: str) -> bool:
+    return text.casefold() in _KNOWN_TABLE_HEADING_LINES
+
+
 def _has_table_header_words(text: str) -> bool:
     lower = text.casefold()
     matches = sum(1 for word in _TABLE_HEADER_WORDS if word in lower)
@@ -226,7 +261,9 @@ def _is_label_value_row(lines: list[str]) -> bool:
     second_line = _normalize_for_match(lines[1])
     if first_line not in _SEVERITY_ROW_TERMS:
         return False
-    return second_line.isdigit() or second_line.casefold() in {"i", "ii", "iii", "iv"}
+    if second_line.isdigit() or second_line.casefold() in {"i", "ii", "iii", "iv"}:
+        return True
+    return len(second_line) == 1 and second_line.isalpha() and second_line.isupper()
 
 
 def _is_severity_row_fragment(lines: list[str]) -> bool:

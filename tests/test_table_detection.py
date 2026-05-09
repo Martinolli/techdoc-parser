@@ -42,17 +42,34 @@ def test_is_table_candidate_text_detects_table_patterns() -> None:
         "B-I. Software hazard causal factor risk assessment criteria"
     )
     assert is_table_candidate_text("III. Risk assessment matrix")
+    assert is_table_candidate_text("SEVERITY CATEGORIES")
+    assert is_table_candidate_text("PROBABILITY LEVELS")
     assert is_table_candidate_text(
         "Description\nSeverity\nCategory\nMishap Result Criteria"
+    )
+    assert is_table_candidate_text(
+        "Description\nLevel\nSpecific Individual Item\nFleet or Inventory"
     )
     assert is_table_candidate_text(
         "Category    Description\nHigh        Severe impact\nLow         Minor impact"
     )
     assert is_table_candidate_text("Entity\nPurpose\nKey links\nWhy it matters")
     assert is_table_candidate_text(
-        "Catastrophic\n1\nCould result in one or more of the following..."
+        "Catastrophic\n1\nCould result in one or more of the following: death, "
+        "permanent total disability, irreversible\nsignificant environmental "
+        "impact, or monetary loss equal to or exceeding $10M."
     )
     assert is_table_candidate_text("Critical\n2")
+    assert is_table_candidate_text("Marginal\n3")
+    assert is_table_candidate_text("Negligible\n4")
+    assert is_table_candidate_text(
+        "Frequent\nA\nLikely to occur often in the life of an item.\n"
+        "Continuously experienced."
+    )
+    assert is_table_candidate_text(
+        "Probable\nB\nWill occur several times in the life of an item.\n"
+        "Will occur frequently."
+    )
 
 
 def test_is_table_candidate_text_rejects_false_positives() -> None:
@@ -68,20 +85,44 @@ def test_is_table_candidate_text_rejects_numbered_prose() -> None:
     """MIL-STD foreword/body prose should not become table candidates."""
     assert not is_table_candidate_text(
         "5. This revision incorporates changes to meet Government and industry "
-        "requests to reinstate task descriptions and improve the standard."
+        "requests to reinstate\ntask descriptions. These tasks may be specified "
+        "in contract documents. When this Standard is\nrequired in a solicitation "
+        "or contract, but no specific task is identified, only Sections 3 and 4 "
+        "are\nmandatory."
     )
     assert not is_table_candidate_text(
         "3. DoD is committed to protecting personnel from accidental death, "
-        "injury, or occupational illness."
+        "injury, or occupational\nillness; mitigating risk of civilian harm."
     )
     assert not is_table_candidate_text(
         "4. This system safety standard practice identifies the DoD approach "
-        "for identifying hazards and managing associated risks."
+        "for identifying hazards\nand assessing and mitigating associated risks."
+    )
+    assert not is_table_candidate_text(
+        "6. Comments, suggestions, or questions on this document should be "
+        "addressed to the preparing activity."
     )
     assert not is_table_candidate_text(
         "This generated paragraph wraps across several lines of text and "
         "contains ordinary sentence structure, lowercase words, and punctuation "
         "without any compact table headers or row-like structure."
+    )
+
+
+def test_is_table_candidate_text_rejects_list_content() -> None:
+    """MIL-STD change-summary list items should not become table candidates."""
+    assert not is_table_candidate_text("c. Included additional tasks:")
+    assert not is_table_candidate_text(
+        "(1)\nHazardous Materials Management Plan.\n(2)\nFunctional Hazard "
+        "Analysis.\n(3)\nSystems-of-Systems Hazard Analysis.\n(4)\n"
+        "Environmental Hazard Analysis."
+    )
+    assert not is_table_candidate_text(
+        "d. Applied increased dollar values for losses in severity descriptions."
+    )
+    assert not is_table_candidate_text('e. Added "Eliminated" level for probability.')
+    assert not is_table_candidate_text(
+        "(3)\n300-series tasks - Evaluation.\n(4)\n400-series tasks - Verification."
     )
 
 
@@ -111,6 +152,18 @@ def test_create_table_blocks_for_page_skips_long_prose_false_positive() -> None:
     text = (
         "5. This revision incorporates changes to meet Government and industry "
         "requests to reinstate task descriptions and improve the standard."
+    )
+    text_block = _text_block(text, normalized_text=text)
+    page = Page(page_number=1, text_blocks=[text_block], blocks=[text_block])
+
+    assert create_table_blocks_for_page(page) == []
+
+
+def test_create_table_blocks_for_page_skips_list_false_positive() -> None:
+    """List-like text should not create table candidates."""
+    text = (
+        "(1)\nHazardous Materials Management Plan.\n(2)\nFunctional Hazard "
+        "Analysis.\n(3)\nSystems-of-Systems Hazard Analysis."
     )
     text_block = _text_block(text, normalized_text=text)
     page = Page(page_number=1, text_blocks=[text_block], blocks=[text_block])
