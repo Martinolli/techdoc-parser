@@ -147,6 +147,8 @@ Phase 5B full pipeline integration testing completed. Added a generated-PDF inte
 
 Phase 6A basic table candidate detection completed. Added table detection helpers, `is_table_candidate_text()`, `create_table_blocks_for_page()`, and `TableBlock` candidate metadata including `source_text_block_ids` and `is_candidate`. `PDFLoader` now creates `TableBlock` candidates for likely table text blocks while preserving original `TextBlock` objects; table candidates appear in `page.blocks` but not `page.text_blocks`, and JSON output includes candidate metadata. Phase 6A only detects table candidates; it does not reconstruct rows and columns or perform advanced table extraction yet. Tests, ruff, and mypy pass.
 
+Phase 6B table candidate false-positive reduction completed. Improved table candidate filtering with long prose paragraph rejection, reduced false positives from numbered body paragraphs, preserved true MIL-STD table detections, and added regression tests for false positives plus true table captions, headers, and rows. Table detection remains candidate-level only; Phase 6B does not reconstruct table columns or rows. Tests, ruff, and mypy pass.
+
 ---
 
 ## 5. Ingestion Layer
