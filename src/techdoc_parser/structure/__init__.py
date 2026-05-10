@@ -1,5 +1,9 @@
 """Document structure detection helpers."""
 
+from techdoc_parser.structure.figures import (
+    create_figure_blocks_for_page,
+    is_figure_caption_text,
+)
 from techdoc_parser.structure.headings import (
     create_heading_block_from_text_block,
     detect_heading_level,
@@ -20,11 +24,13 @@ from techdoc_parser.structure.tables import (
 
 __all__ = [
     "classify_text_block_page_furniture",
+    "create_figure_blocks_for_page",
     "create_heading_block_from_text_block",
     "create_paragraph_blocks_for_page",
     "create_table_blocks_for_page",
     "detect_heading_level",
     "extract_heading_blocks_from_text_block",
+    "is_figure_caption_text",
     "is_heading_text",
     "is_likely_page_header_text",
     "is_page_number_text",

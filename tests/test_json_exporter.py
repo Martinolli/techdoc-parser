@@ -6,6 +6,7 @@ from pathlib import Path
 from techdoc_parser.core import (
     Document,
     DocumentMetadata,
+    FigureBlock,
     Page,
     ParagraphBlock,
     SourceLocation,
@@ -105,3 +106,36 @@ def test_export_document_json_includes_table_candidate_metadata(
     assert table_data["block_type"] == "table"
     assert table_data["is_candidate"] is True
     assert table_data["source_text_block_ids"] == ["text-1"]
+
+
+def test_export_document_json_includes_figure_candidate_metadata(
+    tmp_path: Path,
+) -> None:
+    """FigureBlock JSON should include candidate metadata."""
+    source = SourceLocation(document_path="manual.pdf", page_number=1)
+    figure = FigureBlock(
+        id="figure-1",
+        source=source,
+        text="FIGURE 1. System overview",
+        normalized_text="FIGURE 1. System overview",
+        caption="FIGURE 1. System overview",
+        source_text_block_ids=["text-1"],
+        is_candidate=True,
+    )
+    document = Document(
+        id="doc-1",
+        source_path="manual.pdf",
+        metadata=DocumentMetadata(title="Manual"),
+        pages=[Page(page_number=1, blocks=[figure])],
+    )
+    output_path = tmp_path / "manual.json"
+
+    export_document_json(document, str(output_path))
+
+    data = json.loads(output_path.read_text(encoding="utf-8"))
+    figure_data = data["pages"][0]["blocks"][0]
+
+    assert figure_data["block_type"] == "figure"
+    assert figure_data["caption"] == "FIGURE 1. System overview"
+    assert figure_data["is_candidate"] is True
+    assert figure_data["source_text_block_ids"] == ["text-1"]

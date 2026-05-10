@@ -238,12 +238,16 @@ class FigureBlock(Block):
     block_type: str = field(default="figure", init=False)
     caption: str | None = None
     image_path: str | None = None
+    source_text_block_ids: list[str] = field(default_factory=list)
+    is_candidate: bool = True
 
     def to_dict(self) -> dict[str, object]:
         """Return a JSON-serializable dictionary."""
         data = super().to_dict()
         data["caption"] = self.caption
         data["image_path"] = self.image_path
+        data["source_text_block_ids"] = self.source_text_block_ids
+        data["is_candidate"] = self.is_candidate
         return data
 
 

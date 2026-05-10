@@ -8,6 +8,7 @@ import pytest
 from techdoc_parser import parse_document
 from techdoc_parser.core import (
     Document,
+    FigureBlock,
     HeadingBlock,
     ParagraphBlock,
     TableBlock,
@@ -91,6 +92,23 @@ def _create_table_candidate_pdf(path: Path) -> None:
     page.insert_textbox(
         fitz.Rect(20.0, 40.0, 400.0, 180.0),
         "Category    Description\nHigh        Severe impact\nLow         Minor impact",
+        fontsize=10.0,
+    )
+    document.save(path)
+    document.close()
+
+
+def _create_figure_caption_pdf(path: Path) -> None:
+    document = fitz.open()
+    page = document.new_page(width=420.0, height=240.0)
+    page.insert_textbox(
+        fitz.Rect(20.0, 40.0, 400.0, 70.0),
+        "FIGURE 1. System overview",
+        fontsize=10.0,
+    )
+    page.insert_textbox(
+        fitz.Rect(20.0, 120.0, 400.0, 160.0),
+        "See Figure 1 for details.",
         fontsize=10.0,
     )
     document.save(path)
@@ -289,6 +307,27 @@ def test_pdf_loader_adds_table_candidates_without_changing_text_blocks(
     assert tables[0].is_candidate is True
     assert tables[0].source_text_block_ids
     assert tables[0].rows
+
+
+def test_pdf_loader_adds_figure_candidates_without_changing_text_blocks(
+    tmp_path: Path,
+) -> None:
+    """PDFLoader should add figure candidates to page.blocks only."""
+    pdf_path = tmp_path / "figure-candidate.pdf"
+    _create_figure_caption_pdf(pdf_path)
+
+    document = PDFLoader(str(pdf_path)).load()
+    page = document.pages[0]
+
+    figures = [block for block in page.blocks if isinstance(block, FigureBlock)]
+
+    assert len(figures) == 1
+    assert figures[0] not in page.text_blocks
+    assert all(isinstance(block, TextBlock) for block in page.text_blocks)
+    assert figures[0].caption == "FIGURE 1. System overview"
+    assert figures[0].source_text_block_ids
+    assert figures[0].is_candidate is True
+    assert not any(block.caption == "See Figure 1 for details." for block in figures)
 
 
 def test_parse_document_loads_generated_pdf(tmp_path: Path) -> None:

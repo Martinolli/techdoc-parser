@@ -219,6 +219,8 @@ def test_figure_block_serialization() -> None:
         "normalized_text": None,
         "caption": "Example figure",
         "image_path": "images/figure-1.png",
+        "source_text_block_ids": [],
+        "is_candidate": True,
     }
 
 
