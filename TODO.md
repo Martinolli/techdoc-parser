@@ -151,6 +151,8 @@ Phase 6B table candidate false-positive reduction completed. Improved table cand
 
 Phase 6C table candidate precision refinement completed. Added conservative rejection for definition entries, table-reference paragraphs, and figure captions/references while preserving true MIL-STD table detections from page 19 and hidden table/list-table candidates such as acronyms and document modification structures. Added regression tests for definition entries, table-reference paragraphs, figure captions/references, and true table captions, headers, and rows. Table detection remains candidate-level only; Phase 6C does not reconstruct table columns, merge table regions, or create final table structures. Tests, ruff, and mypy pass.
 
+Phase 6D diagram-label table filtering completed. Added conservative process-diagram label rejection for table candidates, including figure/process-flow element labels such as "Element 4: Identify and Document Risk Mitigation Measures", while preserving true MIL-STD table detections from page 19. Added regression tests for diagram-label false positives and true table captions, headers, and rows. Table detection remains candidate-level only; Phase 6D does not reconstruct table columns, merge table regions, or create final table structures. FigureBlock extraction remains future work. Tests, ruff, and mypy pass.
+
 ---
 
 ## 5. Ingestion Layer
