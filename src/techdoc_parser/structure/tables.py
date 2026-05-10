@@ -16,11 +16,20 @@ _ROMAN_TABLE_LABEL_RE = re.compile(
 )
 _LETTERED_LIST_ITEM_RE = re.compile(r"^[a-z]\.\s+\S.+$", re.IGNORECASE)
 _PAREN_NUMBERED_ITEM_RE = re.compile(r"^\(\d+\)$")
+_DEFINITION_ENTRY_RE = re.compile(
+    r"^\d+(?:\.\d+){2,}\s+(?P<term>[^.\n]{1,80})\.\s+(?P<body>\S.+)$"
+)
 _NUMBERED_PROSE_START_RE = re.compile(
     r"^\d+\.\s+(?:This|These|The|DoD|Comments|Since|When|If|A|An)\b",
     re.IGNORECASE,
 )
-_FIGURE_CAPTION_RE = re.compile(r"^Figure\s+\d+[\.:]\s+\S.+$", re.IGNORECASE)
+_TABLE_REFERENCE_RE = re.compile(r"\bTables?\s+[A-Z0-9][A-Z0-9.-]*\b", re.IGNORECASE)
+_FIGURE_CAPTION_RE = re.compile(
+    r"^Figure\s+(?:\d+|[A-Z]-?\d+)[\.:]\s+\S.+$", re.IGNORECASE
+)
+_FIGURE_REFERENCE_RE = re.compile(
+    r"\bFigures?\s+(?:\d+|[A-Z]-?\d+)[A-Z0-9.-]*\b", re.IGNORECASE
+)
 _TOC_DOT_LEADER_RE = re.compile(r"\.{5,}\s*(?:[ivxlcdm]+|\d+)$", re.IGNORECASE)
 _TABLE_HEADER_WORDS = {
     "category",
@@ -143,6 +152,49 @@ def is_lettered_or_numbered_list_item(text: str) -> bool:
     return parenthesized_markers == 1 and len(lines) <= 3
 
 
+def is_definition_entry_text(text: str) -> bool:
+    """Return whether text looks like a numbered glossary definition entry."""
+    normalized_text = _normalize_for_match(text)
+    match = _DEFINITION_ENTRY_RE.match(normalized_text)
+    if match is None:
+        return False
+    if is_table_caption_text(normalized_text) or _has_structured_table_layout(text):
+        return False
+
+    term = match.group("term")
+    body = match.group("body")
+    term_words = term.split()
+    body_words = body.split()
+    if not term_words or len(term_words) > 8 or len(body_words) < 5:
+        return False
+
+    lowercase_words = sum(1 for word in body_words if word[:1].islower())
+    lowercase_ratio = lowercase_words / len(body_words)
+    return lowercase_ratio >= 0.35 and any(mark in body for mark in ".;:,")
+
+
+def is_table_reference_paragraph(text: str) -> bool:
+    """Return whether prose merely references a table without being table data."""
+    normalized_text = _normalize_for_match(text)
+    if not normalized_text or is_table_caption_text(normalized_text):
+        return False
+    return _TABLE_REFERENCE_RE.search(normalized_text) is not None and not (
+        _has_structured_table_layout(text)
+    )
+
+
+def is_figure_caption_or_reference_text(text: str) -> bool:
+    """Return whether text is a figure caption or figure-reference paragraph."""
+    normalized_text = _normalize_for_match(text)
+    if not normalized_text or is_table_caption_text(normalized_text):
+        return False
+    if _FIGURE_CAPTION_RE.match(normalized_text):
+        return True
+    return _FIGURE_REFERENCE_RE.search(normalized_text) is not None and not (
+        _has_structured_table_layout(text)
+    )
+
+
 def should_reject_table_candidate(text: str) -> bool:
     """Return whether a table candidate should be rejected as a false positive."""
     normalized_text = _normalize_for_match(text)
@@ -150,14 +202,18 @@ def should_reject_table_candidate(text: str) -> bool:
         return True
     if _TOC_DOT_LEADER_RE.search(normalized_text):
         return True
-    if _FIGURE_CAPTION_RE.fullmatch(normalized_text):
-        return True
     if "http://" in normalized_text or "https://" in normalized_text:
         return True
     if normalized_text.casefold().startswith("source:"):
         return True
     if is_table_caption_text(normalized_text):
         return False
+    if is_definition_entry_text(text):
+        return True
+    if is_table_reference_paragraph(text):
+        return True
+    if is_figure_caption_or_reference_text(text):
+        return True
     if is_lettered_or_numbered_list_item(text):
         return True
     if is_heading_text(normalized_text):
@@ -270,6 +326,15 @@ def _is_severity_row_fragment(lines: list[str]) -> bool:
     if not _is_label_value_row(lines[:2]):
         return False
     return any(len(line.split()) >= 4 for line in lines[2:])
+
+
+def _has_structured_table_layout(text: str) -> bool:
+    lines = _non_empty_lines(text)
+    if _count_column_like_lines(lines) >= 2:
+        return True
+    if _has_compact_vertical_header(lines):
+        return True
+    return _has_known_table_row_fragment(lines)
 
 
 def _looks_like_wrapped_prose_lines(lines: list[str]) -> bool:

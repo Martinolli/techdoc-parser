@@ -81,6 +81,52 @@ def test_is_table_candidate_text_rejects_false_positives() -> None:
     assert not is_table_candidate_text("Figure 1. System overview")
 
 
+def test_is_table_candidate_text_rejects_definition_entries() -> None:
+    """Glossary-style definition entries should not become table candidates."""
+    assert not is_table_candidate_text(
+        "3.2.29 Risk. A combination of the severity of the mishap and the "
+        "probability that the mishap will occur."
+    )
+    assert not is_table_candidate_text(
+        "3.2.1 Acceptable Risk. Risk that the appropriate acceptance authority "
+        "is willing to accept without additional mitigation."
+    )
+    assert not is_table_candidate_text(
+        "3.2.30 Risk level. The characterization of risk as either High, "
+        "Serious, Medium, or Low."
+    )
+    assert not is_table_candidate_text(
+        "3.2.31 Safety. Freedom from conditions that can cause death, injury, "
+        "occupational illness, damage to or loss of equipment or property, or "
+        "damage to the environment."
+    )
+
+
+def test_is_table_candidate_text_rejects_table_reference_paragraphs() -> None:
+    """Prose that only references tables should not become table candidates."""
+    assert not is_table_candidate_text(
+        "4.3.3 Assess and document risk. The severity category and probability "
+        "level of the potential mishap(s) for each hazard across all system "
+        "modes are assessed using the definitions in Tables I and II."
+    )
+    assert not is_table_candidate_text("See Table I for severity categories.")
+    assert not is_table_candidate_text("The results are summarized in Table II.")
+    assert not is_table_candidate_text(
+        "The matrix shown in Table III is used for risk assessment."
+    )
+
+
+def test_is_table_candidate_text_rejects_figure_text() -> None:
+    """Figure captions and figure references should not become table candidates."""
+    assert not is_table_candidate_text("Figure 1. System overview")
+    assert not is_table_candidate_text("FIGURE 1. System overview")
+    assert not is_table_candidate_text(
+        "Figure B-1. Assessing software\u2019s contribution to risk"
+    )
+    assert not is_table_candidate_text("The process is shown in Figure 1.")
+    assert not is_table_candidate_text("See Figure 2 for the architecture diagram.")
+
+
 def test_is_table_candidate_text_rejects_numbered_prose() -> None:
     """MIL-STD foreword/body prose should not become table candidates."""
     assert not is_table_candidate_text(
@@ -167,6 +213,45 @@ def test_create_table_blocks_for_page_skips_list_false_positive() -> None:
     )
     text_block = _text_block(text, normalized_text=text)
     page = Page(page_number=1, text_blocks=[text_block], blocks=[text_block])
+
+    assert create_table_blocks_for_page(page) == []
+
+
+def test_create_table_blocks_for_page_skips_definition_entry() -> None:
+    """Definition entries should not create table candidates."""
+    text = (
+        "3.2.29 Risk. A combination of the severity of the mishap and the "
+        "probability that the mishap will occur."
+    )
+    text_block = _text_block(text, normalized_text=text)
+    page = Page(page_number=1, text_blocks=[text_block], blocks=[text_block])
+
+    assert create_table_blocks_for_page(page) == []
+
+
+def test_create_table_blocks_for_page_skips_table_reference_paragraph() -> None:
+    """Paragraphs that merely mention tables should not create table candidates."""
+    text = (
+        "4.3.3 Assess and document risk. The severity category and probability "
+        "level of the potential mishap(s) for each hazard across all system "
+        "modes are assessed using the definitions in Tables I and II."
+    )
+    text_block = _text_block(text, normalized_text=text)
+    page = Page(page_number=1, text_blocks=[text_block], blocks=[text_block])
+
+    assert create_table_blocks_for_page(page) == []
+
+
+def test_create_table_blocks_for_page_skips_figure_caption_or_reference() -> None:
+    """Figure captions and references should not create table candidates."""
+    text_blocks = [
+        _text_block("Figure 1. System overview", id="text-1"),
+        _text_block(
+            "See Figure 2 for the architecture diagram.",
+            id="text-2",
+        ),
+    ]
+    page = Page(page_number=1, text_blocks=text_blocks, blocks=text_blocks)
 
     assert create_table_blocks_for_page(page) == []
 
