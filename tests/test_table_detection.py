@@ -140,6 +140,27 @@ def test_is_table_candidate_text_rejects_process_diagram_labels() -> None:
     assert not is_table_candidate_text("Process Step 1:\nAssess Risk")
 
 
+def test_is_table_candidate_text_rejects_form_template_label_groups() -> None:
+    """Form/template label-only groups should not become table candidates."""
+    assert not is_table_candidate_text(
+        "Hazard Tracking Log\nHazard Title\nHazard Description\nHazard Causes"
+    )
+    assert not is_table_candidate_text(
+        "Hazard ID\nHazard Title\nHazard Description\nHazard Causes"
+    )
+    assert not is_table_candidate_text(
+        "Report Title\nReport Date\nPrepared By\nApproved By"
+    )
+
+
+def test_is_table_candidate_text_rejects_section_prose_with_table_words() -> None:
+    """Numbered prose sections with table-like words should not be candidates."""
+    assert not is_table_candidate_text(
+        "5.3 Task structure. Each individual task is divided into three "
+        "parts\u2014purpose, task\ndescription, and details to be specified."
+    )
+
+
 def test_is_table_candidate_text_rejects_numbered_prose() -> None:
     """MIL-STD foreword/body prose should not become table candidates."""
     assert not is_table_candidate_text(
@@ -272,6 +293,27 @@ def test_create_table_blocks_for_page_skips_figure_caption_or_reference() -> Non
 def test_create_table_blocks_for_page_skips_process_diagram_label() -> None:
     """Process diagram labels should not create table candidates."""
     text = "Element 4:\nIdentify and Document\nRisk Mitigation Measures"
+    text_block = _text_block(text, normalized_text=text)
+    page = Page(page_number=1, text_blocks=[text_block], blocks=[text_block])
+
+    assert create_table_blocks_for_page(page) == []
+
+
+def test_create_table_blocks_for_page_skips_form_template_label_group() -> None:
+    """Form/template label groups should not create table candidates."""
+    text = "Hazard Tracking Log\nHazard Title\nHazard Description\nHazard Causes"
+    text_block = _text_block(text, normalized_text=text)
+    page = Page(page_number=1, text_blocks=[text_block], blocks=[text_block])
+
+    assert create_table_blocks_for_page(page) == []
+
+
+def test_create_table_blocks_for_page_skips_section_prose_with_table_words() -> None:
+    """Section prose with table-like words should not create table candidates."""
+    text = (
+        "5.3 Task structure. Each individual task is divided into three "
+        "parts\u2014purpose, task description, and details to be specified."
+    )
     text_block = _text_block(text, normalized_text=text)
     page = Page(page_number=1, text_blocks=[text_block], blocks=[text_block])
 

@@ -19,6 +19,7 @@ _PAREN_NUMBERED_ITEM_RE = re.compile(r"^\(\d+\)$")
 _DEFINITION_ENTRY_RE = re.compile(
     r"^\d+(?:\.\d+){2,}\s+(?P<term>[^.\n]{1,80})\.\s+(?P<body>\S.+)$"
 )
+_SECTION_PROSE_START_RE = re.compile(r"^\d+(?:\.\d+)+\s+\S[^.]{1,80}\.\s+\S.+$")
 _NUMBERED_PROSE_START_RE = re.compile(
     r"^\d+\.\s+(?:This|These|The|DoD|Comments|Since|When|If|A|An)\b",
     re.IGNORECASE,
@@ -70,6 +71,30 @@ _DIAGRAM_NODE_WORDS = {
     "input",
     "output",
     "start",
+}
+_FORM_LABEL_TERMS = {
+    "approved",
+    "by",
+    "causes",
+    "date",
+    "description",
+    "hazard",
+    "id",
+    "log",
+    "prepared",
+    "report",
+    "title",
+    "tracking",
+}
+_SECTION_PROSE_TABLE_WORDS = {
+    "category",
+    "description",
+    "details",
+    "level",
+    "probability",
+    "purpose",
+    "severity",
+    "specified",
 }
 
 
@@ -223,6 +248,49 @@ def is_process_diagram_label_text(text: str) -> bool:
     return _is_compact_diagram_keyword_cluster(lines)
 
 
+def is_form_or_template_label_group_text(text: str) -> bool:
+    """Return whether text looks like compact form/template labels."""
+    normalized_text = _normalize_for_match(text)
+    if not normalized_text or is_table_caption_text(normalized_text):
+        return False
+    if _has_structured_table_layout(text):
+        return False
+
+    lines = _non_empty_lines(text)
+    if not 3 <= len(lines) <= 8:
+        return False
+    if not all(_is_short_title_line(line) for line in lines):
+        return False
+
+    words = [
+        word.casefold() for line in lines for word in re.findall(r"[A-Za-z]+", line)
+    ]
+    if not words:
+        return False
+    form_label_words = sum(1 for word in words if word in _FORM_LABEL_TERMS)
+    return form_label_words / len(words) >= 0.75
+
+
+def is_section_prose_with_table_like_words(text: str) -> bool:
+    """Return whether numbered section prose only mentions table-like terms."""
+    normalized_text = _normalize_for_match(text)
+    if not normalized_text or is_table_caption_text(normalized_text):
+        return False
+    if _has_structured_table_layout(text):
+        return False
+    if _SECTION_PROSE_START_RE.match(normalized_text) is None:
+        return False
+
+    lower = normalized_text.casefold()
+    if not any(word in lower for word in _SECTION_PROSE_TABLE_WORDS):
+        return False
+
+    words = normalized_text.split()
+    lowercase_words = sum(1 for word in words if word[:1].islower())
+    lowercase_ratio = lowercase_words / len(words) if words else 0.0
+    return lowercase_ratio >= 0.35 and any(mark in normalized_text for mark in ".;:,")
+
+
 def should_reject_table_candidate(text: str) -> bool:
     """Return whether a table candidate should be rejected as a false positive."""
     normalized_text = _normalize_for_match(text)
@@ -243,6 +311,10 @@ def should_reject_table_candidate(text: str) -> bool:
     if is_figure_caption_or_reference_text(text):
         return True
     if is_process_diagram_label_text(text):
+        return True
+    if is_form_or_template_label_group_text(text):
+        return True
+    if is_section_prose_with_table_like_words(text):
         return True
     if is_lettered_or_numbered_list_item(text):
         return True
