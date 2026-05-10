@@ -149,6 +149,8 @@ Phase 6A basic table candidate detection completed. Added table detection helper
 
 Phase 6B table candidate false-positive reduction completed. Improved table candidate filtering with long prose paragraph rejection plus lettered and numbered list rejection, reduced false positives from MIL-STD foreword prose and page 3 list/change-summary content, preserved true MIL-STD table detections from page 19, and added regression tests for page 2/page 3 false positives plus true table captions, headers, and rows. Table detection remains candidate-level only; Phase 6B does not reconstruct table columns, merge table regions, or create final table structures. Tests, ruff, and mypy pass.
 
+Phase 6C table candidate precision refinement completed. Added conservative rejection for definition entries, table-reference paragraphs, and figure captions/references while preserving true MIL-STD table detections from page 19 and hidden table/list-table candidates such as acronyms and document modification structures. Added regression tests for definition entries, table-reference paragraphs, figure captions/references, and true table captions, headers, and rows. Table detection remains candidate-level only; Phase 6C does not reconstruct table columns, merge table regions, or create final table structures. Tests, ruff, and mypy pass.
+
 ---
 
 ## 5. Ingestion Layer
