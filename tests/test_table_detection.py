@@ -127,6 +127,19 @@ def test_is_table_candidate_text_rejects_figure_text() -> None:
     assert not is_table_candidate_text("See Figure 2 for the architecture diagram.")
 
 
+def test_is_table_candidate_text_rejects_process_diagram_labels() -> None:
+    """Process-flow element labels should not become table candidates."""
+    assert not is_table_candidate_text(
+        "Element 4:\nIdentify and Document\nRisk Mitigation Measures"
+    )
+    assert not is_table_candidate_text(
+        "Element 6:\nVerify, Validate, and Document\nRisk Reduction"
+    )
+    assert not is_table_candidate_text("Element 8:\nManage Life-Cycle Risk")
+    assert not is_table_candidate_text("Step 1:\nIdentify Hazards")
+    assert not is_table_candidate_text("Process Step 1:\nAssess Risk")
+
+
 def test_is_table_candidate_text_rejects_numbered_prose() -> None:
     """MIL-STD foreword/body prose should not become table candidates."""
     assert not is_table_candidate_text(
@@ -252,6 +265,15 @@ def test_create_table_blocks_for_page_skips_figure_caption_or_reference() -> Non
         ),
     ]
     page = Page(page_number=1, text_blocks=text_blocks, blocks=text_blocks)
+
+    assert create_table_blocks_for_page(page) == []
+
+
+def test_create_table_blocks_for_page_skips_process_diagram_label() -> None:
+    """Process diagram labels should not create table candidates."""
+    text = "Element 4:\nIdentify and Document\nRisk Mitigation Measures"
+    text_block = _text_block(text, normalized_text=text)
+    page = Page(page_number=1, text_blocks=[text_block], blocks=[text_block])
 
     assert create_table_blocks_for_page(page) == []
 

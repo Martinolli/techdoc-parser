@@ -30,6 +30,9 @@ _FIGURE_CAPTION_RE = re.compile(
 _FIGURE_REFERENCE_RE = re.compile(
     r"\bFigures?\s+(?:\d+|[A-Z]-?\d+)[A-Z0-9.-]*\b", re.IGNORECASE
 )
+_PROCESS_DIAGRAM_START_RE = re.compile(
+    r"^(?:Element|Process Step|Step)\s+\d+:\s*$", re.IGNORECASE
+)
 _TOC_DOT_LEADER_RE = re.compile(r"\.{5,}\s*(?:[ivxlcdm]+|\d+)$", re.IGNORECASE)
 _TABLE_HEADER_WORDS = {
     "category",
@@ -60,6 +63,13 @@ _SEVERITY_ROW_TERMS = {
 _KNOWN_TABLE_HEADING_LINES = {
     "probability levels",
     "severity categories",
+}
+_DIAGRAM_NODE_WORDS = {
+    "decision",
+    "end",
+    "input",
+    "output",
+    "start",
 }
 
 
@@ -195,6 +205,24 @@ def is_figure_caption_or_reference_text(text: str) -> bool:
     )
 
 
+def is_process_diagram_label_text(text: str) -> bool:
+    """Return whether text looks like a short process-flow node label."""
+    normalized_text = _normalize_for_match(text)
+    if not normalized_text or is_table_caption_text(normalized_text):
+        return False
+    if _has_structured_table_layout(text):
+        return False
+
+    lines = _non_empty_lines(text)
+    if not lines:
+        return False
+    if _PROCESS_DIAGRAM_START_RE.match(lines[0]):
+        return 2 <= len(lines) <= 4 and all(
+            _is_short_title_line(line) for line in lines
+        )
+    return _is_compact_diagram_keyword_cluster(lines)
+
+
 def should_reject_table_candidate(text: str) -> bool:
     """Return whether a table candidate should be rejected as a false positive."""
     normalized_text = _normalize_for_match(text)
@@ -213,6 +241,8 @@ def should_reject_table_candidate(text: str) -> bool:
     if is_table_reference_paragraph(text):
         return True
     if is_figure_caption_or_reference_text(text):
+        return True
+    if is_process_diagram_label_text(text):
         return True
     if is_lettered_or_numbered_list_item(text):
         return True
@@ -335,6 +365,18 @@ def _has_structured_table_layout(text: str) -> bool:
     if _has_compact_vertical_header(lines):
         return True
     return _has_known_table_row_fragment(lines)
+
+
+def _is_short_title_line(line: str) -> bool:
+    words = _normalize_for_match(line.rstrip(":")).split()
+    return 1 <= len(words) <= 6 and all(len(word) <= 18 for word in words)
+
+
+def _is_compact_diagram_keyword_cluster(lines: list[str]) -> bool:
+    if not 2 <= len(lines) <= 4:
+        return False
+    normalized_lines = {_normalize_for_match(line).casefold() for line in lines}
+    return normalized_lines <= _DIAGRAM_NODE_WORDS
 
 
 def _looks_like_wrapped_prose_lines(lines: list[str]) -> bool:
