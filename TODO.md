@@ -200,7 +200,7 @@ Phase 2D native-text page detection completed. `Page` now includes `has_native_t
   - [ ] Use figure-region detection to suppress table candidates inside diagrams
 - [ ] Attach source location to every extracted object
 
-Phase 7A figure caption candidate detection completed. Added the figure detection structure module, `is_figure_caption_text()`, and `create_figure_blocks_for_page()`. `PDFLoader` now creates `FigureBlock` candidates for obvious figure captions, preserves original `TextBlock` objects unchanged, adds figures to `page.blocks` but not `page.text_blocks`, and preserves source references plus `source_text_block_ids`; JSON output includes figure candidate metadata. Phase 7A only detects figure captions as candidate `FigureBlock` objects; it does not extract images, detect full figure regions, or suppress table candidates inside diagrams yet. Tests, ruff, and mypy pass.
+Phase 7A figure caption candidate detection completed. Added the figure detection structure module, `is_figure_caption_text()`, and `create_figure_blocks_for_page()`. `PDFLoader` now creates `FigureBlock` candidates for obvious figure captions, preserves original `TextBlock` objects unchanged, adds figures to `page.blocks` but not `page.text_blocks`, and preserves source references plus `source_text_block_ids`; JSON output includes figure candidate metadata. MIL-STD-882E page 17 and page 103 figure captions are detected as `FigureBlock` candidates. Phase 7A only detects figure captions as candidate `FigureBlock` objects; it does not extract images, detect full figure regions, or suppress table candidates inside diagrams yet. Tests, ruff, and mypy pass.
 
 ---
 
