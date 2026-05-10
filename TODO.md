@@ -151,7 +151,7 @@ Phase 6B table candidate false-positive reduction completed. Improved table cand
 
 Phase 6C table candidate precision refinement completed. Added conservative rejection for definition entries, table-reference paragraphs, and figure captions/references while preserving true MIL-STD table detections from page 19 and hidden table/list-table candidates such as acronyms and document modification structures. Added regression tests for definition entries, table-reference paragraphs, figure captions/references, and true table captions, headers, and rows. Table detection remains candidate-level only; Phase 6C does not reconstruct table columns, merge table regions, or create final table structures. Tests, ruff, and mypy pass.
 
-Phase 6D diagram/template-label table filtering completed. Added conservative rejection for process-diagram labels, form/template label groups, and section prose where table-like words appear inside normal sentences. Rejected figure/process-flow labels such as "Element 4: Identify and Document Risk Mitigation Measures", figure/template label groups such as Hazard Tracking Log / Hazard Title / Hazard Description / Hazard Causes, and section prose such as 5.3 Task structure, while preserving true MIL-STD table detections from page 19. Added regression tests for diagram-label, template-label, and section-prose false positives plus true table captions, headers, and rows. Table detection remains candidate-level only; Phase 6D does not reconstruct table columns, merge table regions, or create final table structures. FigureBlock and form/template extraction remain future work. Tests, ruff, and mypy pass.
+Phase 6D diagram/template-label table filtering completed. Added conservative rejection for process-diagram labels, form/template label groups, and section prose where table-like words appear inside normal sentences, while preserving true MIL-STD table detections from page 19. Added regression tests for diagram-label, template-label, and section-prose false positives plus true table captions, headers, and rows. Table detection remains candidate-level only; Phase 6D does not reconstruct table columns, merge table regions, or create final table structures. Known limitation: figure/diagram-internal text, such as labels inside MIL-STD-882E FIGURE B-1 on page 103, may still be detected as `TableBlock` candidates until FigureBlock / diagram-region detection is implemented. Tests, ruff, and mypy pass.
 
 ---
 
@@ -196,6 +196,8 @@ Phase 2D native-text page detection completed. `Page` now includes `has_native_t
 - [ ] Implement simple table extraction
 - [ ] Implement formula candidate detection
 - [ ] Implement figure/image candidate detection
+  - [ ] Detect figure captions and figure regions
+  - [ ] Use figure-region detection to suppress table candidates inside diagrams
 - [ ] Attach source location to every extracted object
 
 ---
