@@ -97,6 +97,18 @@ _SECTION_PROSE_TABLE_WORDS = {
     "severity",
     "specified",
 }
+_FIGURE_INTERNAL_PHRASES = {
+    "cm/drawing control",
+    "contribution to system risk",
+    "engineering design process",
+    "hazard tracking log",
+    "operator training",
+    "safety-significant software",
+    "system and software system",
+    "system risk",
+    "typical safety activities",
+}
+_BULLET_PREFIXES = ("-", "*", "\u2022")
 
 
 def is_table_candidate_text(text: str) -> bool:
@@ -356,7 +368,12 @@ def create_table_blocks_for_page(page: Page) -> list[TableBlock]:
 
 def has_figure_caption_on_page(page: Page) -> bool:
     """Return whether the page has figure candidate blocks."""
-    return any(isinstance(block, FigureBlock) for block in page.blocks)
+    return bool(get_figure_caption_blocks(page))
+
+
+def get_figure_caption_blocks(page: Page) -> list[FigureBlock]:
+    """Return figure candidate blocks on the page."""
+    return [block for block in page.blocks if isinstance(block, FigureBlock)]
 
 
 def is_likely_figure_internal_text(text: str) -> bool:
@@ -369,19 +386,37 @@ def is_likely_figure_internal_text(text: str) -> bool:
     ):
         return True
     lines = _non_empty_lines(text)
+    if _has_figure_internal_phrase(normalized_text):
+        return _is_compact_figure_label_block(lines)
+    if _has_bullet_lines(lines):
+        return _is_compact_figure_label_block(lines)
     return _is_compact_figure_context_diagram_keyword_cluster(
         lines
     ) or _has_repeated_label_prefix(lines)
 
 
+def is_above_figure_caption(text_block: TextBlock, figure_block: FigureBlock) -> bool:
+    """Return whether a text block appears above a figure caption."""
+    text_bbox = text_block.source.bbox if text_block.source is not None else None
+    caption_bbox = figure_block.source.bbox if figure_block.source is not None else None
+    if text_bbox is None or caption_bbox is None:
+        return False
+    return text_bbox.y1 <= caption_bbox.y0
+
+
 def is_near_figure_caption(text_block: TextBlock, page: Page) -> bool:
     """Return whether a text block is plausibly adjacent to a figure caption."""
+    return is_near_figure_caption_region(text_block, page)
+
+
+def is_near_figure_caption_region(text_block: TextBlock, page: Page) -> bool:
+    """Return whether a text block is plausibly within a figure-caption region."""
     text_bbox = text_block.source.bbox if text_block.source is not None else None
     if text_bbox is None:
         return False
 
     vertical_window = max((page.height or 0.0) * 0.45, 180.0)
-    for figure_block in _figure_blocks_for_page(page):
+    for figure_block in get_figure_caption_blocks(page):
         caption_bbox = (
             figure_block.source.bbox if figure_block.source is not None else None
         )
@@ -394,7 +429,18 @@ def is_near_figure_caption(text_block: TextBlock, page: Page) -> bool:
         overlaps_horizontally = text_bbox.x0 <= caption_bbox.x1 and (
             caption_bbox.x0 <= text_bbox.x1
         )
-        if vertical_gap <= vertical_window and overlaps_horizontally:
+        if not overlaps_horizontally:
+            continue
+        if _is_bottom_caption(figure_block, page) and (
+            is_above_figure_caption(text_block, figure_block)
+            and vertical_gap <= vertical_window
+        ):
+            return True
+        if _is_top_caption(figure_block, page) and (
+            caption_bbox.y1 <= text_bbox.y0 and vertical_gap <= vertical_window
+        ):
+            return True
+        if vertical_gap <= min(vertical_window, 120.0):
             return True
     return False
 
@@ -548,14 +594,10 @@ def _has_repeated_label_prefix(lines: list[str]) -> bool:
     return max(prefixes.count(prefix) for prefix in set(prefixes)) >= 3
 
 
-def _figure_blocks_for_page(page: Page) -> list[FigureBlock]:
-    return [block for block in page.blocks if isinstance(block, FigureBlock)]
-
-
 def _has_any_figure_caption_bbox(page: Page) -> bool:
     return any(
         figure.source is not None and figure.source.bbox is not None
-        for figure in _figure_blocks_for_page(page)
+        for figure in get_figure_caption_blocks(page)
     )
 
 
@@ -564,6 +606,42 @@ def _has_usable_figure_context_bbox(text_block: TextBlock, page: Page) -> bool:
         text_block.source is not None
         and text_block.source.bbox is not None
         and _has_any_figure_caption_bbox(page)
+    )
+
+
+def _has_figure_internal_phrase(text: str) -> bool:
+    lower = text.casefold()
+    return any(phrase in lower for phrase in _FIGURE_INTERNAL_PHRASES)
+
+
+def _has_bullet_lines(lines: list[str]) -> bool:
+    return any(line.lstrip().startswith(_BULLET_PREFIXES) for line in lines)
+
+
+def _is_compact_figure_label_block(lines: list[str]) -> bool:
+    if not 2 <= len(lines) <= 8:
+        return False
+    words = _normalize_for_match(" ".join(lines)).split()
+    if len(words) > 36:
+        return False
+    return all(len(line) <= 70 for line in lines)
+
+
+def _is_bottom_caption(figure_block: FigureBlock, page: Page) -> bool:
+    caption_bbox = figure_block.source.bbox if figure_block.source is not None else None
+    return (
+        caption_bbox is not None
+        and page.height is not None
+        and caption_bbox.y0 >= page.height * 0.6
+    )
+
+
+def _is_top_caption(figure_block: FigureBlock, page: Page) -> bool:
+    caption_bbox = figure_block.source.bbox if figure_block.source is not None else None
+    return (
+        caption_bbox is not None
+        and page.height is not None
+        and caption_bbox.y1 <= page.height * 0.4
     )
 
 
