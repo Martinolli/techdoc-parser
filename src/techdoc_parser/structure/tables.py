@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from techdoc_parser.core import HeadingBlock, Page, TableBlock, TextBlock
+from techdoc_parser.core import FigureBlock, HeadingBlock, Page, TableBlock, TextBlock
 from techdoc_parser.structure.headings import is_heading_text
 
 _TABLE_TITLE_RE = re.compile(
@@ -72,6 +72,7 @@ _DIAGRAM_NODE_WORDS = {
     "output",
     "start",
 }
+_FIGURE_CONTEXT_DIAGRAM_NODE_WORDS = _DIAGRAM_NODE_WORDS | {"process"}
 _FORM_LABEL_TERMS = {
     "approved",
     "by",
@@ -334,6 +335,8 @@ def create_table_blocks_for_page(page: Page) -> list[TableBlock]:
             continue
         if not is_table_candidate_text(text_block.normalized_text or text):
             continue
+        if should_suppress_table_candidate_due_to_figure_context(text_block, page):
+            continue
 
         rows = [[line] for line in _non_empty_lines(text_block.normalized_text or text)]
         tables.append(
@@ -349,6 +352,68 @@ def create_table_blocks_for_page(page: Page) -> list[TableBlock]:
         )
 
     return tables
+
+
+def has_figure_caption_on_page(page: Page) -> bool:
+    """Return whether the page has figure candidate blocks."""
+    return any(isinstance(block, FigureBlock) for block in page.blocks)
+
+
+def is_likely_figure_internal_text(text: str) -> bool:
+    """Return whether text looks like labels inside a figure or diagram."""
+    normalized_text = _normalize_for_match(text)
+    if not normalized_text or _has_strong_table_evidence(text):
+        return False
+    if is_process_diagram_label_text(text) or is_form_or_template_label_group_text(
+        text
+    ):
+        return True
+    lines = _non_empty_lines(text)
+    return _is_compact_figure_context_diagram_keyword_cluster(
+        lines
+    ) or _has_repeated_label_prefix(lines)
+
+
+def is_near_figure_caption(text_block: TextBlock, page: Page) -> bool:
+    """Return whether a text block is plausibly adjacent to a figure caption."""
+    text_bbox = text_block.source.bbox if text_block.source is not None else None
+    if text_bbox is None:
+        return False
+
+    vertical_window = max((page.height or 0.0) * 0.45, 180.0)
+    for figure_block in _figure_blocks_for_page(page):
+        caption_bbox = (
+            figure_block.source.bbox if figure_block.source is not None else None
+        )
+        if caption_bbox is None:
+            continue
+        vertical_gap = min(
+            abs(text_bbox.y1 - caption_bbox.y0),
+            abs(caption_bbox.y1 - text_bbox.y0),
+        )
+        overlaps_horizontally = text_bbox.x0 <= caption_bbox.x1 and (
+            caption_bbox.x0 <= text_bbox.x1
+        )
+        if vertical_gap <= vertical_window and overlaps_horizontally:
+            return True
+    return False
+
+
+def should_suppress_table_candidate_due_to_figure_context(
+    text_block: TextBlock,
+    page: Page,
+) -> bool:
+    """Return whether figure context should prevent table candidate creation."""
+    if not has_figure_caption_on_page(page):
+        return False
+    text = text_block.normalized_text or text_block.text
+    if text is None or not is_likely_figure_internal_text(text):
+        return False
+    if _has_strong_table_evidence(text):
+        return False
+    if is_near_figure_caption(text_block, page):
+        return True
+    return not _has_usable_figure_context_bbox(text_block, page)
 
 
 def _should_skip_text_block(
@@ -439,6 +504,18 @@ def _has_structured_table_layout(text: str) -> bool:
     return _has_known_table_row_fragment(lines)
 
 
+def _has_strong_table_evidence(text: str) -> bool:
+    normalized_text = _normalize_for_match(text)
+    if is_table_caption_text(normalized_text):
+        return True
+    if has_table_header_terms(text):
+        return True
+    lines = _non_empty_lines(text)
+    if _count_column_like_lines(lines) >= 2:
+        return True
+    return _has_known_table_row_fragment(lines)
+
+
 def _is_short_title_line(line: str) -> bool:
     words = _normalize_for_match(line.rstrip(":")).split()
     return 1 <= len(words) <= 6 and all(len(word) <= 18 for word in words)
@@ -449,6 +526,45 @@ def _is_compact_diagram_keyword_cluster(lines: list[str]) -> bool:
         return False
     normalized_lines = {_normalize_for_match(line).casefold() for line in lines}
     return normalized_lines <= _DIAGRAM_NODE_WORDS
+
+
+def _is_compact_figure_context_diagram_keyword_cluster(lines: list[str]) -> bool:
+    if not 2 <= len(lines) <= 4:
+        return False
+    normalized_lines = {_normalize_for_match(line).casefold() for line in lines}
+    return normalized_lines <= _FIGURE_CONTEXT_DIAGRAM_NODE_WORDS
+
+
+def _has_repeated_label_prefix(lines: list[str]) -> bool:
+    if len(lines) < 3:
+        return False
+    prefixes = [
+        _normalize_for_match(line).split()[0].casefold()
+        for line in lines
+        if _normalize_for_match(line).split()
+    ]
+    if len(prefixes) != len(lines):
+        return False
+    return max(prefixes.count(prefix) for prefix in set(prefixes)) >= 3
+
+
+def _figure_blocks_for_page(page: Page) -> list[FigureBlock]:
+    return [block for block in page.blocks if isinstance(block, FigureBlock)]
+
+
+def _has_any_figure_caption_bbox(page: Page) -> bool:
+    return any(
+        figure.source is not None and figure.source.bbox is not None
+        for figure in _figure_blocks_for_page(page)
+    )
+
+
+def _has_usable_figure_context_bbox(text_block: TextBlock, page: Page) -> bool:
+    return (
+        text_block.source is not None
+        and text_block.source.bbox is not None
+        and _has_any_figure_caption_bbox(page)
+    )
 
 
 def _looks_like_wrapped_prose_lines(lines: list[str]) -> bool:

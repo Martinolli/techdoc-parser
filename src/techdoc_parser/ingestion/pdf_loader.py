@@ -55,8 +55,8 @@ class PDFLoader:
                 )
                 self._add_text_blocks(page=page, pdf_page=pdf_page)
                 page.blocks.extend(create_paragraph_blocks_for_page(page))
-                page.blocks.extend(create_table_blocks_for_page(page))
                 page.blocks.extend(create_figure_blocks_for_page(page))
+                page.blocks.extend(create_table_blocks_for_page(page))
                 self._update_page_text_status(page)
                 document.pages.append(page)
 

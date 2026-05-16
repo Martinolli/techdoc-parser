@@ -100,7 +100,7 @@ def _create_table_candidate_pdf(path: Path) -> None:
 
 def _create_figure_caption_pdf(path: Path) -> None:
     document = fitz.open()
-    page = document.new_page(width=420.0, height=240.0)
+    page = document.new_page(width=420.0, height=320.0)
     page.insert_textbox(
         fitz.Rect(20.0, 40.0, 400.0, 70.0),
         "FIGURE 1. System overview",
@@ -109,6 +109,16 @@ def _create_figure_caption_pdf(path: Path) -> None:
     page.insert_textbox(
         fitz.Rect(20.0, 120.0, 400.0, 160.0),
         "See Figure 1 for details.",
+        fontsize=10.0,
+    )
+    page.insert_textbox(
+        fitz.Rect(20.0, 180.0, 190.0, 240.0),
+        "Input\nProcess\nOutput",
+        fontsize=10.0,
+    )
+    page.insert_textbox(
+        fitz.Rect(220.0, 180.0, 400.0, 210.0),
+        "TABLE I. Severity categories",
         fontsize=10.0,
     )
     document.save(path)
@@ -328,6 +338,15 @@ def test_pdf_loader_adds_figure_candidates_without_changing_text_blocks(
     assert figures[0].source_text_block_ids
     assert figures[0].is_candidate is True
     assert not any(block.caption == "See Figure 1 for details." for block in figures)
+
+    tables = [block for block in page.blocks if isinstance(block, TableBlock)]
+    assert len(tables) == 1
+    assert tables[0].text is not None
+    assert "TABLE I. Severity categories" in tables[0].text
+    assert not any(
+        block.text is not None and "Input\nProcess\nOutput" in block.text
+        for block in tables
+    )
 
 
 def test_parse_document_loads_generated_pdf(tmp_path: Path) -> None:
