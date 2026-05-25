@@ -32,6 +32,35 @@ def test_cli_parses_generated_pdf_and_writes_json(tmp_path: Path) -> None:
     assert len(data["pages"]) == 1
 
 
+def test_cli_can_write_semantic_chunks_json(tmp_path: Path) -> None:
+    """CLI should optionally write semantic chunks JSON output."""
+    input_path = tmp_path / "manual.pdf"
+    output_path = tmp_path / "output" / "manual.json"
+    chunks_output_path = tmp_path / "output" / "chunks.json"
+    _create_test_pdf(input_path, text="This generated PDF creates a body paragraph.")
+
+    result = main(
+        [
+            str(input_path),
+            "--output",
+            str(output_path),
+            "--chunks-output",
+            str(chunks_output_path),
+            "--chunk-max-chars",
+            "80",
+        ]
+    )
+
+    assert result == 0
+    assert output_path.exists()
+    assert chunks_output_path.exists()
+
+    chunks_data = json.loads(chunks_output_path.read_text(encoding="utf-8"))
+    assert chunks_data["chunk_count"] >= 1
+    assert chunks_data["chunks"]
+    assert "source_page_numbers" in chunks_data["chunks"][0]
+
+
 def test_cli_returns_one_for_unsupported_file_type(tmp_path: Path) -> None:
     """CLI should report unsupported input types as user errors."""
     input_path = tmp_path / "manual.txt"
