@@ -219,4 +219,5 @@ __marimo__/
 
 # Local parser run artifacts
 output/
+input/
 check_techdoc_parse_result.py
