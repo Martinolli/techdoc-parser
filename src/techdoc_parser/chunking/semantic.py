@@ -8,6 +8,7 @@ from techdoc_parser.core import (
     Document,
     FigureBlock,
     FormulaBlock,
+    HeadingBlock,
     ParagraphBlock,
     TableBlock,
     TableRegionBlock,
@@ -23,6 +24,9 @@ def create_semantic_chunks(document: Document, max_chars: int = 1200) -> list[Ch
     current_page_numbers: list[int] = []
     current_block_ids: list[str] = []
     current_text_block_ids: list[str] = []
+    heading_context: dict[int, str] = {}
+    current_chunk_context: dict[int, str] = {}
+    current_has_non_heading = False
 
     for page in document.pages:
         for block in get_semantic_blocks_for_page(page):
@@ -30,6 +34,29 @@ def create_semantic_chunks(document: Document, max_chars: int = 1200) -> list[Ch
             if not block_text:
                 continue
 
+            is_heading = get_heading_level(block) is not None
+            if is_heading:
+                if current_parts and current_has_non_heading:
+                    chunks.append(
+                        _create_chunk(
+                            document=document,
+                            chunk_index=len(chunks) + 1,
+                            text=_join_chunk_parts(current_parts),
+                            source_page_numbers=current_page_numbers,
+                            source_block_ids=current_block_ids,
+                            source_text_block_ids=current_text_block_ids,
+                            section_context=current_chunk_context,
+                        )
+                    )
+                    current_parts = []
+                    current_page_numbers = []
+                    current_block_ids = []
+                    current_text_block_ids = []
+                    current_chunk_context = {}
+                    current_has_non_heading = False
+                update_heading_context(block, heading_context)
+
+            block_context = dict(heading_context)
             candidate_text = _join_chunk_parts([*current_parts, block_text])
             if current_parts and len(candidate_text) > max_chars:
                 chunks.append(
@@ -40,14 +67,19 @@ def create_semantic_chunks(document: Document, max_chars: int = 1200) -> list[Ch
                         source_page_numbers=current_page_numbers,
                         source_block_ids=current_block_ids,
                         source_text_block_ids=current_text_block_ids,
+                        section_context=current_chunk_context,
                     )
                 )
                 current_parts = []
                 current_page_numbers = []
                 current_block_ids = []
                 current_text_block_ids = []
+                current_chunk_context = {}
+                current_has_non_heading = False
 
+            current_chunk_context = block_context
             current_parts.append(block_text)
+            current_has_non_heading = current_has_non_heading or not is_heading
             _append_unique_int(
                 current_page_numbers,
                 get_block_page_number(block) or page.page_number,
@@ -67,6 +99,7 @@ def create_semantic_chunks(document: Document, max_chars: int = 1200) -> list[Ch
                 source_page_numbers=current_page_numbers,
                 source_block_ids=current_block_ids,
                 source_text_block_ids=current_text_block_ids,
+                section_context=current_chunk_context,
             )
         )
 
@@ -108,6 +141,44 @@ def get_block_page_number(block: Block) -> int | None:
     return block.source.page_number
 
 
+def update_heading_context(block: Block, context: dict[int, str]) -> None:
+    """Update active heading context with a heading block."""
+    level = get_heading_level(block)
+    if level is None:
+        return
+    heading_text = get_heading_text(block)
+    if not heading_text:
+        return
+    for existing_level in list(context):
+        if existing_level >= level:
+            del context[existing_level]
+    context[level] = heading_text
+
+
+def get_heading_level(block: Block) -> int | None:
+    """Return a clamped heading level for a heading block."""
+    if not isinstance(block, HeadingBlock):
+        return None
+    return min(max(block.level, 1), 6)
+
+
+def get_heading_text(block: Block) -> str:
+    """Return cleaned heading text."""
+    return clean_chunk_text(_block_text(block))
+
+
+def build_section_path(context: dict[int, str]) -> str:
+    """Return active section path from shallowest to deepest heading."""
+    return " > ".join(text for _level, text in sorted(context.items()))
+
+
+def get_current_section_title(context: dict[int, str]) -> str | None:
+    """Return the deepest active section title."""
+    if not context:
+        return None
+    return context[max(context)]
+
+
 def clean_chunk_text(text: str) -> str:
     """Remove standalone page/document furniture lines from chunk text."""
     cleaned_lines: list[str] = []
@@ -139,8 +210,9 @@ def _create_chunk(
     source_page_numbers: list[int],
     source_block_ids: list[str],
     source_text_block_ids: list[str],
+    section_context: dict[int, str],
 ) -> Chunk:
-    metadata = _chunk_metadata(document, chunk_index)
+    metadata = _chunk_metadata(document, chunk_index, section_context)
     return Chunk(
         id=f"chunk-{chunk_index}",
         document_id=document.id,
@@ -153,7 +225,11 @@ def _create_chunk(
     )
 
 
-def _chunk_metadata(document: Document, chunk_index: int) -> dict[str, str]:
+def _chunk_metadata(
+    document: Document,
+    chunk_index: int,
+    section_context: dict[int, str],
+) -> dict[str, str]:
     metadata = {
         "chunk_index": str(chunk_index),
         "chunk_type": "semantic",
@@ -162,6 +238,13 @@ def _chunk_metadata(document: Document, chunk_index: int) -> dict[str, str]:
         metadata["source_path"] = document.source_path
     if document.metadata.title:
         metadata["title"] = document.metadata.title
+    section_title = get_current_section_title(section_context)
+    section_path = build_section_path(section_context)
+    if section_title is not None:
+        metadata["section_title"] = section_title
+        metadata["section_level"] = str(max(section_context))
+    if section_path:
+        metadata["section_path"] = section_path
     return metadata
 
 

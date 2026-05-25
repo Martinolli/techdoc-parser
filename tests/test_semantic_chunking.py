@@ -56,6 +56,22 @@ def _paragraph(
     )
 
 
+def _heading(
+    id: str,
+    text: str,
+    *,
+    level: int = 1,
+    y0: float = 10.0,
+) -> HeadingBlock:
+    return HeadingBlock(
+        id=id,
+        source=_source(y0=y0),
+        text=text,
+        normalized_text=text,
+        level=level,
+    )
+
+
 def _table(
     id: str,
     text: str,
@@ -197,6 +213,131 @@ def test_create_semantic_chunks_adds_metadata() -> None:
     assert chunks[0].metadata["title"] == "Manual Title"
     assert chunks[0].chunk_type == "semantic"
     assert chunks[0].document_id == "manual"
+
+
+def test_create_semantic_chunks_adds_single_heading_context() -> None:
+    """Chunks should inherit metadata from the nearest heading."""
+    heading = _heading("heading-1", "7. Flight Test Risk Management.", level=1)
+    paragraph = _paragraph(
+        "paragraph-1",
+        "Risk management body paragraph.",
+        ["text-1"],
+        y0=30.0,
+    )
+    page = Page(page_number=1, blocks=[heading, paragraph])
+
+    chunks = create_semantic_chunks(_document(page))
+
+    assert len(chunks) == 1
+    assert chunks[0].metadata["section_title"] == "7. Flight Test Risk Management."
+    assert chunks[0].metadata["section_path"] == "7. Flight Test Risk Management."
+    assert chunks[0].metadata["section_level"] == "1"
+
+
+def test_create_semantic_chunks_adds_nested_heading_context() -> None:
+    """Nested headings should produce a simple section path."""
+    heading_one = _heading("heading-1", "7. Flight Test Risk Management.", level=1)
+    heading_two = _heading("heading-2", "b. Requirements.", level=2, y0=30.0)
+    paragraph = _paragraph("paragraph-1", "Requirement body.", ["text-1"], y0=50.0)
+    page = Page(page_number=1, blocks=[heading_one, heading_two, paragraph])
+
+    chunks = create_semantic_chunks(_document(page))
+
+    assert len(chunks) == 1
+    assert chunks[0].metadata["section_title"] == "b. Requirements."
+    assert (
+        chunks[0].metadata["section_path"]
+        == "7. Flight Test Risk Management. > b. Requirements."
+    )
+    assert chunks[0].metadata["section_level"] == "2"
+
+
+def test_create_semantic_chunks_resets_nested_heading_context() -> None:
+    """A new shallower heading should clear deeper section metadata."""
+    heading_one = _heading("heading-1", "7. Flight Test Risk Management.", level=1)
+    heading_two = _heading("heading-2", "b. Requirements.", level=2, y0=30.0)
+    paragraph_one = _paragraph(
+        "paragraph-1",
+        "Requirement body.",
+        ["text-1"],
+        y0=50.0,
+    )
+    heading_three = _heading(
+        "heading-3",
+        "8. Safety Event Reporting and Response.",
+        level=1,
+        y0=70.0,
+    )
+    paragraph_two = _paragraph(
+        "paragraph-2",
+        "Reporting body.",
+        ["text-2"],
+        y0=90.0,
+    )
+    page = Page(
+        page_number=1,
+        blocks=[heading_one, heading_two, paragraph_one, heading_three, paragraph_two],
+    )
+
+    chunks = create_semantic_chunks(_document(page))
+
+    assert len(chunks) == 2
+    assert (
+        chunks[1].metadata["section_path"] == "8. Safety Event Reporting and Response."
+    )
+    assert "b. Requirements." not in chunks[1].metadata["section_path"]
+
+
+def test_create_semantic_chunks_starts_new_chunk_at_new_heading() -> None:
+    """A heading after body content should start a new section chunk."""
+    heading_one = _heading("heading-1", "1. First section.", level=1)
+    paragraph_one = _paragraph("paragraph-1", "First body.", ["text-1"], y0=30.0)
+    heading_two = _heading("heading-2", "2. Second section.", level=1, y0=50.0)
+    paragraph_two = _paragraph("paragraph-2", "Second body.", ["text-2"], y0=70.0)
+    page = Page(
+        page_number=1,
+        blocks=[heading_one, paragraph_one, heading_two, paragraph_two],
+    )
+
+    chunks = create_semantic_chunks(_document(page), max_chars=200)
+
+    assert len(chunks) == 2
+    assert "2. Second section." not in chunks[0].text
+    assert chunks[1].text.startswith("2. Second section.")
+    assert chunks[1].metadata["section_title"] == "2. Second section."
+
+
+def test_create_semantic_chunks_omits_section_metadata_without_heading() -> None:
+    """Chunks without an active heading should keep only general metadata."""
+    paragraph = _paragraph("paragraph-1", "Body paragraph.", ["text-1"])
+    page = Page(page_number=1, blocks=[paragraph])
+
+    chunks = create_semantic_chunks(_document(page))
+
+    assert "section_title" not in chunks[0].metadata
+    assert "section_path" not in chunks[0].metadata
+    assert "section_level" not in chunks[0].metadata
+    assert chunks[0].metadata["chunk_type"] == "semantic"
+
+
+def test_create_semantic_chunks_keeps_section_metadata_with_cleaned_text() -> None:
+    """Furniture cleanup should not remove active section metadata."""
+    heading = _heading("heading-1", "7. Flight Test Risk Management.", level=1)
+    paragraph = _paragraph(
+        "paragraph-1",
+        "1/31/2012\n\n4040.26B\n\nAppendix C\n\nHowever, there may be risks...",
+        ["text-1"],
+        y0=30.0,
+    )
+    page = Page(page_number=1, blocks=[heading, paragraph])
+
+    chunks = create_semantic_chunks(_document(page))
+
+    assert len(chunks) == 1
+    assert "1/31/2012" not in chunks[0].text
+    assert "4040.26B" not in chunks[0].text
+    assert "However, there may be risks..." in chunks[0].text
+    assert chunks[0].metadata["section_title"] == "7. Flight Test Risk Management."
 
 
 def test_create_semantic_chunks_excludes_page_furniture_text() -> None:
