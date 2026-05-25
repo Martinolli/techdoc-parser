@@ -17,10 +17,12 @@ from techdoc_parser.core import (
 )
 from techdoc_parser.structure.tables import is_table_caption_text
 
-_MAX_TABLE_GAP = 80.0
+_MAX_TABLE_GAP = 120.0
 _MAX_PARAGRAPH_GAP = 70.0
+_MAX_ROW_FRAGMENT_GAP = 140.0
 _LETTERED_BODY_PARAGRAPH_RE = re.compile(r"^[a-z]\.\s+\S.+$", re.IGNORECASE)
 _PAREN_BODY_PARAGRAPH_RE = re.compile(r"^\(\d+\)\s+\S.+$")
+_MATRIX_LABEL_RE = re.compile(r"^\([A-F]\)$", re.IGNORECASE)
 _ROW_LABEL_TERMS = {
     "catastrophic",
     "critical",
@@ -32,6 +34,13 @@ _ROW_LABEL_TERMS = {
     "remote",
     "improbable",
     "eliminated",
+}
+_MATRIX_VALUE_TERMS = {
+    "eliminated",
+    "high",
+    "low",
+    "medium",
+    "serious",
 }
 
 
@@ -120,26 +129,64 @@ def should_continue_table_region(
     last_related_block: Block,
 ) -> bool:
     """Return whether a block should continue the active table region."""
-    if isinstance(block, HeadingBlock | FigureBlock):
+    if should_stop_table_region_at_block(block, grouped_blocks):
         return False
     if isinstance(block, TableBlock):
-        if _is_table_caption_block(block):
-            return False
-        return _should_continue_with_table_block(
-            block, grouped_blocks, last_related_block
+        return is_table_region_continuation_block(
+            block=block,
+            active_region_blocks=grouped_blocks,
+            previous_block=last_related_block,
         )
     if not isinstance(block, ParagraphBlock):
         return True
     if _source_text_ids(block) & grouped_source_ids:
         return True
-    if _vertical_gap(last_related_block, block) > _MAX_PARAGRAPH_GAP:
-        return False
-    if is_body_paragraph_between_tables(block):
-        return False
-    return _should_include_paragraph_fragment(
-        ordered_blocks=ordered_blocks,
-        paragraph=block,
+    return is_table_region_continuation_block(
+        block=block,
+        active_region_blocks=grouped_blocks,
         previous_block=last_related_block,
+        ordered_blocks=ordered_blocks,
+    )
+
+
+def should_stop_table_region_at_block(
+    block: Block,
+    active_region_blocks: list[Block],
+) -> bool:
+    """Return whether a block is a clear boundary for the active table region."""
+    if isinstance(block, HeadingBlock | FigureBlock):
+        return True
+    if isinstance(block, TableBlock):
+        return _is_table_caption_block(block) and bool(active_region_blocks)
+    if isinstance(block, ParagraphBlock):
+        return is_body_paragraph_between_tables(block)
+    return False
+
+
+def is_table_region_continuation_block(
+    *,
+    block: Block,
+    active_region_blocks: list[Block],
+    previous_block: Block,
+    ordered_blocks: list[Block] | None = None,
+) -> bool:
+    """Return whether a block is a conservative table-region continuation."""
+    gap = _vertical_gap(previous_block, block)
+    if isinstance(block, TableBlock):
+        return _should_continue_with_table_block(block, active_region_blocks, gap)
+    if not isinstance(block, ParagraphBlock):
+        return True
+    if gap > _MAX_ROW_FRAGMENT_GAP:
+        return False
+    if _is_table_fragment_text(_block_normalized_text(block), previous_block):
+        return True
+    if gap > _MAX_PARAGRAPH_GAP:
+        return False
+    if _is_short_row_or_cell_fragment(block):
+        return True
+    return ordered_blocks is not None and _is_between_table_blocks(
+        ordered_blocks,
+        block,
     )
 
 
@@ -167,9 +214,13 @@ def _should_include_paragraph_fragment(
 def _should_continue_with_table_block(
     block: TableBlock,
     grouped_blocks: list[Block],
-    last_related_block: Block,
+    gap: float,
 ) -> bool:
-    if _vertical_gap(last_related_block, block) > _MAX_TABLE_GAP:
+    if gap > _MAX_ROW_FRAGMENT_GAP:
+        return False
+    if is_table_row_continuation_fragment(block):
+        return True
+    if gap > _MAX_TABLE_GAP:
         return False
     region_bbox = _union_block_bboxes(grouped_blocks)
     block_bbox = _bbox_for_block(block)
@@ -331,8 +382,20 @@ def _is_table_caption_block(block: TableBlock) -> bool:
 def is_body_paragraph_between_tables(block: ParagraphBlock) -> bool:
     """Return whether a paragraph is body prose that should stop grouping."""
     normalized_text = _block_normalized_text(block)
+    return is_body_paragraph_after_table(normalized_text)
+
+
+def is_body_paragraph_after_table(text: str) -> bool:
+    """Return whether text looks like body prose following a table."""
+    normalized_text = _normalize_text_for_match(text)
     if not normalized_text:
         return True
+    if is_table_matrix_value_fragment(normalized_text):
+        return False
+    if is_table_row_label_fragment(normalized_text):
+        return False
+    if is_table_cell_description_fragment(normalized_text):
+        return False
     if _LETTERED_BODY_PARAGRAPH_RE.match(normalized_text) is not None:
         return True
     if _PAREN_BODY_PARAGRAPH_RE.match(normalized_text) is not None:
@@ -350,10 +413,58 @@ def is_table_row_continuation_fragment(
         return False
     if isinstance(block, ParagraphBlock) and is_body_paragraph_between_tables(block):
         return False
-    lines = _non_empty_lines(text)
-    if _starts_with_known_row_label(lines):
+    if is_table_row_label_fragment(text):
         return True
+    if is_table_matrix_value_fragment(text):
+        return True
+    if is_table_cell_description_fragment(text) and previous_block is not None:
+        return _is_label_value_block(previous_block) or is_table_row_label_fragment(
+            _block_normalized_text(previous_block)
+        )
     return previous_block is not None and _is_label_value_block(previous_block)
+
+
+def is_table_row_label_fragment(text: str) -> bool:
+    """Return whether text starts with a known table row label."""
+    lines = _non_empty_lines(text)
+    return _starts_with_known_row_label(lines)
+
+
+def is_table_matrix_value_fragment(text: str) -> bool:
+    """Return whether text looks like a risk-matrix row or cell fragment."""
+    lines = [
+        _normalize_text_for_match(line).casefold() for line in _non_empty_lines(text)
+    ]
+    if not lines:
+        return False
+    if _MATRIX_LABEL_RE.match(lines[0]) is not None:
+        return len(lines) == 1 or all(
+            line in _MATRIX_VALUE_TERMS or _MATRIX_LABEL_RE.match(line) is not None
+            for line in lines[1:]
+        )
+    return all(line in _MATRIX_VALUE_TERMS for line in lines) and len(lines) >= 2
+
+
+def is_table_cell_description_fragment(text: str) -> bool:
+    """Return whether text looks like a prose cell within a known table row."""
+    normalized_text = _normalize_text_for_match(text)
+    lower = normalized_text.casefold()
+    if not normalized_text:
+        return False
+    if _LETTERED_BODY_PARAGRAPH_RE.match(normalized_text) is not None:
+        return False
+    if _PAREN_BODY_PARAGRAPH_RE.match(normalized_text) is not None:
+        return False
+    return lower.startswith(
+        (
+            "could result ",
+            "incapable of occurrence",
+            "likely to occur",
+            "so unlikely",
+            "unlikely but possible",
+            "will occur",
+        )
+    )
 
 
 def _is_short_row_or_cell_fragment(block: ParagraphBlock) -> bool:
@@ -377,7 +488,7 @@ def is_duplicate_table_region_fragment(
 
 def normalize_fragment_for_dedup(text: str) -> str:
     """Normalize a whole fragment for table-region deduplication."""
-    return " ".join(text.split()).casefold()
+    return _normalize_text_for_match(text).casefold()
 
 
 def _deduplicated_region_fragments(
@@ -447,6 +558,25 @@ def _is_long_body_prose(text: str) -> bool:
     lowercase_ratio = lowercase_words / len(words)
     sentence_marks = sum(text.count(mark) for mark in ".;:")
     return lowercase_ratio >= 0.45 and sentence_marks >= 2
+
+
+def _is_table_fragment_text(text: str, previous_block: Block | None = None) -> bool:
+    return (
+        is_table_row_label_fragment(text)
+        or is_table_matrix_value_fragment(text)
+        or is_table_cell_description_fragment(text)
+        or (
+            previous_block is not None
+            and is_table_row_continuation_fragment(
+                Block(id="", source=None, block_type="", text=text),
+                previous_block,
+            )
+        )
+    )
+
+
+def _normalize_text_for_match(text: str | None) -> str:
+    return " ".join((text or "").split())
 
 
 def _source_text_ids(block: Block) -> set[str]:

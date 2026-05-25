@@ -38,10 +38,11 @@ def _table(
     source_text_block_ids: list[str],
     *,
     y0: float = 10.0,
+    x0: float = 10.0,
 ) -> TableBlock:
     return TableBlock(
         id=id,
-        source=_source(y0=y0),
+        source=_source(y0=y0, x0=x0),
         text=text,
         normalized_text=text,
         rows=[[line] for line in text.splitlines() if line.strip()],
@@ -55,10 +56,11 @@ def _paragraph(
     source_text_block_ids: list[str],
     *,
     y0: float = 10.0,
+    x0: float = 10.0,
 ) -> ParagraphBlock:
     return ParagraphBlock(
         id=id,
-        source=_source(y0=y0),
+        source=_source(y0=y0, x0=x0),
         text=text,
         normalized_text=text,
         source_text_block_ids=source_text_block_ids,
@@ -265,26 +267,30 @@ def test_table_region_includes_mil_std_table_i_final_row_fragments() -> None:
         "Catastrophic\n1\nCould result in death or permanent disability.",
         ["text-4"],
         y0=60.0,
+        x0=190.0,
     )
-    critical = _table("table-5", "Critical\n2", ["text-5"], y0=90.0)
+    critical = _table("table-5", "Critical\n2", ["text-5"], y0=90.0, x0=190.0)
     critical_description = _paragraph(
         "paragraph-1",
         "Could result in severe injury, occupational illness, or major damage.",
         ["text-6"],
         y0=105.0,
+        x0=250.0,
     )
-    marginal = _table("table-6", "Marginal\n3", ["text-7"], y0=125.0)
+    marginal = _table("table-6", "Marginal\n3", ["text-7"], y0=125.0, x0=190.0)
     marginal_description = _paragraph(
         "paragraph-2",
         "Could result in minor injury, occupational illness, or minor damage.",
         ["text-8"],
         y0=140.0,
+        x0=250.0,
     )
     negligible = _table(
         "table-7",
         "Negligible\n4\nCould result in less than minor injury or damage.",
         ["text-9"],
         y0=160.0,
+        x0=190.0,
     )
     body = _paragraph(
         "paragraph-3",
@@ -396,6 +402,113 @@ def test_table_region_includes_mil_std_table_ii_final_row_fragments() -> None:
     assert "When available" not in (regions[0].normalized_text or "")
 
 
+def test_table_region_includes_mil_std_table_iii_matrix_fragments() -> None:
+    """MIL-STD TABLE III matrix row fragments should stay in one region."""
+    caption = _table(
+        "table-1", "TABLE III. Risk assessment matrix", ["text-1"], y0=10.0
+    )
+    title = _table("table-2", "RISK ASSESSMENT MATRIX", ["text-2"], y0=25.0)
+    severity = _table("table-3", "SEVERITY", ["text-3"], y0=40.0)
+    severity_values = _table(
+        "table-4",
+        "Catastrophic\nCritical\nMarginal\nNegligible",
+        ["text-4"],
+        y0=55.0,
+        x0=150.0,
+    )
+    severity_numbers = _table("table-5", "(1)\n(2)\n(3)\n(4)", ["text-5"], y0=70.0)
+    probability = _table("table-6", "PROBABILITY", ["text-6"], y0=85.0)
+    frequent = _table("table-7", "Frequent", ["text-7"], y0=100.0, x0=20.0)
+    frequent_values = _table(
+        "table-8",
+        "(A)\nHigh\nHigh\nSerious\nMedium",
+        ["text-8"],
+        y0=115.0,
+        x0=150.0,
+    )
+    probable = _table("table-9", "Probable", ["text-9"], y0=135.0, x0=20.0)
+    probable_values = _table(
+        "table-10",
+        "(B)\nHigh\nHigh\nSerious\nMedium",
+        ["text-10"],
+        y0=150.0,
+        x0=150.0,
+    )
+    occasional = _table("table-11", "Occasional", ["text-11"], y0=170.0, x0=20.0)
+    occasional_values = _table(
+        "table-12",
+        "(C)\nHigh\nSerious\nMedium\nLow",
+        ["text-12"],
+        y0=185.0,
+        x0=150.0,
+    )
+    remote = _table("table-13", "Remote", ["text-13"], y0=205.0, x0=20.0)
+    remote_values = _table(
+        "table-14",
+        "(D)\nSerious\nMedium\nMedium\nLow",
+        ["text-14"],
+        y0=220.0,
+        x0=150.0,
+    )
+    improbable = _table("table-15", "Improbable", ["text-15"], y0=240.0, x0=20.0)
+    improbable_values = _table(
+        "table-16",
+        "(E)\nMedium\nMedium\nMedium\nLow",
+        ["text-16"],
+        y0=255.0,
+        x0=150.0,
+    )
+    eliminated = _table("table-17", "Eliminated", ["text-17"], y0=275.0, x0=20.0)
+    eliminated_values = _table(
+        "table-18",
+        "(F)\nEliminated",
+        ["text-18"],
+        y0=290.0,
+        x0=150.0,
+    )
+    body = _paragraph(
+        "paragraph-1",
+        "d. The definitions in Tables I and II, and the RACs in Table III shall "
+        "be used to assess risk.",
+        ["text-19"],
+        y0=330.0,
+    )
+    page = Page(
+        page_number=1,
+        blocks=[
+            caption,
+            title,
+            severity,
+            severity_values,
+            severity_numbers,
+            probability,
+            frequent,
+            frequent_values,
+            probable,
+            probable_values,
+            occasional,
+            occasional_values,
+            remote,
+            remote_values,
+            improbable,
+            improbable_values,
+            eliminated,
+            eliminated_values,
+            body,
+        ],
+    )
+
+    regions = create_table_region_blocks_for_page(page)
+
+    assert len(regions) == 1
+    assert "Frequent" in (regions[0].normalized_text or "")
+    assert "(A)\nHigh\nHigh\nSerious\nMedium" in (regions[0].normalized_text or "")
+    assert "Improbable" in (regions[0].normalized_text or "")
+    assert "(F)\nEliminated" in (regions[0].normalized_text or "")
+    assert "paragraph-1" not in regions[0].source_paragraph_block_ids
+    assert "The definitions in Tables" not in (regions[0].normalized_text or "")
+
+
 def test_semantic_blocks_table_region_suppresses_low_level_duplicates() -> None:
     """TableRegionBlock should win over low-level table and paragraph fragments."""
     table = _table("table-1", "TABLE I. Severity categories", ["text-1"], y0=10.0)
@@ -443,3 +556,40 @@ def test_semantic_markdown_renders_table_region_without_low_level_duplicates() -
     assert "TABLE I. Severity categories\nSEVERITY CATEGORIES" in markdown
     assert "**Table candidate**" not in markdown
     assert "Ordinary body paragraph." in markdown
+
+
+def test_semantic_markdown_keeps_table_ii_as_one_region() -> None:
+    """Semantic Markdown should not show a second region for continuation rows."""
+    caption = _table("table-1", "TABLE II. Probability levels", ["text-1"], y0=10.0)
+    header = _table("table-2", "PROBABILITY LEVELS", ["text-2"], y0=25.0)
+    remote = _table("table-3", "Remote\nD\nUnlikely but possible.", ["text-3"], y0=45.0)
+    improbable = _table(
+        "table-4",
+        "Improbable\nE\nSo unlikely it can be assumed occurrence may not be "
+        "experienced.",
+        ["text-4"],
+        y0=140.0,
+    )
+    eliminated = _table("table-5", "Eliminated\nF", ["text-5"], y0=160.0)
+    body = _paragraph(
+        "paragraph-1",
+        "(1) When available, the use of appropriate and representative quantitative "
+        "data is preferred.",
+        ["text-6"],
+        y0=195.0,
+    )
+    page = Page(
+        page_number=1, blocks=[caption, header, remote, improbable, eliminated, body]
+    )
+    regions = create_table_region_blocks_for_page(page)
+    page.blocks.extend(regions)
+    document = _document(page.blocks)
+
+    markdown = document_to_semantic_markdown(document)
+
+    assert len(regions) == 1
+    assert markdown.count("**Table region candidate**") == 1
+    assert "Improbable\nE" in markdown
+    assert "Eliminated\nF" in markdown
+    assert "**Table candidate**" not in markdown
+    assert "When available" in markdown
