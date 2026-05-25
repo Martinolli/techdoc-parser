@@ -209,6 +209,7 @@ Phase 7B figure-context table suppression completed. Table candidate detection n
 ## 8. Semantic Structuring Layer
 
 - [x] Add RAG/export-friendly semantic block view
+- [x] Add semantic Markdown export
 - [ ] Build section hierarchy
 - [ ] Link headings to child blocks
 - [ ] Detect definitions
@@ -219,6 +220,8 @@ Phase 7B figure-context table suppression completed. Table candidate detection n
 - [ ] Detect table and figure references
 
 Phase 8A semantic block filtering completed. Added `get_semantic_blocks_for_page()` to return a RAG/export-friendly semantic block view that excludes raw `TextBlock` objects and suppresses duplicate `ParagraphBlock` objects when a `TableBlock`, `FigureBlock`, or `HeadingBlock` represents the same source content. Candidate table and figure blocks are preserved, and original `page.blocks` / `page.text_blocks` remain unchanged. JSON and Markdown exporter behavior remain unchanged for now. Phase 8A does not change the parser's internal traceability model, alter JSON export, implement RAG chunking, merge tables, or reconstruct table rows/columns. Added semantic block unit tests. Tests, ruff, and mypy pass.
+
+Phase 8B semantic Markdown export completed. Added `document_to_semantic_markdown()` and `export_document_semantic_markdown()` using `get_semantic_blocks_for_page()` so Markdown can exclude raw `TextBlock` objects and suppress duplicate `ParagraphBlock` output when heading, table, or figure blocks represent the same source content. Existing Markdown and JSON exporter behavior remains unchanged, and `TableBlock` / `FigureBlock` candidates render clearly as candidate semantic blocks. Phase 8B does not implement RAG chunking, table merging, table row/column reconstruction, image extraction, or figure-region parsing. Added semantic Markdown exporter tests. Tests, ruff, and mypy pass.
 
 ---
 
