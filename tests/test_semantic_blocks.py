@@ -234,3 +234,43 @@ def test_semantic_blocks_use_bbox_page_order_when_available() -> None:
         "table-1",
         "paragraph-1",
     ]
+
+
+def test_semantic_blocks_exclude_furniture_like_paragraphs() -> None:
+    """Semantic output should drop short document/page furniture paragraphs."""
+    furniture_blocks = [
+        _paragraph("paragraph-1", "1/31/2012", ["text-1"], y0=10.0),
+        _paragraph("paragraph-2", "4040.26B", ["text-2"], y0=20.0),
+        _paragraph("paragraph-3", "C-2", ["text-3"], y0=30.0),
+        _paragraph(
+            "paragraph-4",
+            "Page intentionally left blank",
+            ["text-4"],
+            y0=40.0,
+        ),
+    ]
+    body = _paragraph(
+        "paragraph-5",
+        "This body paragraph remains.",
+        ["text-5"],
+        y0=50.0,
+    )
+    page = Page(page_number=1, blocks=[*furniture_blocks, body])
+
+    semantic_blocks = get_semantic_blocks_for_page(page)
+
+    assert semantic_blocks == [body]
+
+
+def test_semantic_blocks_preserve_legitimate_appendix_heading() -> None:
+    """Long appendix headings should not be removed as page furniture."""
+    heading = _heading(
+        "heading-1",
+        "APPENDIX C. AIR FLIGHT TEST RISK MANAGEMENT PROCESS",
+    )
+    appendix_header = _paragraph("paragraph-1", "Appendix C", ["text-1"], y0=30.0)
+    page = Page(page_number=1, blocks=[heading, appendix_header])
+
+    semantic_blocks = get_semantic_blocks_for_page(page)
+
+    assert semantic_blocks == [heading]

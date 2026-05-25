@@ -6,6 +6,7 @@ from techdoc_parser.core import (
     Document,
     DocumentMetadata,
     FigureBlock,
+    HeadingBlock,
     Page,
     ParagraphBlock,
     SourceLocation,
@@ -195,3 +196,58 @@ def test_create_semantic_chunks_adds_metadata() -> None:
     assert chunks[0].metadata["title"] == "Manual Title"
     assert chunks[0].chunk_type == "semantic"
     assert chunks[0].document_id == "manual"
+
+
+def test_create_semantic_chunks_excludes_page_furniture_text() -> None:
+    """Furniture-like semantic blocks should not appear in chunks."""
+    furniture_blocks = [
+        _paragraph("paragraph-1", "1/31/2012", ["text-1"], y0=10.0),
+        _paragraph("paragraph-2", "4040.26B", ["text-2"], y0=20.0),
+        _paragraph(
+            "paragraph-3",
+            "Page intentionally left blank",
+            ["text-3"],
+            y0=30.0,
+        ),
+    ]
+    body = _paragraph(
+        "paragraph-4",
+        "This body paragraph remains.",
+        ["text-4"],
+        y0=40.0,
+    )
+    page = Page(page_number=1, blocks=[*furniture_blocks, body])
+
+    chunks = create_semantic_chunks(_document(page))
+
+    assert len(chunks) == 1
+    assert chunks[0].text == "This body paragraph remains."
+    assert "1/31/2012" not in chunks[0].text
+    assert "4040.26B" not in chunks[0].text
+    assert "Page intentionally left blank" not in chunks[0].text
+
+
+def test_create_semantic_chunks_preserves_legitimate_appendix_content() -> None:
+    """Real appendix headings and body text should remain in chunks."""
+    heading = HeadingBlock(
+        id="heading-1",
+        source=_source(y0=10.0),
+        text="APPENDIX C. AIR FLIGHT TEST RISK MANAGEMENT PROCESS",
+        normalized_text="APPENDIX C. AIR FLIGHT TEST RISK MANAGEMENT PROCESS",
+        level=1,
+    )
+    appendix_header = _paragraph("paragraph-1", "Appendix C", ["text-1"], y0=20.0)
+    body = _paragraph(
+        "paragraph-2",
+        "This appendix describes the risk management process.",
+        ["text-2"],
+        y0=30.0,
+    )
+    page = Page(page_number=1, blocks=[heading, appendix_header, body])
+
+    chunks = create_semantic_chunks(_document(page))
+
+    assert len(chunks) == 1
+    assert "APPENDIX C. AIR FLIGHT TEST RISK MANAGEMENT PROCESS" in chunks[0].text
+    assert "This appendix describes the risk management process." in chunks[0].text
+    assert "Appendix C\n\n" not in chunks[0].text

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Protocol, runtime_checkable
 
 from techdoc_parser.core import (
@@ -13,6 +14,7 @@ from techdoc_parser.core import (
     ParagraphBlock,
     TableBlock,
     TableRegionBlock,
+    TextBlock,
 )
 
 
@@ -36,6 +38,11 @@ _SEMANTIC_TYPES = (
     FigureBlock,
     FormulaBlock,
 )
+_DATE_ONLY_RE = re.compile(r"^\d{1,2}/\d{1,2}/\d{2,4}$")
+_DOCUMENT_ID_RE = re.compile(r"^(?:[A-Z]{2,}-STD-\d+[A-Z]?|\d{4}\.\d+[A-Z]?)$")
+_APPENDIX_HEADER_RE = re.compile(r"^Appendix\s+[A-Z]$", re.IGNORECASE)
+_APPENDIX_PAGE_RE = re.compile(r"^[A-Z]-\d+$")
+_CHANGE_NOTICE_RE = re.compile(r"^w/CHANGE\s+\d+$", re.IGNORECASE)
 
 
 def get_semantic_blocks_for_page(page: Page) -> list[Block]:
@@ -45,6 +52,8 @@ def get_semantic_blocks_for_page(page: Page) -> list[Block]:
     heading_texts: set[str] = set()
 
     for block in page.blocks:
+        if should_exclude_from_semantic_output(block):
+            continue
         if isinstance(block, _SPECIFIC_SEMANTIC_TYPES):
             specific_source_ids.update(get_block_source_text_ids(block))
         if isinstance(block, TableRegionBlock):
@@ -56,6 +65,8 @@ def get_semantic_blocks_for_page(page: Page) -> list[Block]:
 
     semantic_blocks_with_index: list[tuple[Block, int]] = []
     for fallback_index, block in enumerate(page.blocks):
+        if should_exclude_from_semantic_output(block):
+            continue
         if not isinstance(block, _SEMANTIC_TYPES):
             continue
         if _is_duplicate_table_block(block, table_region_source_ids):
@@ -90,6 +101,35 @@ def has_overlapping_source_ids(block: Block, source_ids: set[str]) -> bool:
     return bool(get_block_source_text_ids(block) & source_ids)
 
 
+def should_exclude_from_semantic_output(block: Block) -> bool:
+    """Return whether a block is raw/furniture noise for semantic output."""
+    if isinstance(block, TextBlock):
+        return True
+    if _has_furniture_flag(block):
+        return True
+    if isinstance(block, HeadingBlock | TableBlock | TableRegionBlock | FigureBlock):
+        return False
+    return is_semantic_furniture_text(get_block_normalized_text(block))
+
+
+def is_semantic_furniture_text(text: str) -> bool:
+    """Return whether text is likely page/document furniture only."""
+    normalized_text = " ".join(text.split())
+    if not normalized_text:
+        return True
+    if normalized_text.casefold() == "page intentionally left blank":
+        return True
+    if _DATE_ONLY_RE.fullmatch(normalized_text):
+        return True
+    if _DOCUMENT_ID_RE.fullmatch(normalized_text):
+        return True
+    if _CHANGE_NOTICE_RE.fullmatch(normalized_text):
+        return True
+    if _APPENDIX_HEADER_RE.fullmatch(normalized_text):
+        return True
+    return _APPENDIX_PAGE_RE.fullmatch(normalized_text) is not None
+
+
 def block_sort_key(block: Block, fallback_index: int) -> tuple[int, float, float, int]:
     """Return a stable page-order sort key for semantic blocks."""
     bbox = block.source.bbox if block.source is not None else None
@@ -118,4 +158,13 @@ def _is_duplicate_table_block(
     return isinstance(block, TableBlock) and has_overlapping_source_ids(
         block,
         table_region_source_ids,
+    )
+
+
+def _has_furniture_flag(block: Block) -> bool:
+    return bool(
+        getattr(block, "is_page_furniture", False)
+        or getattr(block, "is_page_header", False)
+        or getattr(block, "is_page_footer", False)
+        or getattr(block, "is_page_number", False)
     )
