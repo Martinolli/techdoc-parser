@@ -12,6 +12,7 @@ from techdoc_parser.core import (
     Page,
     ParagraphBlock,
     TableBlock,
+    TableRegionBlock,
 )
 
 
@@ -20,11 +21,18 @@ class _HasSourceTextBlockIds(Protocol):
     source_text_block_ids: list[str]
 
 
-_SPECIFIC_SEMANTIC_TYPES = (HeadingBlock, TableBlock, FigureBlock, FormulaBlock)
+_SPECIFIC_SEMANTIC_TYPES = (
+    HeadingBlock,
+    TableBlock,
+    TableRegionBlock,
+    FigureBlock,
+    FormulaBlock,
+)
 _SEMANTIC_TYPES = (
     HeadingBlock,
     ParagraphBlock,
     TableBlock,
+    TableRegionBlock,
     FigureBlock,
     FormulaBlock,
 )
@@ -33,11 +41,14 @@ _SEMANTIC_TYPES = (
 def get_semantic_blocks_for_page(page: Page) -> list[Block]:
     """Return semantic page blocks without raw text or duplicate paragraphs."""
     specific_source_ids: set[str] = set()
+    table_region_source_ids: set[str] = set()
     heading_texts: set[str] = set()
 
     for block in page.blocks:
         if isinstance(block, _SPECIFIC_SEMANTIC_TYPES):
             specific_source_ids.update(get_block_source_text_ids(block))
+        if isinstance(block, TableRegionBlock):
+            table_region_source_ids.update(get_block_source_text_ids(block))
         if isinstance(block, HeadingBlock):
             heading_text = get_block_normalized_text(block)
             if heading_text:
@@ -46,6 +57,8 @@ def get_semantic_blocks_for_page(page: Page) -> list[Block]:
     semantic_blocks_with_index: list[tuple[Block, int]] = []
     for fallback_index, block in enumerate(page.blocks):
         if not isinstance(block, _SEMANTIC_TYPES):
+            continue
+        if _is_duplicate_table_block(block, table_region_source_ids):
             continue
         if _is_duplicate_paragraph(block, specific_source_ids, heading_texts):
             continue
@@ -96,3 +109,13 @@ def _is_duplicate_paragraph(
         return True
     normalized_text = get_block_normalized_text(block)
     return bool(normalized_text and normalized_text in heading_texts)
+
+
+def _is_duplicate_table_block(
+    block: Block,
+    table_region_source_ids: set[str],
+) -> bool:
+    return isinstance(block, TableBlock) and has_overlapping_source_ids(
+        block,
+        table_region_source_ids,
+    )

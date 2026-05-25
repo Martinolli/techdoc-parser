@@ -12,6 +12,7 @@ from techdoc_parser.core.models import (
     ParagraphBlock,
     SourceLocation,
     TableBlock,
+    TableRegionBlock,
     TextBlock,
 )
 
@@ -27,5 +28,6 @@ __all__ = [
     "ParagraphBlock",
     "SourceLocation",
     "TableBlock",
+    "TableRegionBlock",
     "TextBlock",
 ]

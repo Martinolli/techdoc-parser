@@ -22,6 +22,7 @@ from techdoc_parser.structure import (
     create_figure_blocks_for_page,
     create_paragraph_blocks_for_page,
     create_table_blocks_for_page,
+    create_table_region_blocks_for_page,
     extract_heading_blocks_from_text_block,
 )
 
@@ -57,6 +58,7 @@ class PDFLoader:
                 page.blocks.extend(create_paragraph_blocks_for_page(page))
                 page.blocks.extend(create_figure_blocks_for_page(page))
                 page.blocks.extend(create_table_blocks_for_page(page))
+                page.blocks.extend(create_table_region_blocks_for_page(page))
                 self._update_page_text_status(page)
                 document.pages.append(page)
 

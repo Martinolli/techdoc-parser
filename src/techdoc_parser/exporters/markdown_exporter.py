@@ -12,6 +12,7 @@ from techdoc_parser.core import (
     ParagraphBlock,
     SourceLocation,
     TableBlock,
+    TableRegionBlock,
     TextBlock,
 )
 from techdoc_parser.structure import get_semantic_blocks_for_page
@@ -180,6 +181,8 @@ def _render_semantic_block(block: Block) -> str:
         return _render_heading_block(block)
     if isinstance(block, ParagraphBlock):
         return _render_paragraph_block(block)
+    if isinstance(block, TableRegionBlock):
+        return _render_table_region_block(block)
     if isinstance(block, TableBlock):
         return _render_table_block(block)
     if isinstance(block, FigureBlock):
@@ -208,6 +211,20 @@ def _render_table_block(block: TableBlock) -> str:
     table_text = _block_text(block)
     lines = [
         "**Table candidate**",
+        "",
+        _semantic_source_line(block),
+        "",
+        "```text",
+        table_text,
+        "```",
+    ]
+    return "\n".join(lines)
+
+
+def _render_table_region_block(block: TableRegionBlock) -> str:
+    table_text = _block_text(block)
+    lines = [
+        "**Table region candidate**",
         "",
         _semantic_source_line(block),
         "",

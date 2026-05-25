@@ -216,6 +216,30 @@ class TableBlock(Block):
 
 
 @dataclass
+class TableRegionBlock(Block):
+    """A grouped candidate table region assembled from nearby fragments."""
+
+    block_type: str = field(default="table_region", init=False)
+    caption: str | None = None
+    rows: list[list[str]] = field(default_factory=list)
+    source_text_block_ids: list[str] = field(default_factory=list)
+    source_table_block_ids: list[str] = field(default_factory=list)
+    source_paragraph_block_ids: list[str] = field(default_factory=list)
+    is_candidate: bool = True
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-serializable dictionary."""
+        data = super().to_dict()
+        data["caption"] = self.caption
+        data["rows"] = self.rows
+        data["source_text_block_ids"] = self.source_text_block_ids
+        data["source_table_block_ids"] = self.source_table_block_ids
+        data["source_paragraph_block_ids"] = self.source_paragraph_block_ids
+        data["is_candidate"] = self.is_candidate
+        return data
+
+
+@dataclass
 class FormulaBlock(Block):
     """A formula block extracted from a document page."""
 

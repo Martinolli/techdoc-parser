@@ -18,6 +18,7 @@ from techdoc_parser.structure.page_furniture import (
 )
 from techdoc_parser.structure.paragraphs import create_paragraph_blocks_for_page
 from techdoc_parser.structure.semantic import get_semantic_blocks_for_page
+from techdoc_parser.structure.table_regions import create_table_region_blocks_for_page
 from techdoc_parser.structure.tables import (
     create_table_blocks_for_page,
     is_table_candidate_text,
@@ -29,6 +30,7 @@ __all__ = [
     "create_heading_block_from_text_block",
     "create_paragraph_blocks_for_page",
     "create_table_blocks_for_page",
+    "create_table_region_blocks_for_page",
     "detect_heading_level",
     "extract_heading_blocks_from_text_block",
     "get_semantic_blocks_for_page",
