@@ -119,7 +119,7 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 - [ ] Detect potential formula blocks
 - [x] Export structured JSON
 - [x] Export readable Markdown
-- [ ] Create simple RAG chunks with source references
+- [x] Create simple RAG chunks with source references
 
 Phase 4B basic heading detection completed. Added the structure package, conservative heading heuristics, `is_heading_text()`, `detect_heading_level()`, and `create_heading_block_from_text_block()`. `PDFLoader` now adds obvious `HeadingBlock` objects to `page.blocks` while preserving original `TextBlock` objects in both `page.text_blocks` and `page.blocks`. Tests, ruff, and mypy pass.
 
@@ -245,14 +245,17 @@ Phase 4A text normalization completed. Added the normalization package and `norm
 
 ## 10. Chunking Layer
 
-- [ ] Define `Chunk` model
+- [x] Define `Chunk` model
+- [x] Implement basic semantic chunk creation
 - [ ] Implement section-aware chunking
 - [ ] Implement paragraph-aware chunking
 - [ ] Implement table-aware chunking
 - [ ] Implement formula-aware chunking
-- [ ] Preserve source references in chunks
+- [x] Preserve source references in chunks
 - [ ] Preserve parent-child hierarchy
 - [ ] Export vector-database-friendly payload
+
+Phase 10A basic semantic chunking completed. Added the `Chunk` model and `create_semantic_chunks()` to aggregate semantic blocks from `get_semantic_blocks_for_page()` into simple RAG-oriented chunks. Raw `TextBlock` objects are excluded, source page numbers, source block ids, and available source text block ids are preserved, and table, table-region, figure, and formula candidates are labeled in chunk text. Basic `max_chars` chunk aggregation is implemented. Phase 10A does not generate embeddings, connect to vector databases, split inside oversized blocks, optimize chunk boundaries, or solve advanced table reconstruction. Added semantic chunking unit tests. Tests, ruff, and mypy pass.
 
 ---
 
