@@ -252,12 +252,15 @@ Phase 4A text normalization completed. Added the normalization package and `norm
 - [ ] Implement table-aware chunking
 - [ ] Implement formula-aware chunking
 - [x] Preserve source references in chunks
+- [x] Exclude page/document furniture from semantic chunks
 - [ ] Preserve parent-child hierarchy
 - [x] Export basic chunk JSON payload
 
 Phase 10A basic semantic chunking completed. Added the `Chunk` model and `create_semantic_chunks()` to aggregate semantic blocks from `get_semantic_blocks_for_page()` into simple RAG-oriented chunks. Raw `TextBlock` objects are excluded, source page numbers, source block ids, and available source text block ids are preserved, and table, table-region, figure, and formula candidates are labeled in chunk text. Basic `max_chars` chunk aggregation is implemented. Phase 10A does not generate embeddings, connect to vector databases, split inside oversized blocks, optimize chunk boundaries, or solve advanced table reconstruction. Added semantic chunking unit tests. Tests, ruff, and mypy pass.
 
 Phase 10B chunk JSON export completed. Added `chunks_to_json_dict()`, `chunks_to_json()`, `export_chunks_json()`, and `export_document_chunks_json()` so semantic chunks can be written as downstream-consumable JSON with `chunk_count`, serialized chunks, source page numbers, source block ids, source text block ids, chunk type, and metadata. The CLI can optionally write semantic chunks with `--chunks-output` and `--chunk-max-chars`. Existing document JSON, Markdown, and semantic Markdown export behavior remains unchanged. Phase 10B does not generate embeddings, connect to vector databases, perform RAG ingestion, optimize chunk boundaries, or solve advanced table reconstruction. Added chunk JSON exporter tests and CLI chunk export tests. Tests, ruff, and mypy pass.
+
+Phase 10C semantic chunk cleanup completed. Semantic block filtering now excludes page/document furniture from RAG-oriented output, including common headers, footers, page numbers, dates, standalone document IDs, short appendix page labels, and "Page intentionally left blank" text. Full document JSON export, debug Markdown export, original `page.blocks`, and original `page.text_blocks` remain unchanged, and legitimate headings such as full appendix titles are preserved. Phase 10C only cleans semantic/chunk output; it does not change the raw traceability model, generate embeddings, connect to vector databases, or solve advanced table reconstruction. Added semantic filtering and semantic chunking regression tests. Tests, ruff, and mypy pass.
 
 ---
 
