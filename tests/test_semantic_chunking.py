@@ -1,6 +1,7 @@
 """Tests for semantic RAG chunk creation."""
 
 from techdoc_parser.chunking import create_semantic_chunks
+from techdoc_parser.chunking.semantic import clean_chunk_text
 from techdoc_parser.core import (
     BoundingBox,
     Document,
@@ -251,3 +252,60 @@ def test_create_semantic_chunks_preserves_legitimate_appendix_content() -> None:
     assert "APPENDIX C. AIR FLIGHT TEST RISK MANAGEMENT PROCESS" in chunks[0].text
     assert "This appendix describes the risk management process." in chunks[0].text
     assert "Appendix C\n\n" not in chunks[0].text
+
+
+def test_clean_chunk_text_removes_embedded_furniture_lines() -> None:
+    """Chunk cleanup should remove embedded page/document furniture lines."""
+    text = "1/31/2012\n\n4040.26B\n\nAppendix C\n\nHowever, there may be risks..."
+
+    cleaned_text = clean_chunk_text(text)
+
+    assert "1/31/2012" not in cleaned_text
+    assert "4040.26B" not in cleaned_text
+    assert "Appendix C" not in cleaned_text
+    assert "However, there may be risks..." in cleaned_text
+
+
+def test_clean_chunk_text_preserves_full_appendix_heading() -> None:
+    """Full appendix headings should remain meaningful chunk content."""
+    text = "APPENDIX C. AIR FLIGHT TEST RISK MANAGEMENT PROCESS"
+
+    assert clean_chunk_text(text) == text
+
+
+def test_clean_chunk_text_preserves_body_appendix_reference() -> None:
+    """Body references to appendices should not be removed."""
+    text = "See Appendix C for a more detailed description of the process."
+
+    assert clean_chunk_text(text) == text
+
+
+def test_clean_chunk_text_removes_page_labels() -> None:
+    """Standalone appendix-style page labels should be removed."""
+    cleaned_text = clean_chunk_text("C-2\n\nMain body text")
+
+    assert "C-2" not in cleaned_text
+    assert cleaned_text == "Main body text"
+
+
+def test_clean_chunk_text_removes_intentionally_blank_page_text() -> None:
+    """Intentionally blank page markers should leave no chunk text."""
+    assert clean_chunk_text("Page intentionally left blank") == ""
+
+
+def test_create_semantic_chunks_cleans_embedded_furniture_lines() -> None:
+    """Semantic chunks should clean furniture lines embedded in paragraph text."""
+    paragraph = _paragraph(
+        "paragraph-1",
+        "1/31/2012\n\n4040.26B\n\nAppendix C\n\nHowever, there may be risks...",
+        ["text-1"],
+    )
+    page = Page(page_number=1, blocks=[paragraph])
+
+    chunks = create_semantic_chunks(_document(page))
+
+    assert len(chunks) == 1
+    assert "1/31/2012" not in chunks[0].text
+    assert "4040.26B" not in chunks[0].text
+    assert "Appendix C" not in chunks[0].text
+    assert "However, there may be risks..." in chunks[0].text

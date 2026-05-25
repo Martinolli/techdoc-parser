@@ -13,6 +13,7 @@ from techdoc_parser.core import (
     TableRegionBlock,
 )
 from techdoc_parser.structure import get_semantic_blocks_for_page
+from techdoc_parser.structure.semantic import is_semantic_furniture_text
 
 
 def create_semantic_chunks(document: Document, max_chars: int = 1200) -> list[Chunk]:
@@ -74,7 +75,7 @@ def create_semantic_chunks(document: Document, max_chars: int = 1200) -> list[Ch
 
 def block_to_chunk_text(block: Block) -> str:
     """Render a semantic block as chunk text."""
-    text = _block_text(block)
+    text = clean_chunk_text(_block_text(block))
     if not text:
         return ""
     if isinstance(block, TableRegionBlock):
@@ -105,6 +106,29 @@ def get_block_page_number(block: Block) -> int | None:
     if block.source is None:
         return None
     return block.source.page_number
+
+
+def clean_chunk_text(text: str) -> str:
+    """Remove standalone page/document furniture lines from chunk text."""
+    cleaned_lines: list[str] = []
+    previous_blank = False
+
+    for line in text.splitlines():
+        stripped_line = line.strip()
+        if not stripped_line:
+            if cleaned_lines and not previous_blank:
+                cleaned_lines.append("")
+                previous_blank = True
+            continue
+        if is_semantic_furniture_text(stripped_line):
+            continue
+        cleaned_lines.append(line)
+        previous_blank = False
+
+    while cleaned_lines and cleaned_lines[-1] == "":
+        cleaned_lines.pop()
+
+    return "\n".join(cleaned_lines)
 
 
 def _create_chunk(
