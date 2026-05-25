@@ -2,7 +2,19 @@
 
 from pathlib import Path
 
-from techdoc_parser.core import BoundingBox, Document, SourceLocation, TextBlock
+from techdoc_parser.core import (
+    Block,
+    BoundingBox,
+    Document,
+    FigureBlock,
+    FormulaBlock,
+    HeadingBlock,
+    ParagraphBlock,
+    SourceLocation,
+    TableBlock,
+    TextBlock,
+)
+from techdoc_parser.structure import get_semantic_blocks_for_page
 
 
 def document_to_markdown(document: Document) -> str:
@@ -56,6 +68,53 @@ def export_document_markdown(document: Document, output_path: str) -> None:
     path.write_text(document_to_markdown(document), encoding="utf-8")
 
 
+def document_to_semantic_markdown(document: Document) -> str:
+    """Render a document as semantic Markdown without raw text-block duplicates."""
+    lines: list[str] = []
+    title = document.metadata.title or document.id
+
+    lines.extend(
+        [
+            f"# {title}",
+            "",
+            f"Source path: {document.source_path}",
+            "",
+            "## Metadata",
+            "",
+        ]
+    )
+    lines.extend(_metadata_lines(document))
+
+    for page in document.pages:
+        lines.extend(
+            [
+                "",
+                f"## Page {page.page_number}",
+                "",
+                f"- has_native_text: {page.has_native_text}",
+                f"- requires_ocr: {page.requires_ocr}",
+                "",
+            ]
+        )
+
+        for block in get_semantic_blocks_for_page(page):
+            rendered_block = _render_semantic_block(block)
+            if rendered_block:
+                lines.extend([rendered_block, ""])
+
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def export_document_semantic_markdown(
+    document: Document,
+    output_path: str | Path,
+) -> None:
+    """Write semantic Markdown to an output path."""
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(document_to_semantic_markdown(document), encoding="utf-8")
+
+
 def _metadata_lines(document: Document) -> list[str]:
     metadata = document.metadata
     fields = [
@@ -105,3 +164,80 @@ def _has_distinct_normalized_text(
     normalized_text: str | None,
 ) -> bool:
     return normalized_text is not None and normalized_text != (text or "")
+
+
+def _block_text(block: Block) -> str:
+    text = block.normalized_text or block.text
+    if text is None and isinstance(block, FigureBlock):
+        text = block.caption
+    if text is None and isinstance(block, FormulaBlock):
+        text = block.latex
+    return text or ""
+
+
+def _render_semantic_block(block: Block) -> str:
+    if isinstance(block, HeadingBlock):
+        return _render_heading_block(block)
+    if isinstance(block, ParagraphBlock):
+        return _render_paragraph_block(block)
+    if isinstance(block, TableBlock):
+        return _render_table_block(block)
+    if isinstance(block, FigureBlock):
+        return _render_figure_block(block)
+    if isinstance(block, FormulaBlock):
+        return _render_formula_block(block)
+    return ""
+
+
+def _render_heading_block(block: HeadingBlock) -> str:
+    level = min(max(block.level, 1), 6)
+    heading_text = _block_text(block)
+    lines = [f"{'#' * level} {heading_text}"]
+    lines.append(_semantic_source_line(block))
+    return "\n".join(lines)
+
+
+def _render_paragraph_block(block: ParagraphBlock) -> str:
+    paragraph_text = _block_text(block)
+    lines = [paragraph_text]
+    lines.append(_semantic_source_line(block))
+    return "\n".join(lines)
+
+
+def _render_table_block(block: TableBlock) -> str:
+    table_text = _block_text(block)
+    lines = [
+        "**Table candidate**",
+        "",
+        _semantic_source_line(block),
+        "",
+        "```text",
+        table_text,
+        "```",
+    ]
+    return "\n".join(lines)
+
+
+def _render_figure_block(block: FigureBlock) -> str:
+    figure_text = _block_text(block)
+    lines = [f"**Figure candidate:** {figure_text}"]
+    lines.append(_semantic_source_line(block))
+    return "\n".join(lines)
+
+
+def _render_formula_block(block: FormulaBlock) -> str:
+    formula_text = _block_text(block)
+    lines = [
+        "**Formula candidate**",
+        "",
+        _semantic_source_line(block),
+        "",
+        formula_text,
+    ]
+    return "\n".join(lines)
+
+
+def _semantic_source_line(block: Block) -> str:
+    page_number = block.source.page_number if block.source is not None else None
+    page = str(page_number) if page_number is not None else "unknown"
+    return f"_Source: page {page}, block {block.id}_"
