@@ -326,3 +326,30 @@ class Document:
     def to_json(self, indent: int = 2) -> str:
         """Return the document as a JSON string."""
         return json.dumps(self.to_dict(), indent=indent)
+
+
+@dataclass
+class Chunk:
+    """A RAG-oriented text chunk with source references."""
+
+    id: str
+    text: str
+    document_id: str | None = None
+    source_page_numbers: list[int] = field(default_factory=list)
+    source_block_ids: list[str] = field(default_factory=list)
+    source_text_block_ids: list[str] = field(default_factory=list)
+    chunk_type: str = "semantic"
+    metadata: dict[str, str] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-serializable dictionary."""
+        return {
+            "id": self.id,
+            "document_id": self.document_id,
+            "text": self.text,
+            "source_page_numbers": self.source_page_numbers,
+            "source_block_ids": self.source_block_ids,
+            "source_text_block_ids": self.source_text_block_ids,
+            "chunk_type": self.chunk_type,
+            "metadata": self.metadata,
+        }

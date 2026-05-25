@@ -3,6 +3,7 @@
 from techdoc_parser.core.models import (
     Block,
     BoundingBox,
+    Chunk,
     Document,
     DocumentMetadata,
     FigureBlock,
@@ -19,6 +20,7 @@ from techdoc_parser.core.models import (
 __all__ = [
     "Block",
     "BoundingBox",
+    "Chunk",
     "Document",
     "DocumentMetadata",
     "FigureBlock",
