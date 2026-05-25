@@ -114,6 +114,7 @@ PDF → structured document model → JSON export → Markdown export → RAG-re
 - [ ] Detect headings using heuristic methods
 - [x] Detect paragraphs
 - [x] Detect basic tables
+- [x] Group fragmented table candidates into table-region candidates
 - [ ] Preserve table row/column structure where possible
 - [ ] Detect potential formula blocks
 - [x] Export structured JSON
@@ -152,6 +153,8 @@ Phase 6B table candidate false-positive reduction completed. Improved table cand
 Phase 6C table candidate precision refinement completed. Added conservative rejection for definition entries, table-reference paragraphs, and figure captions/references while preserving true MIL-STD table detections from page 19 and hidden table/list-table candidates such as acronyms and document modification structures. Added regression tests for definition entries, table-reference paragraphs, figure captions/references, and true table captions, headers, and rows. Table detection remains candidate-level only; Phase 6C does not reconstruct table columns, merge table regions, or create final table structures. Tests, ruff, and mypy pass.
 
 Phase 6D diagram/template-label table filtering completed. Added conservative rejection for process-diagram labels, form/template label groups, and section prose where table-like words appear inside normal sentences, while preserving true MIL-STD table detections from page 19. Added regression tests for diagram-label, template-label, and section-prose false positives plus true table captions, headers, and rows. Table detection remains candidate-level only; Phase 6D does not reconstruct table columns, merge table regions, or create final table structures. Known limitation: figure/diagram-internal text, such as labels inside MIL-STD-882E FIGURE B-1 on page 103, may still be detected as `TableBlock` candidates until FigureBlock / diagram-region detection is implemented. Tests, ruff, and mypy pass.
+
+Phase 9A table region grouping completed. Added `TableRegionBlock` and `create_table_region_blocks_for_page()` to group fragmented table captions, headers, rows, and nearby table-related fragments into conservative table-region candidates after low-level `TableBlock` detection. Low-level `TextBlock`, `ParagraphBlock`, and `TableBlock` objects remain preserved unchanged. Semantic block filtering now prefers `TableRegionBlock` over duplicate low-level table and paragraph fragments, and semantic Markdown renders grouped regions as "Table region candidate". MIL-STD-882E page 19 should now produce grouped table-region candidates for TABLE I and TABLE II. Phase 9A does not reconstruct true rows/columns, generate Markdown table syntax, or perform advanced table extraction. Added table region grouping, semantic filtering, and semantic Markdown tests. Tests, ruff, and mypy pass.
 
 ---
 
