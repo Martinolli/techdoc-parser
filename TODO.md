@@ -247,7 +247,7 @@ Phase 4A text normalization completed. Added the normalization package and `norm
 
 - [x] Define `Chunk` model
 - [x] Implement basic semantic chunk creation
-- [ ] Implement section-aware chunking
+- [x] Implement section-aware chunking
 - [ ] Implement paragraph-aware chunking
 - [ ] Implement table-aware chunking
 - [ ] Implement formula-aware chunking
@@ -264,6 +264,8 @@ Phase 10B chunk JSON export completed. Added `chunks_to_json_dict()`, `chunks_to
 Phase 10C semantic chunk cleanup completed. Semantic block filtering now excludes page/document furniture from RAG-oriented output, including common headers, footers, page numbers, dates, standalone document IDs, short appendix page labels, and "Page intentionally left blank" text. Full document JSON export, debug Markdown export, original `page.blocks`, and original `page.text_blocks` remain unchanged, and legitimate headings such as full appendix titles are preserved. Phase 10C only cleans semantic/chunk output; it does not change the raw traceability model, generate embeddings, connect to vector databases, or solve advanced table reconstruction. Added semantic filtering and semantic chunking regression tests. Tests, ruff, and mypy pass.
 
 Phase 10D embedded chunk furniture cleanup completed. Added line-level cleanup for emitted semantic chunk text so embedded standalone dates, document identifiers, short appendix headers, page labels, and "Page intentionally left blank" lines are removed even when they appear inside a larger paragraph/chunk. Legitimate full appendix headings and body references to appendices are preserved. Full document JSON export, debug Markdown export, raw extraction, and the parser traceability model remain unchanged. Phase 10D does not generate embeddings, connect to vector databases, or solve advanced table reconstruction. Added semantic chunking regression tests. Tests, ruff, and mypy pass.
+
+Phase 10E section-aware chunk metadata completed. Semantic chunks now include lightweight section metadata from preceding `HeadingBlock` objects, including `section_title`, `section_path`, and `section_level` when heading context is available. Heading context supports nested levels and clears deeper levels when higher-level headings appear, and chunking closes active chunks when a new heading starts to avoid mixing content across sections. Existing chunk source references, general metadata, and page/document furniture cleanup remain preserved. Full document JSON, Markdown, and semantic Markdown export behavior remain unchanged. Phase 10E does not implement a full section tree, parent-child document hierarchy, embeddings, vector database export, or advanced table reconstruction. Added section-aware chunking regression tests. Tests, ruff, and mypy pass.
 
 ---
 
