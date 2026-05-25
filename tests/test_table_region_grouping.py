@@ -223,6 +223,179 @@ def test_table_region_does_not_group_unrelated_single_candidate() -> None:
     assert create_table_region_blocks_for_page(page) == []
 
 
+def test_table_region_deduplicates_repeated_fragments_and_source_ids() -> None:
+    """Repeated table/paragraph fragments should appear once in region text."""
+    caption = _table("table-1", "TABLE I. Severity categories", ["text-1"], y0=10.0)
+    table = _table("table-2", "SEVERITY CATEGORIES", ["text-2"], y0=30.0)
+    duplicate_table = _table("table-2", "SEVERITY CATEGORIES", ["text-2"], y0=30.0)
+    duplicate_paragraph = _paragraph(
+        "paragraph-1",
+        "SEVERITY CATEGORIES",
+        ["text-2"],
+        y0=30.0,
+    )
+    row = _table("table-3", "Critical\n2", ["text-3"], y0=50.0)
+    page = Page(
+        page_number=1,
+        blocks=[caption, table, duplicate_table, duplicate_paragraph, row],
+    )
+
+    regions = create_table_region_blocks_for_page(page)
+
+    assert len(regions) == 1
+    assert (regions[0].normalized_text or "").count("SEVERITY CATEGORIES") == 1
+    assert regions[0].rows.count(["SEVERITY CATEGORIES"]) == 1
+    assert regions[0].source_text_block_ids == ["text-1", "text-2", "text-3"]
+    assert regions[0].source_table_block_ids == ["table-1", "table-2", "table-3"]
+    assert regions[0].source_paragraph_block_ids == ["paragraph-1"]
+
+
+def test_table_region_includes_mil_std_table_i_final_row_fragments() -> None:
+    """MIL-STD TABLE I style final rows should stay in the first region."""
+    table_i = _table("table-1", "TABLE I. Severity categories", ["text-1"], y0=10.0)
+    title = _table("table-2", "SEVERITY CATEGORIES", ["text-2"], y0=25.0)
+    header = _table(
+        "table-3",
+        "Description\nSeverity\nCategory\nMishap Result Criteria",
+        ["text-3"],
+        y0=40.0,
+    )
+    catastrophic = _table(
+        "table-4",
+        "Catastrophic\n1\nCould result in death or permanent disability.",
+        ["text-4"],
+        y0=60.0,
+    )
+    critical = _table("table-5", "Critical\n2", ["text-5"], y0=90.0)
+    critical_description = _paragraph(
+        "paragraph-1",
+        "Could result in severe injury, occupational illness, or major damage.",
+        ["text-6"],
+        y0=105.0,
+    )
+    marginal = _table("table-6", "Marginal\n3", ["text-7"], y0=125.0)
+    marginal_description = _paragraph(
+        "paragraph-2",
+        "Could result in minor injury, occupational illness, or minor damage.",
+        ["text-8"],
+        y0=140.0,
+    )
+    negligible = _table(
+        "table-7",
+        "Negligible\n4\nCould result in less than minor injury or damage.",
+        ["text-9"],
+        y0=160.0,
+    )
+    body = _paragraph(
+        "paragraph-3",
+        "b. To determine the appropriate probability level as defined in Table II.",
+        ["text-10"],
+        y0=190.0,
+    )
+    table_ii = _table("table-8", "TABLE II. Probability levels", ["text-11"], y0=230.0)
+    page = Page(
+        page_number=1,
+        blocks=[
+            table_i,
+            title,
+            header,
+            catastrophic,
+            critical,
+            critical_description,
+            marginal,
+            marginal_description,
+            negligible,
+            body,
+            table_ii,
+        ],
+    )
+
+    regions = create_table_region_blocks_for_page(page)
+
+    assert len(regions) == 1
+    assert "Negligible\n4" in (regions[0].normalized_text or "")
+    assert "Could result in severe injury" in (regions[0].normalized_text or "")
+    assert "Could result in minor injury" in (regions[0].normalized_text or "")
+    assert "paragraph-3" not in regions[0].source_paragraph_block_ids
+    assert "To determine the appropriate probability" not in (
+        regions[0].normalized_text or ""
+    )
+
+
+def test_table_region_includes_mil_std_table_ii_final_row_fragments() -> None:
+    """MIL-STD TABLE II style final row fragments should remain grouped."""
+    table_ii = _table("table-1", "TABLE II. Probability levels", ["text-1"], y0=10.0)
+    title = _table("table-2", "PROBABILITY LEVELS", ["text-2"], y0=25.0)
+    header = _table(
+        "table-3",
+        "Description\nLevel\nSpecific Individual Item\nFleet or Inventory",
+        ["text-3"],
+        y0=40.0,
+    )
+    frequent = _table(
+        "table-4", "Frequent\nA\nLikely to occur often.", ["text-4"], y0=60.0
+    )
+    probable = _table(
+        "table-5", "Probable\nB\nWill occur several times.", ["text-5"], y0=85.0
+    )
+    occasional = _table(
+        "table-6",
+        "Occasional\nC\nLikely to occur sometime.",
+        ["text-6"],
+        y0=110.0,
+    )
+    remote = _table(
+        "table-7", "Remote\nD\nUnlikely but possible.", ["text-7"], y0=135.0
+    )
+    improbable = _table(
+        "table-8",
+        "Improbable\nE\nSo unlikely it can be assumed occurrence may not be "
+        "experienced.",
+        ["text-8"],
+        y0=160.0,
+    )
+    eliminated = _table("table-9", "Eliminated\nF", ["text-9"], y0=190.0)
+    eliminated_description = _paragraph(
+        "paragraph-1",
+        "Incapable of occurrence. This level is used when potential hazards are "
+        "identified and later eliminated.",
+        ["text-10"],
+        y0=205.0,
+    )
+    body = _paragraph(
+        "paragraph-2",
+        "(1) When available, the use of appropriate and representative quantitative "
+        "data is preferred.",
+        ["text-11"],
+        y0=240.0,
+    )
+    page = Page(
+        page_number=1,
+        blocks=[
+            table_ii,
+            title,
+            header,
+            frequent,
+            probable,
+            occasional,
+            remote,
+            improbable,
+            eliminated,
+            eliminated_description,
+            body,
+        ],
+    )
+
+    regions = create_table_region_blocks_for_page(page)
+
+    assert len(regions) == 1
+    assert "Eliminated\nF" in (regions[0].normalized_text or "")
+    assert "Incapable of occurrence" in (regions[0].normalized_text or "")
+    assert "paragraph-1" in regions[0].source_paragraph_block_ids
+    assert "paragraph-2" not in regions[0].source_paragraph_block_ids
+    assert "When available" not in (regions[0].normalized_text or "")
+
+
 def test_semantic_blocks_table_region_suppresses_low_level_duplicates() -> None:
     """TableRegionBlock should win over low-level table and paragraph fragments."""
     table = _table("table-1", "TABLE I. Severity categories", ["text-1"], y0=10.0)

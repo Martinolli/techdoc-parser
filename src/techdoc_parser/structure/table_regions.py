@@ -18,8 +18,21 @@ from techdoc_parser.core import (
 from techdoc_parser.structure.tables import is_table_caption_text
 
 _MAX_TABLE_GAP = 80.0
-_MAX_PARAGRAPH_GAP = 55.0
+_MAX_PARAGRAPH_GAP = 70.0
 _LETTERED_BODY_PARAGRAPH_RE = re.compile(r"^[a-z]\.\s+\S.+$", re.IGNORECASE)
+_PAREN_BODY_PARAGRAPH_RE = re.compile(r"^\(\d+\)\s+\S.+$")
+_ROW_LABEL_TERMS = {
+    "catastrophic",
+    "critical",
+    "marginal",
+    "negligible",
+    "frequent",
+    "probable",
+    "occasional",
+    "remote",
+    "improbable",
+    "eliminated",
+}
 
 
 def create_table_region_blocks_for_page(page: Page) -> list[TableRegionBlock]:
@@ -81,46 +94,86 @@ def _collect_region_blocks(
     last_related_block = ordered_blocks[start_index]
 
     for block in ordered_blocks[start_index + 1 :]:
-        if isinstance(block, HeadingBlock | FigureBlock):
-            break
-        if isinstance(block, TableBlock):
-            if _is_table_caption_block(block):
-                break
-            if _vertical_gap(last_related_block, block) > _MAX_TABLE_GAP:
-                break
-            grouped_blocks.append(block)
-            grouped_source_ids.update(_source_text_ids(block))
-            last_related_block = block
-            continue
-        if not isinstance(block, ParagraphBlock):
-            continue
-
-        if _source_text_ids(block) & grouped_source_ids:
-            continue
-        if _vertical_gap(last_related_block, block) > _MAX_PARAGRAPH_GAP:
-            break
-        if _should_include_paragraph_fragment(
+        if not should_continue_table_region(
+            block=block,
+            grouped_blocks=grouped_blocks,
             ordered_blocks=ordered_blocks,
-            paragraph=block,
+            grouped_source_ids=grouped_source_ids,
+            last_related_block=last_related_block,
         ):
-            grouped_blocks.append(block)
-            grouped_source_ids.update(_source_text_ids(block))
+            break
+
+        append_unique_grouped_block(grouped_blocks, block)
+        grouped_source_ids.update(_source_text_ids(block))
+        if _is_table_related_block(block):
             last_related_block = block
-            continue
-        break
 
     return grouped_blocks
+
+
+def should_continue_table_region(
+    *,
+    block: Block,
+    grouped_blocks: list[Block],
+    ordered_blocks: list[Block],
+    grouped_source_ids: set[str],
+    last_related_block: Block,
+) -> bool:
+    """Return whether a block should continue the active table region."""
+    if isinstance(block, HeadingBlock | FigureBlock):
+        return False
+    if isinstance(block, TableBlock):
+        if _is_table_caption_block(block):
+            return False
+        return _should_continue_with_table_block(
+            block, grouped_blocks, last_related_block
+        )
+    if not isinstance(block, ParagraphBlock):
+        return True
+    if _source_text_ids(block) & grouped_source_ids:
+        return True
+    if _vertical_gap(last_related_block, block) > _MAX_PARAGRAPH_GAP:
+        return False
+    if is_body_paragraph_between_tables(block):
+        return False
+    return _should_include_paragraph_fragment(
+        ordered_blocks=ordered_blocks,
+        paragraph=block,
+        previous_block=last_related_block,
+    )
+
+
+def append_unique_grouped_block(grouped_blocks: list[Block], block: Block) -> None:
+    """Append a grouped block unless the same block id is already present."""
+    if any(grouped_block.id == block.id for grouped_block in grouped_blocks):
+        return
+    grouped_blocks.append(block)
 
 
 def _should_include_paragraph_fragment(
     ordered_blocks: list[Block],
     paragraph: ParagraphBlock,
+    previous_block: Block,
 ) -> bool:
-    if _is_body_paragraph_stop(paragraph):
+    if is_body_paragraph_between_tables(paragraph):
         return False
+    if is_table_row_continuation_fragment(paragraph, previous_block):
+        return True
     if _is_short_row_or_cell_fragment(paragraph):
         return True
     return _is_between_table_blocks(ordered_blocks, paragraph)
+
+
+def _should_continue_with_table_block(
+    block: TableBlock,
+    grouped_blocks: list[Block],
+    last_related_block: Block,
+) -> bool:
+    if _vertical_gap(last_related_block, block) > _MAX_TABLE_GAP:
+        return False
+    region_bbox = _union_block_bboxes(grouped_blocks)
+    block_bbox = _bbox_for_block(block)
+    return _horizontally_aligned(region_bbox, block_bbox)
 
 
 def _is_between_table_blocks(
@@ -184,10 +237,11 @@ def _create_table_region_block(
     grouped_blocks: list[Block],
     caption: str | None,
 ) -> TableRegionBlock:
-    text = "\n".join(
-        _block_text(block) for block in grouped_blocks if _block_text(block)
+    text_fragments, normalized_fragments = _deduplicated_region_fragments(
+        grouped_blocks
     )
-    normalized_text = "\n".join(_normalized_texts(grouped_blocks))
+    text = "\n".join(text_fragments)
+    normalized_text = "\n".join(normalized_fragments)
     rows = [[line] for line in _non_empty_lines(normalized_text)]
 
     source_text_block_ids: list[str] = []
@@ -195,12 +249,11 @@ def _create_table_region_block(
     source_paragraph_block_ids: list[str] = []
     for block in grouped_blocks:
         if isinstance(block, TableBlock):
-            source_table_block_ids.append(block.id)
+            _append_unique_id(source_table_block_ids, block.id)
         if isinstance(block, ParagraphBlock):
-            source_paragraph_block_ids.append(block.id)
-        for source_text_id in _source_text_ids(block):
-            if source_text_id not in source_text_block_ids:
-                source_text_block_ids.append(source_text_id)
+            _append_unique_id(source_paragraph_block_ids, block.id)
+        for source_text_id in _source_text_id_values(block):
+            _append_unique_id(source_text_block_ids, source_text_id)
 
     return TableRegionBlock(
         id=f"page-{page.page_number}-table-region-{region_index}",
@@ -247,6 +300,11 @@ def _union_bboxes(bboxes: list[BoundingBox]) -> BoundingBox:
     )
 
 
+def _union_block_bboxes(blocks: list[Block]) -> BoundingBox | None:
+    bboxes = [bbox for block in blocks if (bbox := _bbox_for_block(block)) is not None]
+    return _union_bboxes(bboxes) if bboxes else None
+
+
 def _block_sort_key(block: Block, fallback_index: int) -> tuple[int, float, float, int]:
     bbox = _bbox_for_block(block)
     if bbox is None:
@@ -270,11 +328,32 @@ def _is_table_caption_block(block: TableBlock) -> bool:
     return is_table_caption_text(_block_normalized_text(block))
 
 
-def _is_body_paragraph_stop(block: ParagraphBlock) -> bool:
+def is_body_paragraph_between_tables(block: ParagraphBlock) -> bool:
+    """Return whether a paragraph is body prose that should stop grouping."""
     normalized_text = _block_normalized_text(block)
     if not normalized_text:
         return True
-    return _LETTERED_BODY_PARAGRAPH_RE.match(normalized_text) is not None
+    if _LETTERED_BODY_PARAGRAPH_RE.match(normalized_text) is not None:
+        return True
+    if _PAREN_BODY_PARAGRAPH_RE.match(normalized_text) is not None:
+        return True
+    return _is_long_body_prose(normalized_text)
+
+
+def is_table_row_continuation_fragment(
+    block: Block,
+    previous_block: Block | None = None,
+) -> bool:
+    """Return whether a block looks like a continuation of a table row."""
+    text = _block_normalized_text(block)
+    if not text:
+        return False
+    if isinstance(block, ParagraphBlock) and is_body_paragraph_between_tables(block):
+        return False
+    lines = _non_empty_lines(text)
+    if _starts_with_known_row_label(lines):
+        return True
+    return previous_block is not None and _is_label_value_block(previous_block)
 
 
 def _is_short_row_or_cell_fragment(block: ParagraphBlock) -> bool:
@@ -287,10 +366,97 @@ def _is_short_row_or_cell_fragment(block: ParagraphBlock) -> bool:
     return not any(line.endswith((".", "?", "!")) for line in lines)
 
 
+def is_duplicate_table_region_fragment(
+    text: str,
+    seen_fragments: set[str],
+) -> bool:
+    """Return whether fragment text already appears in the region."""
+    key = normalize_fragment_for_dedup(text)
+    return bool(key and key in seen_fragments)
+
+
+def normalize_fragment_for_dedup(text: str) -> str:
+    """Normalize a whole fragment for table-region deduplication."""
+    return " ".join(text.split()).casefold()
+
+
+def _deduplicated_region_fragments(
+    grouped_blocks: list[Block],
+) -> tuple[list[str], list[str]]:
+    text_fragments: list[str] = []
+    normalized_fragments: list[str] = []
+    seen_fragments: set[str] = set()
+
+    for block in grouped_blocks:
+        normalized_text = _block_normalized_text(block)
+        if is_duplicate_table_region_fragment(normalized_text, seen_fragments):
+            continue
+        key = normalize_fragment_for_dedup(normalized_text)
+        if key:
+            seen_fragments.add(key)
+        text = _block_text(block)
+        if text:
+            text_fragments.append(text)
+        if normalized_text:
+            normalized_fragments.append(normalized_text)
+
+    return text_fragments, normalized_fragments
+
+
+def _append_unique_id(ids: list[str], value: str) -> None:
+    if value not in ids:
+        ids.append(value)
+
+
+def _is_table_related_block(block: Block) -> bool:
+    return isinstance(block, TableBlock | ParagraphBlock)
+
+
+def _horizontally_aligned(
+    region_bbox: BoundingBox | None,
+    block_bbox: BoundingBox | None,
+) -> bool:
+    if region_bbox is None or block_bbox is None:
+        return True
+    overlap = min(region_bbox.x1, block_bbox.x1) - max(region_bbox.x0, block_bbox.x0)
+    if overlap > 0:
+        return True
+    return abs(region_bbox.x0 - block_bbox.x0) <= 48.0
+
+
+def _starts_with_known_row_label(lines: list[str]) -> bool:
+    if not lines:
+        return False
+    first_line = lines[0].casefold()
+    return first_line in _ROW_LABEL_TERMS
+
+
+def _is_label_value_block(block: Block) -> bool:
+    lines = _non_empty_lines(_block_normalized_text(block))
+    if len(lines) < 2 or not _starts_with_known_row_label(lines):
+        return False
+    value = lines[1]
+    return value.isdigit() or (len(value) == 1 and value.isalpha())
+
+
+def _is_long_body_prose(text: str) -> bool:
+    words = text.split()
+    if len(words) < 24:
+        return False
+    lowercase_words = sum(1 for word in words if word[:1].islower())
+    lowercase_ratio = lowercase_words / len(words)
+    sentence_marks = sum(text.count(mark) for mark in ".;:")
+    return lowercase_ratio >= 0.45 and sentence_marks >= 2
+
+
 def _source_text_ids(block: Block) -> set[str]:
+    return set(_source_text_id_values(block))
+
+
+def _source_text_id_values(block: Block) -> list[str]:
     if isinstance(block, TableBlock | ParagraphBlock):
-        return set(block.source_text_block_ids)
-    return set()
+        return block.source_text_block_ids
+    return []
 
 
 def _block_text(block: Block) -> str:
@@ -299,10 +465,6 @@ def _block_text(block: Block) -> str:
 
 def _block_normalized_text(block: Block) -> str:
     return block.normalized_text or block.text or ""
-
-
-def _normalized_texts(blocks: list[Block]) -> list[str]:
-    return [text for block in blocks if (text := _block_normalized_text(block))]
 
 
 def _non_empty_lines(text: str | None) -> list[str]:
