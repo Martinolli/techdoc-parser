@@ -118,6 +118,19 @@ def _valid_page() -> Page:
     )
 
 
+def _native_text_only_page(lines: list[str]) -> Page:
+    text_blocks = [
+        _text_block(id=f"text-{index}", text=line)
+        for index, line in enumerate(lines, start=1)
+    ]
+    return Page(
+        page_number=1,
+        has_native_text=True,
+        blocks=[*text_blocks],
+        text_blocks=text_blocks,
+    )
+
+
 def test_validation_issue_to_dict() -> None:
     """ValidationIssue should serialize all fields."""
     issue = ValidationIssue(
@@ -309,6 +322,77 @@ def test_validate_document_native_text_without_semantic_blocks_creates_warning()
 
     assert "page.no_semantic_blocks" in _codes(report)
     assert report.summary["pages_without_semantic_blocks"] == 1
+
+
+def test_validate_document_intentionally_blank_page_is_furniture_only_info() -> None:
+    """Intentionally blank pages should not require semantic-block review."""
+    page = _native_text_only_page(
+        [
+            "1/31/2012",
+            "4040.26B",
+            "Appendix G",
+            "Page intentionally left blank",
+            "G-4",
+        ]
+    )
+
+    report = validate_document(_document([page]))
+
+    assert "page.no_semantic_blocks" not in _codes(report)
+    assert "page.furniture_only" in _codes(report)
+    assert report.summary["pages_without_semantic_blocks"] == 0
+    assert report.summary["pages_furniture_only"] == 1
+    assert report.warning_count == 0
+    assert report.info_count == 1
+
+
+def test_validate_document_header_footer_only_page_is_furniture_only_info() -> None:
+    """Header/footer-only pages should not require semantic-block review."""
+    page = _native_text_only_page(
+        [
+            "1/31/2012",
+            "4040.26B",
+            "Appendix C",
+            "C-2",
+        ]
+    )
+
+    report = validate_document(_document([page]))
+
+    assert "page.no_semantic_blocks" not in _codes(report)
+    assert "page.furniture_only" in _codes(report)
+    assert report.summary["pages_without_semantic_blocks"] == 0
+    assert report.summary["pages_furniture_only"] == 1
+    assert report.warning_count == 0
+
+
+def test_validate_document_meaningful_native_text_without_semantic_blocks_warns() -> (
+    None
+):
+    """Meaningful native text without semantic blocks should still be reviewed."""
+    page = _native_text_only_page(
+        ["This page contains meaningful body content that should have been parsed."]
+    )
+
+    report = validate_document(_document([page]))
+
+    assert "page.no_semantic_blocks" in _codes(report)
+    assert "page.furniture_only" not in _codes(report)
+    assert report.summary["pages_without_semantic_blocks"] == 1
+    assert report.summary["pages_furniture_only"] == 0
+    assert report.warning_count == 1
+
+
+def test_decide_ingestion_status_passes_furniture_only_page_info() -> None:
+    """Furniture-only page info should not block automated ingestion."""
+    page = _native_text_only_page(["Page intentionally left blank"])
+    report = validate_document(_document([page]))
+
+    decision = decide_ingestion_status(report)
+
+    assert "page.furniture_only" in _codes(report)
+    assert decision.status == "pass"
+    assert decision.can_ingest is True
 
 
 def test_validate_document_many_table_candidates_creates_warning() -> None:

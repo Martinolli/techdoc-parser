@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from techdoc_parser.core import Chunk, Document, TableBlock, TableRegionBlock
+from techdoc_parser.core import Chunk, Document, Page, TableBlock, TableRegionBlock
 from techdoc_parser.structure import get_semantic_blocks_for_page
 from techdoc_parser.structure.semantic import is_semantic_furniture_text
 
@@ -148,6 +148,7 @@ def validate_document(document: Document) -> ValidationReport:
     issues: list[ValidationIssue] = []
     pages_requiring_ocr = 0
     pages_without_semantic_blocks = 0
+    pages_furniture_only = 0
 
     if not document.pages:
         issues.append(
@@ -182,15 +183,29 @@ def validate_document(document: Document) -> ValidationReport:
 
         semantic_blocks = get_semantic_blocks_for_page(page)
         if page.has_native_text and not page.requires_ocr and not semantic_blocks:
-            pages_without_semantic_blocks += 1
-            issues.append(
-                ValidationIssue(
-                    code="page.no_semantic_blocks",
-                    severity=VALIDATION_WARNING,
-                    message="Page has native text but no semantic blocks.",
-                    page_number=page.page_number,
+            if is_furniture_only_page(page):
+                pages_furniture_only += 1
+                issues.append(
+                    ValidationIssue(
+                        code="page.furniture_only",
+                        severity=VALIDATION_INFO,
+                        message=(
+                            "Page contains only page furniture or intentionally "
+                            "blank content."
+                        ),
+                        page_number=page.page_number,
+                    )
                 )
-            )
+            else:
+                pages_without_semantic_blocks += 1
+                issues.append(
+                    ValidationIssue(
+                        code="page.no_semantic_blocks",
+                        severity=VALIDATION_WARNING,
+                        message="Page has native text but no semantic blocks.",
+                        page_number=page.page_number,
+                    )
+                )
 
         table_blocks = [block for block in page.blocks if isinstance(block, TableBlock)]
         table_regions = [
@@ -227,6 +242,7 @@ def validate_document(document: Document) -> ValidationReport:
             "chunk_count": 0,
             "pages_requiring_ocr": pages_requiring_ocr,
             "pages_without_semantic_blocks": pages_without_semantic_blocks,
+            "pages_furniture_only": pages_furniture_only,
             "chunks_empty_text": 0,
             "chunks_very_short": 0,
             "chunks_very_long": 0,
@@ -356,6 +372,7 @@ def validate_chunks(chunks: list[Chunk]) -> ValidationReport:
             "chunk_count": len(chunks),
             "pages_requiring_ocr": 0,
             "pages_without_semantic_blocks": 0,
+            "pages_furniture_only": 0,
             "chunks_empty_text": chunks_empty_text,
             "chunks_very_short": chunks_very_short,
             "chunks_very_long": chunks_very_long,
@@ -388,6 +405,10 @@ def validate_document_and_chunks(
                 document_report,
                 "pages_without_semantic_blocks",
             ),
+            "pages_furniture_only": _summary_int(
+                document_report,
+                "pages_furniture_only",
+            ),
             "chunks_empty_text": _summary_int(chunk_report, "chunks_empty_text"),
             "chunks_very_short": _summary_int(chunk_report, "chunks_very_short"),
             "chunks_very_long": _summary_int(chunk_report, "chunks_very_long"),
@@ -408,12 +429,38 @@ def validate_document_and_chunks_with_decision(
     return report, decide_ingestion_status(report)
 
 
+def is_furniture_only_page(page: Page) -> bool:
+    """Return whether page text is only furniture or intentionally blank content."""
+    if not page.text_blocks:
+        return False
+
+    for text_block in page.text_blocks:
+        text = " ".join((text_block.normalized_text or text_block.text or "").split())
+        if not text:
+            continue
+        if _has_text_block_furniture_flag(text_block):
+            continue
+        if is_semantic_furniture_text(text):
+            continue
+        return False
+    return True
+
+
 def _has_possible_furniture_leak(text: str) -> bool:
     for line in text.splitlines():
         stripped_line = line.strip()
         if stripped_line and is_semantic_furniture_text(stripped_line):
             return True
     return False
+
+
+def _has_text_block_furniture_flag(text_block: object) -> bool:
+    return bool(
+        getattr(text_block, "is_page_furniture", False)
+        or getattr(text_block, "is_page_header", False)
+        or getattr(text_block, "is_page_footer", False)
+        or getattr(text_block, "is_page_number", False)
+    )
 
 
 def _chunk_document_id(chunks: list[Chunk]) -> str | None:
