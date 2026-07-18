@@ -280,10 +280,13 @@ Phase 10E section-aware chunk metadata completed. Semantic chunks now include li
 - [x] Flag pages requiring human review
 - [x] Generate parsing quality report
 - [x] Generate ingestion-readiness gate decision
+- [x] Tune furniture-only page validation severity
 
 Phase 11A basic validation report completed. Added `ValidationIssue`, `ValidationReport`, `validate_document()`, `validate_chunks()`, and `validate_document_and_chunks()` with report-only quality checks for empty documents, OCR-required pages, missing text blocks, missing semantic blocks, excessive table candidates, multiple table regions, empty/short/long chunks, missing source references, possible furniture leakage, and missing section metadata. Validation reports include issue counts and summary metrics, validation JSON export is available, and the CLI can write validation reports with `--validation-output`. Phase 11A is a conservative quality gate only: it does not block execution, modify parsed content, generate embeddings, or perform RAG ingestion. Tests, ruff, and mypy pass.
 
 Phase 11B validation decision / ingestion gate completed. Added `ValidationDecision`, `decide_ingestion_status()`, and `validate_document_and_chunks_with_decision()` so validation reports can be classified as `pass`, `review`, or `fail` with `can_ingest`, reason, issue counts, and review reasons. Info-only findings do not block ingestion, warnings produce review status, and errors produce fail status. Validation decision JSON export, combined validation gate JSON export, and CLI `--validation-gate-output` support are available. Existing validation report, parse, chunk, export, and CLI exit-code behavior remains unchanged. Phase 11B does not perform RAG ingestion, generate embeddings, connect to vector databases, or modify parsed content. Tests, ruff, and mypy pass.
+
+Phase 11C furniture-only page validation tuning completed. Validation now distinguishes meaningful pages with missing semantic output from furniture-only or intentionally blank pages. Pages containing only headers, footers, dates, document identifiers, short appendix labels, page labels, or "Page intentionally left blank" no longer trigger `page.no_semantic_blocks` warnings and may be reported as `page.furniture_only` info. Gate decisions now pass when furniture-only pages are the only findings, while meaningful native text with missing semantic output still warns. Existing parsing, chunking, export, validation report, and CLI exit-code behavior remains unchanged. Phase 11C does not change semantic extraction, generate embeddings, or perform RAG ingestion. Tests, ruff, and mypy pass.
 
 ---
 
