@@ -5,6 +5,7 @@ from pathlib import Path
 
 from techdoc_parser.chunking import create_semantic_chunks
 from techdoc_parser.core import Chunk, Document
+from techdoc_parser.validation import ValidationReport
 
 
 def export_document_json(
@@ -55,3 +56,22 @@ def export_document_chunks_json(
     """Create semantic chunks for a document and write them as JSON."""
     chunks = create_semantic_chunks(document, max_chars=max_chars)
     export_chunks_json(chunks, output_path, indent=indent)
+
+
+def validation_report_to_json(
+    report: ValidationReport,
+    indent: int = 2,
+) -> str:
+    """Return a validation report as a JSON string."""
+    return json.dumps(report.to_dict(), indent=indent)
+
+
+def export_validation_report_json(
+    report: ValidationReport,
+    output_path: str | Path,
+    indent: int = 2,
+) -> None:
+    """Write a validation report as JSON to an output path."""
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(validation_report_to_json(report, indent=indent), encoding="utf-8")

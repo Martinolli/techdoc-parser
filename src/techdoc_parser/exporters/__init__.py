@@ -6,6 +6,8 @@ from techdoc_parser.exporters.json_exporter import (
     export_chunks_json,
     export_document_chunks_json,
     export_document_json,
+    export_validation_report_json,
+    validation_report_to_json,
 )
 from techdoc_parser.exporters.markdown_exporter import (
     document_to_markdown,
@@ -24,4 +26,6 @@ __all__ = [
     "export_document_json",
     "export_document_markdown",
     "export_document_semantic_markdown",
+    "export_validation_report_json",
+    "validation_report_to_json",
 ]
