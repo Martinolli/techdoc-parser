@@ -271,14 +271,16 @@ Phase 10E section-aware chunk metadata completed. Semantic chunks now include li
 
 ## 11. Validation Layer
 
-- [ ] Define validation checks
-- [ ] Validate document model completeness
+- [x] Define validation checks
+- [x] Validate document model completeness
 - [ ] Validate page sequence
 - [ ] Validate table integrity
-- [ ] Validate missing source references
+- [x] Validate missing source references
 - [ ] Validate low-confidence extractions
-- [ ] Flag pages requiring human review
-- [ ] Generate parsing quality report
+- [x] Flag pages requiring human review
+- [x] Generate parsing quality report
+
+Phase 11A basic validation report completed. Added `ValidationIssue`, `ValidationReport`, `validate_document()`, `validate_chunks()`, and `validate_document_and_chunks()` with report-only quality checks for empty documents, OCR-required pages, missing text blocks, missing semantic blocks, excessive table candidates, multiple table regions, empty/short/long chunks, missing source references, possible furniture leakage, and missing section metadata. Validation reports include issue counts and summary metrics, validation JSON export is available, and the CLI can write validation reports with `--validation-output`. Phase 11A is a conservative quality gate only: it does not block execution, modify parsed content, generate embeddings, or perform RAG ingestion. Tests, ruff, and mypy pass.
 
 ---
 
