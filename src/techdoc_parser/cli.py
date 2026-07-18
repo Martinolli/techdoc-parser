@@ -11,6 +11,7 @@ from techdoc_parser.exporters import (
     export_chunks_json,
     export_document_json,
     export_validation_gate_json,
+    export_validation_gate_markdown,
     export_validation_report_json,
 )
 from techdoc_parser.parser import parse_document
@@ -54,6 +55,10 @@ def main(argv: list[str] | None = None) -> int:
         "--validation-gate-output",
         help="Optional combined validation gate JSON output path.",
     )
+    parser.add_argument(
+        "--validation-summary-output",
+        help="Optional validation gate Markdown summary output path.",
+    )
     args = parser.parse_args(argv)
 
     input_path = cast(str, args.input_path)
@@ -63,6 +68,10 @@ def main(argv: list[str] | None = None) -> int:
     chunk_max_chars = cast(int, args.chunk_max_chars)
     validation_output_path = cast(str | None, args.validation_output)
     validation_gate_output_path = cast(str | None, args.validation_gate_output)
+    validation_summary_output_path = cast(
+        str | None,
+        args.validation_summary_output,
+    )
 
     try:
         document = parse_document(input_path)
@@ -72,6 +81,7 @@ def main(argv: list[str] | None = None) -> int:
             chunks_output_path is not None
             or validation_output_path is not None
             or validation_gate_output_path is not None
+            or validation_summary_output_path is not None
         ):
             chunks = create_semantic_chunks(document, max_chars=chunk_max_chars)
         if chunks_output_path is not None and chunks is not None:
@@ -79,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
         if (
             validation_output_path is not None
             or validation_gate_output_path is not None
+            or validation_summary_output_path is not None
         ) and chunks is not None:
             report, decision = validate_document_and_chunks_with_decision(
                 document,
@@ -97,6 +108,12 @@ def main(argv: list[str] | None = None) -> int:
                     validation_gate_output_path,
                     indent=indent,
                 )
+            if validation_summary_output_path is not None:
+                export_validation_gate_markdown(
+                    report,
+                    decision,
+                    validation_summary_output_path,
+                )
     except Exception as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
@@ -108,5 +125,9 @@ def main(argv: list[str] | None = None) -> int:
         message += f" Wrote validation JSON to '{validation_output_path}'."
     if validation_gate_output_path is not None:
         message += f" Wrote validation gate JSON to '{validation_gate_output_path}'."
+    if validation_summary_output_path is not None:
+        message += (
+            f" Wrote validation summary Markdown to '{validation_summary_output_path}'."
+        )
     print(message)
     return 0

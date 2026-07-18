@@ -127,6 +127,46 @@ def test_cli_can_write_validation_gate_json(tmp_path: Path) -> None:
     assert gate_data["decision"]["status"] in {"pass", "review", "fail"}
 
 
+def test_cli_can_write_validation_summary_markdown(tmp_path: Path) -> None:
+    """CLI should optionally write validation gate Markdown summary output."""
+    input_path = tmp_path / "manual.pdf"
+    output_path = tmp_path / "output" / "manual.json"
+    chunks_output_path = tmp_path / "output" / "chunks.json"
+    validation_output_path = tmp_path / "output" / "validation.json"
+    gate_output_path = tmp_path / "output" / "gate.json"
+    summary_output_path = tmp_path / "output" / "validation_summary.md"
+    _create_test_pdf(input_path, text="This generated PDF creates a body paragraph.")
+
+    result = main(
+        [
+            str(input_path),
+            "--output",
+            str(output_path),
+            "--chunks-output",
+            str(chunks_output_path),
+            "--validation-output",
+            str(validation_output_path),
+            "--validation-gate-output",
+            str(gate_output_path),
+            "--validation-summary-output",
+            str(summary_output_path),
+        ]
+    )
+
+    assert result == 0
+    assert output_path.exists()
+    assert chunks_output_path.exists()
+    assert validation_output_path.exists()
+    assert gate_output_path.exists()
+    assert summary_output_path.exists()
+
+    summary = summary_output_path.read_text(encoding="utf-8")
+    assert "# Validation Gate Summary" in summary
+    assert "Status" in summary
+    assert "Summary" in summary
+    assert "Issues" in summary
+
+
 def test_cli_creates_chunks_internally_for_validation_gate(tmp_path: Path) -> None:
     """CLI gate validation should not require chunks JSON output."""
     input_path = tmp_path / "manual.pdf"
