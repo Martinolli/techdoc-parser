@@ -78,6 +78,71 @@ class ValidationReport:
         }
 
 
+@dataclass
+class ValidationDecision:
+    """A simple downstream ingestion-readiness decision."""
+
+    status: str
+    can_ingest: bool
+    reason: str
+    issue_count: int
+    error_count: int
+    warning_count: int
+    info_count: int
+    review_reasons: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-serializable dictionary."""
+        return {
+            "status": self.status,
+            "can_ingest": self.can_ingest,
+            "reason": self.reason,
+            "issue_count": self.issue_count,
+            "error_count": self.error_count,
+            "warning_count": self.warning_count,
+            "info_count": self.info_count,
+            "review_reasons": self.review_reasons,
+        }
+
+
+def decide_ingestion_status(report: ValidationReport) -> ValidationDecision:
+    """Convert a validation report into an ingestion-readiness decision."""
+    if report.error_count > 0:
+        return ValidationDecision(
+            status="fail",
+            can_ingest=False,
+            reason="Validation errors are present; do not ingest automatically.",
+            issue_count=report.issue_count,
+            error_count=report.error_count,
+            warning_count=report.warning_count,
+            info_count=report.info_count,
+            review_reasons=_issue_reasons(report.issues, VALIDATION_ERROR),
+        )
+
+    if report.warning_count > 0:
+        return ValidationDecision(
+            status="review",
+            can_ingest=False,
+            reason="Validation warnings require review before automated ingestion.",
+            issue_count=report.issue_count,
+            error_count=report.error_count,
+            warning_count=report.warning_count,
+            info_count=report.info_count,
+            review_reasons=_issue_reasons(report.issues, VALIDATION_WARNING),
+        )
+
+    return ValidationDecision(
+        status="pass",
+        can_ingest=True,
+        reason="No blocking validation findings are present.",
+        issue_count=report.issue_count,
+        error_count=report.error_count,
+        warning_count=report.warning_count,
+        info_count=report.info_count,
+        review_reasons=[],
+    )
+
+
 def validate_document(document: Document) -> ValidationReport:
     """Validate parsed document structure and return a quality report."""
     issues: list[ValidationIssue] = []
@@ -334,6 +399,15 @@ def validate_document_and_chunks(
     )
 
 
+def validate_document_and_chunks_with_decision(
+    document: Document,
+    chunks: list[Chunk],
+) -> tuple[ValidationReport, ValidationDecision]:
+    """Validate a document and chunks, then return a gate decision."""
+    report = validate_document_and_chunks(document, chunks)
+    return report, decide_ingestion_status(report)
+
+
 def _has_possible_furniture_leak(text: str) -> bool:
     for line in text.splitlines():
         stripped_line = line.strip()
@@ -363,3 +437,20 @@ def _count_issues_by_severity(
     severity: str,
 ) -> int:
     return sum(1 for issue in issues if issue.severity == severity)
+
+
+def _issue_reasons(
+    issues: list[ValidationIssue],
+    severity: str,
+) -> list[str]:
+    reasons: list[str] = []
+    seen: set[str] = set()
+    for issue in issues:
+        if issue.severity != severity:
+            continue
+        reason = f"{issue.code}: {issue.message}"
+        if reason in seen:
+            continue
+        reasons.append(reason)
+        seen.add(reason)
+    return reasons

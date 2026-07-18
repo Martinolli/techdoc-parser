@@ -10,10 +10,11 @@ from techdoc_parser.chunking import create_semantic_chunks
 from techdoc_parser.exporters import (
     export_chunks_json,
     export_document_json,
+    export_validation_gate_json,
     export_validation_report_json,
 )
 from techdoc_parser.parser import parse_document
-from techdoc_parser.validation import validate_document_and_chunks
+from techdoc_parser.validation import validate_document_and_chunks_with_decision
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -49,6 +50,10 @@ def main(argv: list[str] | None = None) -> int:
         "--validation-output",
         help="Optional validation report JSON output path.",
     )
+    parser.add_argument(
+        "--validation-gate-output",
+        help="Optional combined validation gate JSON output path.",
+    )
     args = parser.parse_args(argv)
 
     input_path = cast(str, args.input_path)
@@ -57,21 +62,41 @@ def main(argv: list[str] | None = None) -> int:
     chunks_output_path = cast(str | None, args.chunks_output)
     chunk_max_chars = cast(int, args.chunk_max_chars)
     validation_output_path = cast(str | None, args.validation_output)
+    validation_gate_output_path = cast(str | None, args.validation_gate_output)
 
     try:
         document = parse_document(input_path)
         export_document_json(document, output_path, indent=indent)
         chunks = None
-        if chunks_output_path is not None or validation_output_path is not None:
+        if (
+            chunks_output_path is not None
+            or validation_output_path is not None
+            or validation_gate_output_path is not None
+        ):
             chunks = create_semantic_chunks(document, max_chars=chunk_max_chars)
         if chunks_output_path is not None and chunks is not None:
             export_chunks_json(chunks, chunks_output_path, indent=indent)
-        if validation_output_path is not None and chunks is not None:
-            export_validation_report_json(
-                validate_document_and_chunks(document, chunks),
-                validation_output_path,
-                indent=indent,
+        if (
+            validation_output_path is not None
+            or validation_gate_output_path is not None
+        ) and chunks is not None:
+            report, decision = validate_document_and_chunks_with_decision(
+                document,
+                chunks,
             )
+            if validation_output_path is not None:
+                export_validation_report_json(
+                    report,
+                    validation_output_path,
+                    indent=indent,
+                )
+            if validation_gate_output_path is not None:
+                export_validation_gate_json(
+                    report,
+                    decision,
+                    validation_gate_output_path,
+                    indent=indent,
+                )
     except Exception as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
@@ -81,5 +106,7 @@ def main(argv: list[str] | None = None) -> int:
         message += f" Wrote chunks JSON to '{chunks_output_path}'."
     if validation_output_path is not None:
         message += f" Wrote validation JSON to '{validation_output_path}'."
+    if validation_gate_output_path is not None:
+        message += f" Wrote validation gate JSON to '{validation_gate_output_path}'."
     print(message)
     return 0

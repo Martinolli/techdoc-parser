@@ -92,6 +92,67 @@ def test_cli_can_write_validation_report_json(tmp_path: Path) -> None:
     assert "chunk_count" in validation_data["summary"]
 
 
+def test_cli_can_write_validation_gate_json(tmp_path: Path) -> None:
+    """CLI should optionally write combined validation gate JSON output."""
+    input_path = tmp_path / "manual.pdf"
+    output_path = tmp_path / "output" / "manual.json"
+    chunks_output_path = tmp_path / "output" / "chunks.json"
+    validation_output_path = tmp_path / "output" / "validation.json"
+    gate_output_path = tmp_path / "output" / "gate.json"
+    _create_test_pdf(input_path, text="This generated PDF creates a body paragraph.")
+
+    result = main(
+        [
+            str(input_path),
+            "--output",
+            str(output_path),
+            "--chunks-output",
+            str(chunks_output_path),
+            "--validation-output",
+            str(validation_output_path),
+            "--validation-gate-output",
+            str(gate_output_path),
+        ]
+    )
+
+    assert result == 0
+    assert output_path.exists()
+    assert chunks_output_path.exists()
+    assert validation_output_path.exists()
+    assert gate_output_path.exists()
+
+    gate_data = json.loads(gate_output_path.read_text(encoding="utf-8"))
+    assert "decision" in gate_data
+    assert "report" in gate_data
+    assert gate_data["decision"]["status"] in {"pass", "review", "fail"}
+
+
+def test_cli_creates_chunks_internally_for_validation_gate(tmp_path: Path) -> None:
+    """CLI gate validation should not require chunks JSON output."""
+    input_path = tmp_path / "manual.pdf"
+    output_path = tmp_path / "output" / "manual.json"
+    gate_output_path = tmp_path / "output" / "gate.json"
+    _create_test_pdf(input_path, text="This generated PDF creates a body paragraph.")
+
+    result = main(
+        [
+            str(input_path),
+            "--output",
+            str(output_path),
+            "--validation-gate-output",
+            str(gate_output_path),
+        ]
+    )
+
+    assert result == 0
+    assert output_path.exists()
+    assert gate_output_path.exists()
+
+    gate_data = json.loads(gate_output_path.read_text(encoding="utf-8"))
+    assert "decision" in gate_data
+    assert gate_data["report"]["summary"]["chunk_count"] >= 1
+
+
 def test_cli_creates_chunks_internally_for_validation(tmp_path: Path) -> None:
     """CLI validation should not require chunks JSON output."""
     input_path = tmp_path / "manual.pdf"

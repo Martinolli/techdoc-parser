@@ -16,15 +16,21 @@ from techdoc_parser.core import (
     TextBlock,
 )
 from techdoc_parser.exporters import (
+    export_validation_gate_json,
     export_validation_report_json,
+    validation_decision_to_json,
+    validation_gate_to_json,
     validation_report_to_json,
 )
 from techdoc_parser.validation import (
+    ValidationDecision,
     ValidationIssue,
     ValidationReport,
+    decide_ingestion_status,
     validate_chunks,
     validate_document,
     validate_document_and_chunks,
+    validate_document_and_chunks_with_decision,
 )
 
 
@@ -101,6 +107,17 @@ def _codes(report: ValidationReport) -> list[str]:
     return [issue.code for issue in report.issues]
 
 
+def _valid_page() -> Page:
+    text_block = _text_block()
+    paragraph = _paragraph()
+    return Page(
+        page_number=1,
+        has_native_text=True,
+        blocks=[text_block, paragraph],
+        text_blocks=[text_block],
+    )
+
+
 def test_validation_issue_to_dict() -> None:
     """ValidationIssue should serialize all fields."""
     issue = ValidationIssue(
@@ -119,6 +136,31 @@ def test_validation_issue_to_dict() -> None:
         "page_number": 2,
         "block_id": "block-1",
         "chunk_id": "chunk-1",
+    }
+
+
+def test_validation_decision_to_dict() -> None:
+    """ValidationDecision should serialize all fields."""
+    decision = ValidationDecision(
+        status="review",
+        can_ingest=False,
+        reason="Warnings require review.",
+        issue_count=2,
+        error_count=0,
+        warning_count=1,
+        info_count=1,
+        review_reasons=["chunk.very_short: Chunk text is very short."],
+    )
+
+    assert decision.to_dict() == {
+        "status": "review",
+        "can_ingest": False,
+        "reason": "Warnings require review.",
+        "issue_count": 2,
+        "error_count": 0,
+        "warning_count": 1,
+        "info_count": 1,
+        "review_reasons": ["chunk.very_short: Chunk text is very short."],
     }
 
 
@@ -147,6 +189,79 @@ def test_validation_report_to_dict_counts_issues() -> None:
         "has_errors": True,
         "has_warnings": True,
     }
+
+
+def test_decide_ingestion_status_fails_for_error_report() -> None:
+    """Validation errors should fail the ingestion gate."""
+    report = ValidationReport(
+        document_id="manual",
+        source_path="manual.pdf",
+        issues=[ValidationIssue("document.empty", "error", "Document is empty.")],
+    )
+
+    decision = decide_ingestion_status(report)
+
+    assert decision.status == "fail"
+    assert decision.can_ingest is False
+    assert "errors" in decision.reason
+    assert decision.review_reasons == ["document.empty: Document is empty."]
+
+
+def test_decide_ingestion_status_reviews_warning_report() -> None:
+    """Warnings without errors should require review."""
+    report = ValidationReport(
+        document_id="manual",
+        source_path="manual.pdf",
+        issues=[
+            ValidationIssue(
+                "chunk.very_short",
+                "warning",
+                "Chunk text is very short.",
+            )
+        ],
+    )
+
+    decision = decide_ingestion_status(report)
+
+    assert decision.status == "review"
+    assert decision.can_ingest is False
+    assert "warnings" in decision.reason
+    assert decision.review_reasons == ["chunk.very_short: Chunk text is very short."]
+
+
+def test_decide_ingestion_status_passes_info_only_report() -> None:
+    """Info-only reports should pass automated ingestion."""
+    report = ValidationReport(
+        document_id="manual",
+        source_path="manual.pdf",
+        issues=[
+            ValidationIssue(
+                "chunk.missing_section_metadata",
+                "info",
+                "Chunk has no section metadata.",
+            )
+        ],
+    )
+
+    decision = decide_ingestion_status(report)
+
+    assert decision.status == "pass"
+    assert decision.can_ingest is True
+    assert decision.info_count == 1
+
+
+def test_decide_ingestion_status_passes_clean_report() -> None:
+    """Clean reports should pass automated ingestion."""
+    report = ValidationReport(
+        document_id="manual",
+        source_path="manual.pdf",
+    )
+
+    decision = decide_ingestion_status(report)
+
+    assert decision.status == "pass"
+    assert decision.can_ingest is True
+    assert decision.review_reasons == []
 
 
 def test_validate_document_empty_document_creates_error() -> None:
@@ -328,6 +443,28 @@ def test_validate_document_and_chunks_combines_reports() -> None:
     assert report.summary["has_warnings"] is True
 
 
+def test_validate_document_and_chunks_with_decision_fails_empty_inputs() -> None:
+    """Combined validation with empty document/chunks should fail."""
+    report, decision = validate_document_and_chunks_with_decision(_document([]), [])
+
+    assert "document.empty" in _codes(report)
+    assert "chunks.empty" in _codes(report)
+    assert decision.status == "fail"
+    assert decision.can_ingest is False
+
+
+def test_validate_document_and_chunks_with_decision_passes_valid_inputs() -> None:
+    """Combined validation with valid simple inputs should pass."""
+    report, decision = validate_document_and_chunks_with_decision(
+        _document([_valid_page()]),
+        [_chunk()],
+    )
+
+    assert report.issue_count == 0
+    assert decision.status == "pass"
+    assert decision.can_ingest is True
+
+
 def test_validation_report_to_json_returns_valid_json() -> None:
     """Validation report JSON helper should serialize report data."""
     report = validate_chunks([_chunk(metadata={})])
@@ -336,6 +473,27 @@ def test_validation_report_to_json_returns_valid_json() -> None:
 
     assert data["issue_count"] == report.issue_count
     assert data["summary"]["chunk_count"] == 1
+
+
+def test_validation_decision_to_json_returns_valid_json() -> None:
+    """Validation decision JSON helper should serialize decision data."""
+    decision = decide_ingestion_status(ValidationReport("manual", "manual.pdf"))
+
+    data = json.loads(validation_decision_to_json(decision))
+
+    assert data["status"] == "pass"
+    assert data["can_ingest"] is True
+
+
+def test_validation_gate_to_json_returns_valid_json() -> None:
+    """Validation gate JSON helper should include decision and report."""
+    report = validate_document_and_chunks(_document([_valid_page()]), [_chunk()])
+    decision = decide_ingestion_status(report)
+
+    data = json.loads(validation_gate_to_json(report, decision))
+
+    assert data["decision"]["status"] == "pass"
+    assert data["report"]["issue_count"] == report.issue_count
 
 
 def test_export_validation_report_json_writes_file(tmp_path: Path) -> None:
@@ -351,3 +509,16 @@ def test_export_validation_report_json_writes_file(tmp_path: Path) -> None:
     data = json.loads(output_path.read_text(encoding="utf-8"))
     assert data["issue_count"] == report.issue_count
     assert data["summary"]["page_count"] == 1
+
+
+def test_export_validation_gate_json_writes_file(tmp_path: Path) -> None:
+    """Validation gate exporter should write decision and report JSON."""
+    report = validate_document_and_chunks(_document([_valid_page()]), [_chunk()])
+    decision = decide_ingestion_status(report)
+    output_path = tmp_path / "nested" / "gate.json"
+
+    export_validation_gate_json(report, decision, output_path)
+
+    data = json.loads(output_path.read_text(encoding="utf-8"))
+    assert data["decision"]["status"] == "pass"
+    assert data["report"]["summary"]["page_count"] == 1
