@@ -335,8 +335,11 @@ Phase 3A Markdown export support completed. Added `document_to_markdown()` and `
 - [ ] Write architecture overview
 - [ ] Write data model documentation
 - [ ] Write pipeline documentation
+- [x] Write output contract and schema alignment audit
 - [ ] Write contribution guide
 - [ ] Write verification approach
+
+Phase 12A output contract and schema alignment audit completed. Added `docs/output_contract_0_1_0_audit.md` documenting the current parser output package, internal model coverage, document JSON, chunk JSON, validation JSON, gate JSON, validation Markdown outputs, and compatibility against the intended `techdoc-structured-document / 0.1.0` target. The audit identifies missing capabilities before AviationRAG D.4c, categorizes gaps into must-have, should-have, and can-wait, and recommends next implementation steps. Phase 12A is documentation only: it does not implement missing schema fields, change parser behavior, or perform AviationRAG ingestion. Tests, ruff, and mypy pass.
 
 ---
 
