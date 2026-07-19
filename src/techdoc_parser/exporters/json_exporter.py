@@ -6,6 +6,7 @@ from pathlib import Path
 from techdoc_parser.chunking import create_semantic_chunks
 from techdoc_parser.core import Chunk, Document
 from techdoc_parser.validation import ValidationDecision, ValidationReport
+from techdoc_parser.version import get_export_metadata
 
 
 def export_document_json(
@@ -20,12 +21,26 @@ def export_document_json(
     """
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(document.to_json(indent=indent), encoding="utf-8")
+    path.write_text(document_to_json(document, indent=indent), encoding="utf-8")
+
+
+def document_to_json_dict(document: Document) -> dict[str, object]:
+    """Return a JSON-serializable dictionary for an exported document."""
+    return {
+        **get_export_metadata(),
+        **document.to_dict(),
+    }
+
+
+def document_to_json(document: Document, indent: int = 2) -> str:
+    """Return an exported document as a JSON string."""
+    return json.dumps(document_to_json_dict(document), indent=indent)
 
 
 def chunks_to_json_dict(chunks: list[Chunk]) -> dict[str, object]:
     """Return a JSON-serializable dictionary for chunks."""
     return {
+        **get_export_metadata(),
         "chunk_count": len(chunks),
         "chunks": [chunk.to_dict() for chunk in chunks],
     }
@@ -63,7 +78,15 @@ def validation_report_to_json(
     indent: int = 2,
 ) -> str:
     """Return a validation report as a JSON string."""
-    return json.dumps(report.to_dict(), indent=indent)
+    report_data = report.to_dict()
+    return json.dumps(
+        {
+            **get_export_metadata(),
+            **report_data,
+            "report": report_data,
+        },
+        indent=indent,
+    )
 
 
 def export_validation_report_json(
@@ -82,7 +105,15 @@ def validation_decision_to_json(
     indent: int = 2,
 ) -> str:
     """Return a validation decision as a JSON string."""
-    return json.dumps(decision.to_dict(), indent=indent)
+    decision_data = decision.to_dict()
+    return json.dumps(
+        {
+            **get_export_metadata(),
+            **decision_data,
+            "decision": decision_data,
+        },
+        indent=indent,
+    )
 
 
 def export_validation_decision_json(
@@ -107,6 +138,7 @@ def validation_gate_to_json(
     """Return combined validation gate data as a JSON string."""
     return json.dumps(
         {
+            **get_export_metadata(),
             "decision": decision.to_dict(),
             "report": report.to_dict(),
         },

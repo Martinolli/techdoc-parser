@@ -16,6 +16,7 @@ from techdoc_parser.core import (
     TextBlock,
 )
 from techdoc_parser.parser import parse_document
+from techdoc_parser.version import PARSER_VERSION
 
 __all__ = [
     "Block",
@@ -31,5 +32,8 @@ __all__ = [
     "TableBlock",
     "TableRegionBlock",
     "TextBlock",
+    "__version__",
     "parse_document",
 ]
+
+__version__ = PARSER_VERSION

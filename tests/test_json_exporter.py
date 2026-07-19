@@ -34,7 +34,10 @@ def test_export_document_json_writes_valid_json(tmp_path: Path) -> None:
     content = output_path.read_text(encoding="utf-8")
     data = json.loads(content)
 
-    assert content.startswith('{\n    "id"')
+    assert content.startswith('{\n    "schema_version"')
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"]["name"] == "techdoc-parser"
+    assert data["parser"]["version"]
     assert data["id"] == "doc-1"
     assert data["source_path"] == "manual.pdf"
     assert data["metadata"]["title"] == "Manual"
@@ -72,6 +75,8 @@ def test_export_document_json_includes_paragraph_blocks_only_in_blocks(
     data = json.loads(output_path.read_text(encoding="utf-8"))
     page = data["pages"][0]
 
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"]["name"] == "techdoc-parser"
     assert any(block["block_type"] == "paragraph" for block in page["blocks"])
     assert all(block["block_type"] == "text" for block in page["text_blocks"])
 

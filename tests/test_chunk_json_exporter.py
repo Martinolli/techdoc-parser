@@ -60,6 +60,8 @@ def test_chunks_to_json_dict_serializes_chunks() -> None:
 
     data = chunks_to_json_dict(chunks)
 
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"] == {"name": "techdoc-parser", "version": "0.1.0"}
     assert data["chunk_count"] == 2
     assert data["chunks"] == [chunk.to_dict() for chunk in chunks]
     first_chunk = data["chunks"][0]
@@ -76,6 +78,8 @@ def test_chunks_to_json_returns_valid_indented_json() -> None:
 
     data = json.loads(json_text)
 
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"]["name"] == "techdoc-parser"
     assert data["chunk_count"] == 1
     assert '\n  "chunk_count"' in json_text
 
@@ -87,6 +91,8 @@ def test_export_chunks_json_writes_file(tmp_path: Path) -> None:
     export_chunks_json([_chunk("chunk-1", "First")], output_path)
 
     data = json.loads(output_path.read_text(encoding="utf-8"))
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"]["version"]
     assert data["chunk_count"] == 1
     assert data["chunks"][0]["id"] == "chunk-1"
 
@@ -98,6 +104,8 @@ def test_export_document_chunks_json_creates_and_writes_chunks(tmp_path: Path) -
     export_document_chunks_json(_document(), output_path)
 
     data = json.loads(output_path.read_text(encoding="utf-8"))
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"]["name"] == "techdoc-parser"
     assert data["chunk_count"] == 1
     assert data["chunks"][0]["text"] == "Body paragraph."
     assert data["chunks"][0]["source_block_ids"] == ["paragraph-1"]

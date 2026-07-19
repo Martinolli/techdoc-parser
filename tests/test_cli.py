@@ -28,6 +28,9 @@ def test_cli_parses_generated_pdf_and_writes_json(tmp_path: Path) -> None:
     assert output_path.exists()
 
     data = json.loads(output_path.read_text(encoding="utf-8"))
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"]["name"] == "techdoc-parser"
+    assert data["parser"]["version"]
     assert data["id"] == "manual"
     assert len(data["pages"]) == 1
 
@@ -56,6 +59,8 @@ def test_cli_can_write_semantic_chunks_json(tmp_path: Path) -> None:
     assert chunks_output_path.exists()
 
     chunks_data = json.loads(chunks_output_path.read_text(encoding="utf-8"))
+    assert chunks_data["schema_version"] == "0.1.0"
+    assert chunks_data["parser"]["name"] == "techdoc-parser"
     assert chunks_data["chunk_count"] >= 1
     assert chunks_data["chunks"]
     assert "source_page_numbers" in chunks_data["chunks"][0]
@@ -87,6 +92,9 @@ def test_cli_can_write_validation_report_json(tmp_path: Path) -> None:
     assert validation_output_path.exists()
 
     validation_data = json.loads(validation_output_path.read_text(encoding="utf-8"))
+    assert validation_data["schema_version"] == "0.1.0"
+    assert validation_data["parser"]["version"]
+    assert "report" in validation_data
     assert "issue_count" in validation_data
     assert validation_data["summary"]["page_count"] == 1
     assert "chunk_count" in validation_data["summary"]
@@ -122,6 +130,8 @@ def test_cli_can_write_validation_gate_json(tmp_path: Path) -> None:
     assert gate_output_path.exists()
 
     gate_data = json.loads(gate_output_path.read_text(encoding="utf-8"))
+    assert gate_data["schema_version"] == "0.1.0"
+    assert gate_data["parser"]["name"] == "techdoc-parser"
     assert "decision" in gate_data
     assert "report" in gate_data
     assert gate_data["decision"]["status"] in {"pass", "review", "fail"}
@@ -162,6 +172,9 @@ def test_cli_can_write_validation_summary_markdown(tmp_path: Path) -> None:
 
     summary = summary_output_path.read_text(encoding="utf-8")
     assert "# Validation Gate Summary" in summary
+    assert "- Schema version: 0.1.0" in summary
+    assert "- Parser name: techdoc-parser" in summary
+    assert "- Parser version: 0.1.0" in summary
     assert "Status" in summary
     assert "Summary" in summary
     assert "Issues" in summary
@@ -189,6 +202,8 @@ def test_cli_creates_chunks_internally_for_validation_gate(tmp_path: Path) -> No
     assert gate_output_path.exists()
 
     gate_data = json.loads(gate_output_path.read_text(encoding="utf-8"))
+    assert gate_data["schema_version"] == "0.1.0"
+    assert gate_data["parser"]["version"]
     assert "decision" in gate_data
     assert gate_data["report"]["summary"]["chunk_count"] >= 1
 
@@ -215,6 +230,8 @@ def test_cli_creates_chunks_internally_for_validation(tmp_path: Path) -> None:
     assert validation_output_path.exists()
 
     validation_data = json.loads(validation_output_path.read_text(encoding="utf-8"))
+    assert validation_data["schema_version"] == "0.1.0"
+    assert validation_data["parser"]["name"] == "techdoc-parser"
     assert "issue_count" in validation_data
     assert validation_data["summary"]["chunk_count"] >= 1
 

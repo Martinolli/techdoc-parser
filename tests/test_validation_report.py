@@ -555,6 +555,9 @@ def test_validation_report_to_json_returns_valid_json() -> None:
 
     data = json.loads(validation_report_to_json(report))
 
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"] == {"name": "techdoc-parser", "version": "0.1.0"}
+    assert data["report"]["issue_count"] == report.issue_count
     assert data["issue_count"] == report.issue_count
     assert data["summary"]["chunk_count"] == 1
 
@@ -565,6 +568,9 @@ def test_validation_decision_to_json_returns_valid_json() -> None:
 
     data = json.loads(validation_decision_to_json(decision))
 
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"]["name"] == "techdoc-parser"
+    assert data["decision"]["status"] == "pass"
     assert data["status"] == "pass"
     assert data["can_ingest"] is True
 
@@ -576,6 +582,8 @@ def test_validation_gate_to_json_returns_valid_json() -> None:
 
     data = json.loads(validation_gate_to_json(report, decision))
 
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"]["version"]
     assert data["decision"]["status"] == "pass"
     assert data["report"]["issue_count"] == report.issue_count
 
@@ -591,6 +599,9 @@ def test_export_validation_report_json_writes_file(tmp_path: Path) -> None:
     export_validation_report_json(report, output_path)
 
     data = json.loads(output_path.read_text(encoding="utf-8"))
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"]["name"] == "techdoc-parser"
+    assert data["report"]["summary"]["page_count"] == 1
     assert data["issue_count"] == report.issue_count
     assert data["summary"]["page_count"] == 1
 
@@ -604,5 +615,7 @@ def test_export_validation_gate_json_writes_file(tmp_path: Path) -> None:
     export_validation_gate_json(report, decision, output_path)
 
     data = json.loads(output_path.read_text(encoding="utf-8"))
+    assert data["schema_version"] == "0.1.0"
+    assert data["parser"]["version"]
     assert data["decision"]["status"] == "pass"
     assert data["report"]["summary"]["page_count"] == 1

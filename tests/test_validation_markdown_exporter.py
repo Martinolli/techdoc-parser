@@ -53,6 +53,10 @@ def test_validation_report_to_markdown_renders_report() -> None:
     markdown = validation_report_to_markdown(_report())
 
     assert "# Validation Report" in markdown
+    assert "## Export Metadata" in markdown
+    assert "- Schema version: 0.1.0" in markdown
+    assert "- Parser name: techdoc-parser" in markdown
+    assert "- Parser version: 0.1.0" in markdown
     assert "document_id: manual" in markdown
     assert "page.requires_ocr" in markdown
     assert "page.furniture_only" in markdown
@@ -67,6 +71,10 @@ def test_validation_gate_to_markdown_renders_decision() -> None:
     markdown = validation_gate_to_markdown(report, decision)
 
     assert "# Validation Gate Summary" in markdown
+    assert "## Export Metadata" in markdown
+    assert "- Schema version: 0.1.0" in markdown
+    assert "- Parser name: techdoc-parser" in markdown
+    assert "- Parser version: 0.1.0" in markdown
     assert "Status: REVIEW" in markdown
     assert "Can ingest: no" in markdown
     assert "Reason:" in markdown
@@ -134,4 +142,6 @@ def test_export_validation_gate_markdown_writes_file(tmp_path: Path) -> None:
     content = output_path.read_text(encoding="utf-8")
     assert output_path.exists()
     assert "# Validation Gate Summary" in content
+    assert "- Schema version: 0.1.0" in content
+    assert "- Parser version: 0.1.0" in content
     assert "Status: REVIEW" in content

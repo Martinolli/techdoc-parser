@@ -17,6 +17,7 @@ from techdoc_parser.core import (
 )
 from techdoc_parser.structure import get_semantic_blocks_for_page
 from techdoc_parser.validation import ValidationDecision, ValidationReport
+from techdoc_parser.version import PARSER_NAME, PARSER_VERSION, SCHEMA_VERSION
 
 _VALIDATION_SUMMARY_KEYS = [
     "page_count",
@@ -136,6 +137,10 @@ def validation_report_to_markdown(report: ValidationReport) -> str:
     lines = [
         "# Validation Report",
         "",
+        "## Export Metadata",
+        "",
+        *_export_metadata_lines(),
+        "",
         "## Document",
         "",
         f"- document_id: {_format_optional(report.document_id)}",
@@ -163,6 +168,10 @@ def validation_gate_to_markdown(
     """Render a validation gate decision and report as Markdown."""
     lines = [
         "# Validation Gate Summary",
+        "",
+        "## Export Metadata",
+        "",
+        *_export_metadata_lines(),
         "",
         "## Decision",
         "",
@@ -233,6 +242,14 @@ def _metadata_lines(document: Document) -> list[str]:
 
     lines = [f"- {name}: {value}" for name, value in fields if value]
     return lines if lines else ["- none"]
+
+
+def _export_metadata_lines() -> list[str]:
+    return [
+        f"- Schema version: {SCHEMA_VERSION}",
+        f"- Parser name: {PARSER_NAME}",
+        f"- Parser version: {PARSER_VERSION}",
+    ]
 
 
 def _source_line(source: SourceLocation) -> str:
