@@ -88,6 +88,11 @@ Gate decision meanings:
 For the detailed output contract audit, see
 [`docs/output_contract_0_1_0_audit.md`](docs/output_contract_0_1_0_audit.md).
 
+## Documentation
+
+- [Architecture and pipeline overview](docs/architecture_pipeline_overview.md)
+- [Output contract audit](docs/output_contract_0_1_0_audit.md)
+
 ## Current Limitations
 
 - Native-text PDFs are supported
