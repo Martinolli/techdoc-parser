@@ -7,15 +7,22 @@ import sys
 from typing import cast
 
 from techdoc_parser.chunking import create_semantic_chunks
+from techdoc_parser.core import Chunk
 from techdoc_parser.exporters import (
+    create_output_manifest,
     export_chunks_json,
     export_document_json,
+    export_output_manifest_json,
     export_validation_gate_json,
     export_validation_gate_markdown,
     export_validation_report_json,
 )
 from techdoc_parser.parser import parse_document
-from techdoc_parser.validation import validate_document_and_chunks_with_decision
+from techdoc_parser.validation import (
+    ValidationDecision,
+    ValidationReport,
+    validate_document_and_chunks_with_decision,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -59,6 +66,10 @@ def main(argv: list[str] | None = None) -> int:
         "--validation-summary-output",
         help="Optional validation gate Markdown summary output path.",
     )
+    parser.add_argument(
+        "--manifest-output",
+        help="Optional output manifest JSON path.",
+    )
     args = parser.parse_args(argv)
 
     input_path = cast(str, args.input_path)
@@ -72,11 +83,14 @@ def main(argv: list[str] | None = None) -> int:
         str | None,
         args.validation_summary_output,
     )
+    manifest_output_path = cast(str | None, args.manifest_output)
 
     try:
         document = parse_document(input_path)
         export_document_json(document, output_path, indent=indent)
-        chunks = None
+        chunks: list[Chunk] | None = None
+        report: ValidationReport | None = None
+        decision: ValidationDecision | None = None
         if (
             chunks_output_path is not None
             or validation_output_path is not None
@@ -114,6 +128,23 @@ def main(argv: list[str] | None = None) -> int:
                     decision,
                     validation_summary_output_path,
                 )
+        if manifest_output_path is not None:
+            manifest = create_output_manifest(
+                document=document,
+                chunks=chunks,
+                validation_report=report,
+                validation_decision=decision,
+                document_json_path=output_path,
+                chunks_json_path=chunks_output_path,
+                validation_json_path=validation_output_path,
+                gate_json_path=validation_gate_output_path,
+                validation_summary_markdown_path=validation_summary_output_path,
+            )
+            export_output_manifest_json(
+                manifest,
+                manifest_output_path,
+                indent=indent,
+            )
     except Exception as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
@@ -129,5 +160,7 @@ def main(argv: list[str] | None = None) -> int:
         message += (
             f" Wrote validation summary Markdown to '{validation_summary_output_path}'."
         )
+    if manifest_output_path is not None:
+        message += f" Wrote output manifest JSON to '{manifest_output_path}'."
     print(message)
     return 0
