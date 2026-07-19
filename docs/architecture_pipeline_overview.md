@@ -136,6 +136,22 @@ when the decision allows the intended workflow. `document.json` remains
 available for traceability and debugging, and `validation_summary.md` remains
 available for human review.
 
+### Planned Structured-Document Boundary
+
+Future AviationRAG integration may use a dedicated structured-document export:
+
+```text
+techdoc-parser
+  ↓
+techdoc-structured-document / 0.1.0
+  ↓
+external contract consumer
+```
+
+This boundary is planned, not implemented. Current outputs remain unchanged.
+AviationRAG is one intended consumer, but the parser must remain usable
+independently, and no direct runtime dependency on AviationRAG is planned.
+
 ## 10. Recommended Near-Term Next Steps
 
 - Add optional validation profiles or strictness modes.

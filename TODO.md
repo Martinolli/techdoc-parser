@@ -355,6 +355,8 @@ Phase 12E architecture and pipeline overview documentation completed. Added `doc
 
 Phase 12F MVP release readiness checkpoint completed. Added `docs/mvp_readiness_checklist.md` documenting the MVP baseline, required output package, final FAA verification command, expected validation gate result, release verification checklist, known MVP limitations, AviationRAG handoff contract using `manifest.json`, and optional `v0.1.0-mvp` tag recommendation. README links to the checklist. Phase 12F is a release-readiness checkpoint only and does not change parser, model, exporter, CLI, validation, runtime behavior, `PROJECTPLAN.md`, generate embeddings, export to vector databases, or perform AviationRAG ingestion. Tests, ruff, and mypy pass.
 
+Phase 13A AviationRAG StructuredDocument contract gap analysis completed. Added `docs/aviationrag_structured_document_gap_analysis.md` and `docs/aviationrag_structured_document_mapping.json` after reviewing the current parser architecture, current output package, and read-only AviationRAG `techdoc-structured-document / 0.1.0` design fixture and validator. The analysis records direct mappings, partial mappings, missing parser capabilities, ownership boundaries, retention recommendation, minimum viable contract, risks, and a controlled implementation sequence. Phase 13A is documentation only: it does not implement structured-document export, change parser/runtime/CLI behavior, process real documents, modify AviationRAG, generate embeddings, or perform ingestion. Recommended next phase is Phase 13B - StructuredDocument contract foundation.
+
 ---
 
 ## 15. Tooling and Quality

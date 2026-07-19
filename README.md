@@ -93,6 +93,7 @@ For the detailed output contract audit, see
 - [Architecture and pipeline overview](docs/architecture_pipeline_overview.md)
 - [MVP readiness checklist](docs/mvp_readiness_checklist.md)
 - [Output contract audit](docs/output_contract_0_1_0_audit.md)
+- [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
 
@@ -100,3 +101,4 @@ For the detailed output contract audit, see
 - Scanned/OCR documents are detected, but OCR is not implemented
 - Tables are candidate-level and partial
 - Full section hierarchy and formula recognition are future work
+- `techdoc-structured-document / 0.1.0` export is planned but not implemented
