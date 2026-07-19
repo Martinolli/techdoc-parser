@@ -1,0 +1,72 @@
+{
+  "schema_name": "techdoc-structured-document",
+  "schema_version": "0.1.0",
+  "parser_name": "techdoc-parser",
+  "parser_version": "0.1.0",
+  "document": {
+    "document_id": "synthetic-hydraulic-guide",
+    "source_filename": "synthetic-hydraulic-inspection-guide.pdf",
+    "document_title": "Synthetic Hydraulic Inspection Guide",
+    "page_count": 2
+  },
+  "pages": [
+    {
+      "page_id": "page-0001",
+      "pdf_page_index": 0,
+      "page_number": 1,
+      "printed_page_label": null
+    },
+    {
+      "page_id": "page-0002",
+      "pdf_page_index": 1,
+      "page_number": 2,
+      "printed_page_label": null
+    }
+  ],
+  "sections": [],
+  "blocks": [
+    {
+      "block_id": "blk-0001",
+      "block_type": "paragraph",
+      "text": "Synthetic hydraulic inspection overview.\nKeep pump access panels clean.",
+      "document_block_index": 0,
+      "page_block_index": 0,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0
+      }
+    },
+    {
+      "block_id": "blk-0002",
+      "block_type": "paragraph",
+      "text": "Synthetic pressure check instructions only.",
+      "document_block_index": 1,
+      "page_block_index": 0,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 144.0,
+          "x1": 420.0,
+          "y1": 166.0
+        }
+      }
+    }
+  ],
+  "tables": [],
+  "figures": [],
+  "equations": [],
+  "admonitions": [],
+  "cross_references": []
+}

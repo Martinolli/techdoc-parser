@@ -3,10 +3,12 @@
 Repository state reflected: `ce87826` (`Update TODO after MVP readiness checkpoint`) on
 `main`, aligned with `origin/main` after `git fetch origin --prune`.
 
-This is Phase 13A analysis and documentation only. It does not implement a
-structured-document exporter, change parser behavior, change extraction or
-chunking behavior, add CLI arguments, modify public Python APIs, process real
-documents, or modify AviationRAG.
+This document was created for Phase 13A analysis and documentation only. Phase
+13B later added an isolated `techdoc_parser.contracts` foundation for
+`techdoc-structured-document / 0.1.0`, but it still does not implement parser
+mapping, change parser behavior, change extraction or chunking behavior, add
+CLI arguments, modify current output formats, process real documents, or modify
+AviationRAG.
 
 ## 8.1 Executive Summary
 
@@ -604,10 +606,20 @@ unknown/not-attempted status only where the target validator and policy permit.
 
 ## 8.25 Recommended Next Phase
 
-Recommended next phase: **Phase 13B - StructuredDocument Contract Foundation**.
+Phase 13B status: **completed as an isolated contract foundation**.
 
-Phase 13B should add schema constants, contract-specific serialization types or
-mapping functions, and synthetic export tests. It should not add CLI
-integration yet, should not process real documents, should not import
-AviationRAG runtime code, and should not change parser extraction, chunking,
-validation, current JSON, Markdown, manifest, or public API behavior.
+Phase 13B added schema constants, contract-specific serialization types,
+deterministic JSON helpers, a synthetic minimum fixture, and regression tests.
+It did not add parser-model mapping, CLI integration, real-document processing,
+AviationRAG imports, AviationRAG modifications, embeddings, Astra, FAISS, or
+changes to parser extraction, chunking, validation, current JSON, Markdown, or
+manifest behavior.
+
+Recommended next phase: **Phase 13C - Document, Page, Block, And Source-Span
+Mapping**.
+
+Phase 13C should map current `Document`, `Page`, `Block`, and `SourceLocation`
+data into the Phase 13B contract model while preserving all existing output
+formats. It should continue to leave unknown checksums, page labels, sections,
+revision metadata, confidence values, and advanced entities absent, null, or
+empty unless the current parser supplies truthful evidence.

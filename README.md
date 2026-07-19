@@ -88,11 +88,22 @@ Gate decision meanings:
 For the detailed output contract audit, see
 [`docs/output_contract_0_1_0_audit.md`](docs/output_contract_0_1_0_audit.md).
 
+## Structured-Document Contract Foundation
+
+An isolated internal foundation for `techdoc-structured-document / 0.1.0` is
+available under `techdoc_parser.contracts`. It defines schema constants,
+contract dataclasses, and deterministic JSON serialization helpers for future
+AviationRAG-compatible structured-document output.
+
+This foundation is not wired into the CLI or current output package. Existing
+JSON, Markdown, validation, gate, and manifest outputs remain unchanged.
+
 ## Documentation
 
 - [Architecture and pipeline overview](docs/architecture_pipeline_overview.md)
 - [MVP readiness checklist](docs/mvp_readiness_checklist.md)
 - [Output contract audit](docs/output_contract_0_1_0_audit.md)
+- [Structured-document contract foundation](docs/structured_document_contract.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -101,4 +112,5 @@ For the detailed output contract audit, see
 - Scanned/OCR documents are detected, but OCR is not implemented
 - Tables are candidate-level and partial
 - Full section hierarchy and formula recognition are future work
-- `techdoc-structured-document / 0.1.0` export is planned but not implemented
+- `techdoc-structured-document / 0.1.0` has an internal contract foundation,
+  but parser mapping and CLI export are not implemented

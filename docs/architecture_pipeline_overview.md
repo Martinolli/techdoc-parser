@@ -48,6 +48,7 @@ Output package and manifest
 | `techdoc_parser.chunking` | Semantic chunk creation, chunk text cleanup, source reference preservation, and section metadata assignment. |
 | `techdoc_parser.validation` | Quality report generation and ingestion gate decision mapping. |
 | `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, and semantic Markdown export helpers. |
+| `techdoc_parser.contracts` | Isolated versioned contract models and deterministic serializers for future external structured-document artifacts. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
 
@@ -136,21 +137,26 @@ when the decision allows the intended workflow. `document.json` remains
 available for traceability and debugging, and `validation_summary.md` remains
 available for human review.
 
-### Planned Structured-Document Boundary
+### Structured-Document Contract Boundary
 
-Future AviationRAG integration may use a dedicated structured-document export:
+Future AviationRAG integration may use a dedicated structured-document export.
+The current foundation is an internal contract layer only:
 
 ```text
-techdoc-parser
+Current parser models
   ↓
-techdoc-structured-document / 0.1.0
+StructuredDocument contract serializer
+  ↓
+techdoc-structured-document / 0.1.0 JSON object
   ↓
 external contract consumer
 ```
 
-This boundary is planned, not implemented. Current outputs remain unchanged.
-AviationRAG is one intended consumer, but the parser must remain usable
-independently, and no direct runtime dependency on AviationRAG is planned.
+The contract foundation is implemented under `techdoc_parser.contracts`, but
+parser-model mapping, CLI output, manifest integration, and runtime ingestion
+are not implemented. Current outputs remain unchanged. AviationRAG is one
+intended consumer, but the parser remains independent and has no direct runtime
+dependency on AviationRAG.
 
 ## 10. Recommended Near-Term Next Steps
 
