@@ -91,6 +91,7 @@ For the detailed output contract audit, see
 ## Documentation
 
 - [Architecture and pipeline overview](docs/architecture_pipeline_overview.md)
+- [MVP readiness checklist](docs/mvp_readiness_checklist.md)
 - [Output contract audit](docs/output_contract_0_1_0_audit.md)
 
 ## Current Limitations
