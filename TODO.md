@@ -299,6 +299,7 @@ Phase 11D human-readable validation summary completed. Added Markdown export for
 - [x] Markdown exporter
 - [x] RAG chunk JSON exporter
 - [x] Add schema/parser metadata to exported artifacts
+- [x] Add output manifest JSON support
 - [ ] Debug HTML exporter
 - [ ] Optional SQLite exporter
 - [ ] Optional YAML exporter
@@ -308,6 +309,8 @@ Phase 2B JSON export support completed. Added `export_document_json()`, exporter
 Phase 3A Markdown export support completed. Added `document_to_markdown()` and `export_document_markdown()`, exported them from the exporters package, documented usage in README, and covered title/id, source path, metadata, page status, text blocks, and source traceability in tests. Tests, ruff, and mypy pass.
 
 Phase 12B schema and parser metadata completed. Exported machine-readable artifacts now include `schema_version` and parser metadata with parser name and parser version. Document JSON, chunk JSON, validation JSON, validation gate JSON, and validation summary Markdown now emit versioned output content while preserving existing CLI behavior and file outputs. Added export metadata tests and updated exporter and CLI regression tests. Phase 12B only adds version metadata to exported artifacts; it does not change parsing, chunking, validation decisions, CLI flags, embeddings, vector database export, or AviationRAG ingestion. Tests, ruff, and mypy pass.
+
+Phase 12C output manifest JSON completed. Added manifest generation for produced artifacts with `schema_version`, parser metadata, source document path and id, generated output artifact paths, validation decision when available, and document, chunk, and validation metrics when available. Added manifest JSON export helpers, CLI `--manifest-output` support, output manifest tests, and CLI regression tests. Existing parsing, chunking, validation, JSON export, Markdown export, and CLI exit-code behavior remains unchanged. Phase 12C does not change validation decision logic, generate embeddings, export to vector databases, or perform AviationRAG ingestion. Tests, ruff, and mypy pass.
 
 ---
 
