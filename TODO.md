@@ -343,6 +343,7 @@ Phase 12C output manifest JSON completed. Added manifest generation for produced
 - [x] Write pipeline documentation
 - [x] Document full output package CLI workflow
 - [x] Write output contract and schema alignment audit
+- [x] Document MVP release readiness checkpoint
 - [ ] Write contribution guide
 - [ ] Write verification approach
 
@@ -351,6 +352,8 @@ Phase 12A output contract and schema alignment audit completed. Added `docs/outp
 Phase 12D README full-package CLI usage documentation completed. README now documents the full output package workflow for generating document JSON, chunk JSON, validation JSON, gate JSON, validation summary Markdown, and manifest JSON; explains each artifact's purpose; documents schema/parser metadata; points downstream systems to `manifest.json`; defines pass/review/fail gate meanings; and summarizes MVP limitations for native-text PDFs, OCR, tables, section hierarchy, and formulas. Phase 12D is documentation only and does not change parser, model, exporter, CLI, validation, runtime behavior, `PROJECTPLAN.md`, or AviationRAG ingestion. Tests, ruff, and mypy pass.
 
 Phase 12E architecture and pipeline overview documentation completed. Added `docs/architecture_pipeline_overview.md` covering the current MVP architecture, major packages and responsibilities, processing stages from PDF ingestion to output package generation, raw `TextBlock` preservation and derived semantic blocks, output artifacts with schema/parser metadata, validation and gate philosophy, MVP scope and limitations, and AviationRAG integration starting from `manifest.json`. README links to the overview. Phase 12E is documentation only and does not change parser, model, exporter, CLI, validation, runtime behavior, `PROJECTPLAN.md`, or AviationRAG ingestion. Tests, ruff, and mypy pass.
+
+Phase 12F MVP release readiness checkpoint completed. Added `docs/mvp_readiness_checklist.md` documenting the MVP baseline, required output package, final FAA verification command, expected validation gate result, release verification checklist, known MVP limitations, AviationRAG handoff contract using `manifest.json`, and optional `v0.1.0-mvp` tag recommendation. README links to the checklist. Phase 12F is a release-readiness checkpoint only and does not change parser, model, exporter, CLI, validation, runtime behavior, `PROJECTPLAN.md`, generate embeddings, export to vector databases, or perform AviationRAG ingestion. Tests, ruff, and mypy pass.
 
 ---
 
