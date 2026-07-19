@@ -298,6 +298,7 @@ Phase 11D human-readable validation summary completed. Added Markdown export for
 - [x] JSON exporter
 - [x] Markdown exporter
 - [x] RAG chunk JSON exporter
+- [x] Add schema/parser metadata to exported artifacts
 - [ ] Debug HTML exporter
 - [ ] Optional SQLite exporter
 - [ ] Optional YAML exporter
@@ -305,6 +306,8 @@ Phase 11D human-readable validation summary completed. Added Markdown export for
 Phase 2B JSON export support completed. Added `export_document_json()`, exporter unit tests, and README usage for local development, PDF parsing, JSON export, and current limitations. Tests, ruff, and mypy pass.
 
 Phase 3A Markdown export support completed. Added `document_to_markdown()` and `export_document_markdown()`, exported them from the exporters package, documented usage in README, and covered title/id, source path, metadata, page status, text blocks, and source traceability in tests. Tests, ruff, and mypy pass.
+
+Phase 12B schema and parser metadata completed. Exported machine-readable artifacts now include `schema_version` and parser metadata with parser name and parser version. Document JSON, chunk JSON, validation JSON, validation gate JSON, and validation summary Markdown now emit versioned output content while preserving existing CLI behavior and file outputs. Added export metadata tests and updated exporter and CLI regression tests. Phase 12B only adds version metadata to exported artifacts; it does not change parsing, chunking, validation decisions, CLI flags, embeddings, vector database export, or AviationRAG ingestion. Tests, ruff, and mypy pass.
 
 ---
 
