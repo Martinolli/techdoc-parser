@@ -1,0 +1,908 @@
+{
+  "schema_name": "techdoc-structured-document",
+  "schema_version": "0.1.0",
+  "parser_name": "techdoc-parser",
+  "parser_version": "0.1.0",
+  "document": {
+    "document_id": "ref-doc",
+    "source_filename": "synthetic-reference-guide.pdf",
+    "document_title": "Synthetic Reference Guide",
+    "canonical_title": "Synthetic Reference Guide",
+    "page_count": 2
+  },
+  "pages": [
+    {
+      "page_id": "page-0001",
+      "pdf_page_index": 0,
+      "page_number": 1,
+      "printed_page_label": null
+    },
+    {
+      "page_id": "page-0002",
+      "pdf_page_index": 1,
+      "page_number": 2,
+      "printed_page_label": null
+    }
+  ],
+  "sections": [
+    {
+      "section_id": "ref-doc:s0001",
+      "level": 1,
+      "title": "Reference Overview",
+      "section_number": "1",
+      "raw_heading": "1 Reference Overview",
+      "normalized_heading": "1 Reference Overview",
+      "path": [
+        "1 Reference Overview"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "source_block_ids": [
+          "heading-1",
+          "figure-caption-3",
+          "table-2",
+          "equation-4",
+          "warning-1"
+        ],
+        "extraction_method": "synthetic"
+      }
+    },
+    {
+      "section_id": "ref-doc:s0002",
+      "level": 2,
+      "title": "Inspection References",
+      "parent_section_id": "ref-doc:s0001",
+      "section_number": "2.1",
+      "raw_heading": "2.1 Inspection References",
+      "normalized_heading": "2.1 Inspection References",
+      "path": [
+        "1 Reference Overview",
+        "2.1 Inspection References"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "source_block_ids": [
+          "heading-2-1",
+          "ref-section-figure",
+          "ref-table",
+          "ref-equation",
+          "ref-unresolved",
+          "ref-external"
+        ],
+        "extraction_method": "synthetic"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "block_id": "heading-1",
+      "block_type": "section_heading",
+      "text": "1 Reference Overview",
+      "document_block_index": 0,
+      "page_block_index": 0,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "ref-doc:s0001",
+      "normalized_text": "1 Reference Overview",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 72.0,
+          "x1": 420.0,
+          "y1": 96.0
+        },
+        "source_block_ids": [
+          "heading-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 72.0,
+        "x1": 420.0,
+        "y1": 96.0
+      }
+    },
+    {
+      "block_id": "figure-caption-3",
+      "block_type": "figure_caption",
+      "text": "Figure 3 -- Synthetic Reference Diagram",
+      "document_block_index": 1,
+      "page_block_index": 1,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "ref-doc:s0001",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 120.0,
+          "x1": 420.0,
+          "y1": 144.0
+        },
+        "source_block_ids": [
+          "figure-caption-3"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 120.0,
+        "x1": 420.0,
+        "y1": 144.0
+      }
+    },
+    {
+      "block_id": "table-2",
+      "block_type": "table",
+      "text": "Table 2 -- Synthetic Inspection Interval",
+      "document_block_index": 2,
+      "page_block_index": 2,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "ref-doc:s0001",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 170.0,
+          "x1": 420.0,
+          "y1": 220.0
+        },
+        "source_block_ids": [
+          "table-2"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 170.0,
+        "x1": 420.0,
+        "y1": 220.0
+      }
+    },
+    {
+      "block_id": "equation-4",
+      "block_type": "equation",
+      "text": "Equation 4: Q = m × c × ΔT",
+      "document_block_index": 3,
+      "page_block_index": 3,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "ref-doc:s0001",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 250.0,
+          "x1": 420.0,
+          "y1": 274.0
+        },
+        "source_block_ids": [
+          "equation-4"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 250.0,
+        "x1": 420.0,
+        "y1": 274.0
+      }
+    },
+    {
+      "block_id": "warning-1",
+      "block_type": "paragraph",
+      "text": "WARNING: Use synthetic test equipment only.",
+      "document_block_index": 4,
+      "page_block_index": 4,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "ref-doc:s0001",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 300.0,
+          "x1": 420.0,
+          "y1": 330.0
+        },
+        "source_block_ids": [
+          "warning-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 300.0,
+        "x1": 420.0,
+        "y1": 330.0
+      }
+    },
+    {
+      "block_id": "heading-2-1",
+      "block_type": "section_heading",
+      "text": "2.1 Inspection References",
+      "document_block_index": 5,
+      "page_block_index": 0,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "normalized_text": "2.1 Inspection References",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 72.0,
+          "x1": 420.0,
+          "y1": 96.0
+        },
+        "source_block_ids": [
+          "heading-2-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 72.0,
+        "x1": 420.0,
+        "y1": 96.0
+      }
+    },
+    {
+      "block_id": "ref-section-figure",
+      "block_type": "paragraph",
+      "text": "Refer to Section 2.1 and Figure 3.",
+      "document_block_index": 6,
+      "page_block_index": 1,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "ref-section-figure"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "block_id": "ref-table",
+      "block_type": "paragraph",
+      "text": "See Table 2 for the inspection interval.",
+      "document_block_index": 7,
+      "page_block_index": 2,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "ref-table"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "block_id": "ref-equation",
+      "block_type": "paragraph",
+      "text": "See Equation 4.",
+      "document_block_index": 8,
+      "page_block_index": 3,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "ref-equation"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "block_id": "ref-unresolved",
+      "block_type": "paragraph",
+      "text": "Refer to Appendix C.",
+      "document_block_index": 9,
+      "page_block_index": 4,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "ref-unresolved"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "block_id": "ref-external",
+      "block_type": "paragraph",
+      "text": "In accordance with document SYN-STD-004.",
+      "document_block_index": 10,
+      "page_block_index": 5,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "ref-external"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "ref-doc:p0:t0001",
+      "page_start": 1,
+      "page_end": 1,
+      "pdf_page_index_start": 0,
+      "pdf_page_index_end": 0,
+      "source_block_ids": [
+        "table-2"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 170.0,
+          "x1": 420.0,
+          "y1": 220.0
+        },
+        "source_block_ids": [
+          "table-2"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "ref-doc:s0001",
+      "section_path": [
+        "1 Reference Overview"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 170.0,
+        "x1": 420.0,
+        "y1": 220.0
+      },
+      "text": "Table 2 -- Synthetic Inspection Interval",
+      "columns": [],
+      "rows": [],
+      "cells": [],
+      "header_rows": [],
+      "merged_cells": [],
+      "is_candidate": true,
+      "extraction_status": "candidate",
+      "caption": "Table 2 -- Synthetic Inspection Interval"
+    }
+  ],
+  "figures": [
+    {
+      "figure_id": "ref-doc:p0:f0001",
+      "page_start": 1,
+      "page_end": 1,
+      "pdf_page_index_start": 0,
+      "pdf_page_index_end": 0,
+      "source_block_ids": [
+        "figure-caption-3"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 120.0,
+          "x1": 420.0,
+          "y1": 144.0
+        },
+        "source_block_ids": [
+          "figure-caption-3"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "ref-doc:s0001",
+      "section_path": [
+        "1 Reference Overview"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 120.0,
+        "x1": 420.0,
+        "y1": 144.0
+      },
+      "caption": "Figure 3 -- Synthetic Reference Diagram",
+      "source_caption_text": "Figure 3 -- Synthetic Reference Diagram",
+      "is_candidate": true,
+      "extraction_status": "caption_candidate"
+    }
+  ],
+  "equations": [
+    {
+      "equation_id": "ref-doc:e0001",
+      "page_start": 1,
+      "page_end": 1,
+      "pdf_page_index_start": 0,
+      "pdf_page_index_end": 0,
+      "source_block_ids": [
+        "equation-4"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 250.0,
+          "x1": 420.0,
+          "y1": 274.0
+        },
+        "source_block_ids": [
+          "equation-4"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "ref-doc:s0001",
+      "section_path": [
+        "1 Reference Overview"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 250.0,
+        "x1": 420.0,
+        "y1": 274.0
+      },
+      "raw_text": "Equation 4: Q = m × c × ΔT",
+      "equation_label": "Equation 4"
+    }
+  ],
+  "admonitions": [
+    {
+      "admonition_id": "ref-doc:a0001",
+      "page_start": 1,
+      "page_end": 1,
+      "pdf_page_index_start": 0,
+      "pdf_page_index_end": 0,
+      "source_block_ids": [
+        "warning-1"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 300.0,
+          "x1": 420.0,
+          "y1": 330.0
+        },
+        "source_block_ids": [
+          "warning-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "ref-doc:s0001",
+      "section_path": [
+        "1 Reference Overview"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 300.0,
+        "x1": 420.0,
+        "y1": 330.0
+      },
+      "admonition_type": "WARNING",
+      "normalized_type": "WARNING",
+      "raw_label": "WARNING:",
+      "body_text": "Use synthetic test equipment only."
+    }
+  ],
+  "cross_references": [
+    {
+      "reference_id": "ref-doc:r0001",
+      "raw_text": "Refer to Section 2.1",
+      "raw_reference_text": "Refer to Section 2.1",
+      "reference_type": "section",
+      "resolution_status": "resolved",
+      "source_block_ids": [
+        "ref-section-figure"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "ref-section-figure"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "target_identifier": "2.1",
+      "target_id": "ref-doc:s0002",
+      "page_start": 2,
+      "page_end": 2,
+      "pdf_page_index_start": 1,
+      "pdf_page_index_end": 1,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "section_path": [
+        "1 Reference Overview",
+        "2.1 Inspection References"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "reference_id": "ref-doc:r0002",
+      "raw_text": "Figure 3.",
+      "raw_reference_text": "Figure 3.",
+      "reference_type": "figure",
+      "resolution_status": "resolved",
+      "source_block_ids": [
+        "ref-section-figure"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "ref-section-figure"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "target_identifier": "3",
+      "target_id": "ref-doc:p0:f0001",
+      "page_start": 2,
+      "page_end": 2,
+      "pdf_page_index_start": 1,
+      "pdf_page_index_end": 1,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "section_path": [
+        "1 Reference Overview",
+        "2.1 Inspection References"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "reference_id": "ref-doc:r0003",
+      "raw_text": "See Table 2",
+      "raw_reference_text": "See Table 2",
+      "reference_type": "table",
+      "resolution_status": "resolved",
+      "source_block_ids": [
+        "ref-table"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "ref-table"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "target_identifier": "2",
+      "target_id": "ref-doc:p0:t0001",
+      "page_start": 2,
+      "page_end": 2,
+      "pdf_page_index_start": 1,
+      "pdf_page_index_end": 1,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "section_path": [
+        "1 Reference Overview",
+        "2.1 Inspection References"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "reference_id": "ref-doc:r0004",
+      "raw_text": "See Equation 4.",
+      "raw_reference_text": "See Equation 4.",
+      "reference_type": "equation",
+      "resolution_status": "resolved",
+      "source_block_ids": [
+        "ref-equation"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "ref-equation"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "target_identifier": "4",
+      "target_id": "ref-doc:e0001",
+      "page_start": 2,
+      "page_end": 2,
+      "pdf_page_index_start": 1,
+      "pdf_page_index_end": 1,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "section_path": [
+        "1 Reference Overview",
+        "2.1 Inspection References"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "reference_id": "ref-doc:r0005",
+      "raw_text": "Refer to Appendix C.",
+      "raw_reference_text": "Refer to Appendix C.",
+      "reference_type": "appendix",
+      "resolution_status": "unresolved",
+      "source_block_ids": [
+        "ref-unresolved"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "ref-unresolved"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "target_identifier": "Appendix C",
+      "page_start": 2,
+      "page_end": 2,
+      "pdf_page_index_start": 1,
+      "pdf_page_index_end": 1,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "section_path": [
+        "1 Reference Overview",
+        "2.1 Inspection References"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "reference_id": "ref-doc:r0006",
+      "raw_text": "In accordance with document SYN-STD-004.",
+      "raw_reference_text": "In accordance with document SYN-STD-004.",
+      "reference_type": "external_document",
+      "resolution_status": "external",
+      "source_block_ids": [
+        "ref-external"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "ref-external"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "target_identifier": "SYN-STD-004",
+      "page_start": 2,
+      "page_end": 2,
+      "pdf_page_index_start": 1,
+      "pdf_page_index_end": 1,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "ref-doc:s0002",
+      "section_path": [
+        "1 Reference Overview",
+        "2.1 Inspection References"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    }
+  ]
+}

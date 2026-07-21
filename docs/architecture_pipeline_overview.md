@@ -43,12 +43,12 @@ Output package and manifest
 | `techdoc_parser.core` | Dataclass models for documents, pages, blocks, source locations, bounding boxes, metadata, and chunks. |
 | `techdoc_parser.loaders` | Conceptual loader layer; currently implemented by `techdoc_parser.ingestion`. |
 | `techdoc_parser.ingestion` | PDF ingestion through `PDFLoader` and PyMuPDF. |
-| `techdoc_parser.structure` | Heuristic structure detection for page furniture, headings, paragraphs, tables, table regions, figures, conservative equation evidence, explicit-label admonitions, and semantic block views. |
+| `techdoc_parser.structure` | Heuristic structure detection for page furniture, headings, paragraphs, tables, table regions, figures, conservative equation evidence, explicit-label admonitions, explicit textual cross-references, and semantic block views. |
 | `techdoc_parser.normalization` | Text normalization helpers that preserve raw text while storing normalized text separately. |
 | `techdoc_parser.chunking` | Semantic chunk creation, chunk text cleanup, source reference preservation, and section metadata assignment. |
 | `techdoc_parser.validation` | Quality report generation and ingestion gate decision mapping. |
 | `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, and semantic Markdown export helpers. |
-| `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, equation/admonition entity mapper, and deterministic serializers for future external structured-document artifacts. |
+| `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, equation/admonition entity mapper, cross-reference mapper, confidence policy helpers, and deterministic serializers for future external structured-document artifacts. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
 
@@ -62,7 +62,7 @@ Output package and manifest
 6. Table candidate detection: table-like text is marked as candidate `TableBlock` content without claiming full table reconstruction.
 7. Figure caption detection: obvious figure captions are represented as candidate `FigureBlock` objects.
 8. Table region grouping: nearby table fragments may be grouped into candidate `TableRegionBlock` objects.
-9. Structured-document entity mapping: the internal contract API can map existing table/figure evidence, conservative equation evidence, and explicit-label admonitions without changing parser outputs.
+9. Structured-document entity mapping: the internal contract API can map existing table/figure evidence, conservative equation evidence, explicit-label admonitions, explicit textual cross-references, and confidence policy without changing parser outputs.
 10. Semantic block filtering: raw text blocks and duplicate derived blocks are filtered from semantic views without modifying the source model.
 11. Semantic chunk creation: semantic blocks are aggregated into RAG-oriented chunks with source references.
 12. Chunk cleanup and section metadata: emitted chunk text is cleaned of furniture lines, and available heading context is stored as section metadata.
@@ -124,10 +124,14 @@ results. Validation status is emitted in the validation and gate artifacts.
 - Figure support is caption-level.
 - Formula discovery from PDF layout is not implemented; the internal structured-document mapper can expose existing `FormulaBlock` records and conservative paragraph equation evidence.
 - Admonition mapping is explicit-label only in the internal structured-document mapper; safety severity inference is not implemented.
+- Cross-reference mapping is explicit-text only in the internal
+  structured-document mapper; unresolved, external, ambiguous, and
+  not-attempted statuses are preserved rather than repaired.
 - Section-aware chunk metadata exists in current chunk outputs. A heading-derived
   section tree exists only in the internal structured-document contract API; it
   is not emitted by the current CLI output package.
-- Confidence scoring is not implemented as a dedicated model yet.
+- Confidence scoring is not implemented as a dedicated model. The internal
+  structured-document mapper omits current placeholder confidence values.
 
 ## 9. AviationRAG Integration Position
 
@@ -149,25 +153,30 @@ model mapper:
 
 ```text
 Current parser models
-  ↓
-StructuredDocument mapper
-  ↓
-StructuredDocument contract serializer
-  ↓
-versioned techdoc-structured-document / 0.1.0 JSON object
-  ↓
-external contract consumer
+        ↓
+Document/page/block mapping
+        ↓
+Section hierarchy
+        ↓
+Table and figure-caption evidence
+        ↓
+Equation and admonition evidence
+        ↓
+Cross-references and confidence policy
+        ↓
+StructuredDocument serializer
 ```
 
 The contract foundation and mapper are implemented under
 `techdoc_parser.contracts`. The mapper covers document, page, block, source-span,
-bounding-box, heading-derived section hierarchy data, and current
-table/figure-caption candidate evidence that already exists in the parser
-model. CLI output, manifest integration, runtime ingestion, true table
-reconstruction, figure asset extraction, and equation/admonition/reference root
-collections are not implemented. Current outputs remain unchanged.
-AviationRAG is one intended consumer, but the parser remains independent and has
-no direct runtime dependency on AviationRAG.
+bounding-box, heading-derived section hierarchy data, current table/figure
+candidate evidence, conservative equation evidence, explicit-label admonition
+evidence, explicit textual cross-references, and confidence omission policy.
+CLI output, manifest integration, runtime ingestion, true table reconstruction,
+figure asset extraction, and formal cross-project compatibility validation are
+not implemented. Current outputs remain unchanged. AviationRAG is one intended
+consumer, but the parser remains independent and has no direct runtime
+dependency on AviationRAG.
 
 ## 10. Recommended Near-Term Next Steps
 
@@ -175,7 +184,8 @@ no direct runtime dependency on AviationRAG.
   cleanup-readiness reference. Cleanup remains useful but non-blocking.
 - Add optional validation profiles or strictness modes.
 - Add an architecture diagram later if the pipeline grows more complex.
-- Add optional structured-document CLI/manifest output when downstream consumers
-  need files rather than the Python API.
-- Add a dedicated confidence scoring model.
+- Phase 13G: add optional structured-document CLI/manifest output when
+  downstream consumers need files rather than the Python API.
+- Phase 13H: formalize synthetic compatibility validation against AviationRAG.
+- Add a dedicated confidence scoring model only when truthful evidence exists.
 - Add an advanced table extraction adapter for more reliable table structure.

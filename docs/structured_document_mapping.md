@@ -1,7 +1,7 @@
 # StructuredDocument Parser Model Mapping
 
 Date: 2026-07-21
-Status: Phase 13C/13D implemented as a Python contract API
+Status: Phase 13C through Phase 13F implemented as a Python contract API
 
 ## 1. Purpose
 
@@ -16,11 +16,16 @@ block `section_id` assignments, and aggregate section source spans without
 changing parser extraction, heading detection, chunking, current output files,
 or CLI behavior.
 
+Phase 13F adds root cross-reference mapping from explicit textual evidence and
+a confidence policy that omits current placeholder confidence values.
+
 The implementation lives in:
 
 ```text
 src/techdoc_parser/contracts/structured_document_mapper.py
 src/techdoc_parser/contracts/structured_document_hierarchy.py
+src/techdoc_parser/contracts/structured_document_references.py
+src/techdoc_parser/contracts/structured_document_confidence.py
 ```
 
 It is available through `techdoc_parser.contracts` as:
@@ -258,30 +263,49 @@ paths. Detection requires explicit starting labels such as `WARNING`, `CAUTION`,
 `NOTE`, `IMPORTANT`, or `SAFETY NOTICE`; the mapper does not infer safety
 severity from wording or typography.
 
-## 16. Unsupported Entities
+## 16. Cross-Reference Entities
 
-The mapper leaves these root collections empty unless callers supply records
-explicitly:
+Phase 13F maps explicit textual references into root `cross_references` after
+sections and entity roots exist. The mapper detects only paragraph/unknown block
+references introduced by explicit phrases such as `see`, `refer to`,
+`in accordance with`, `as specified in`, `as described in`, and `according to`.
 
-- `cross_references`
+Each reference preserves exact raw reference text, target identifier, reference
+type, source block IDs, source span, page refs, optional section refs, and a
+validator-compatible resolution status. Resolution is exact only against known
+sections, tables, figures, and equations. Unmatched local references remain
+`unresolved`, duplicate matches become `ambiguous`, external document IDs become
+`external`, and unsupported cases remain `not_attempted`.
+
+The mapper does not use fuzzy matching, PDF link metadata, external lookup,
+semantic similarity, or fabricated target IDs.
+
+## 17. Confidence Policy
+
+The mapper omits confidence fields unless a meaningful numeric evidence source
+exists. Current `SourceLocation.confidence` values are not promoted because
+native PyMuPDF extraction currently uses placeholder `1.0` values. Confidence
+helpers reject booleans, non-numeric values, and out-of-range numbers.
+
+## 18. Unsupported Entities
 
 Formula discovery from PDF layout and broad admonition classification remain
 future parser work.
 
-## 17. Guarantees
+## 19. Guarantees
 
 The mapper is deterministic, import-safe, filesystem-independent, and
 non-mutating. Repeated mapping of the same parser object with the same options
 produces identical contract JSON. The mapper does not invoke current exporters
 or depend on CLI orchestration.
 
-## 18. Backward Compatibility
+## 20. Backward Compatibility
 
 Existing parser public models, constructors, JSON exporters, Markdown exporters,
 validation report exports, gate exports, output manifests, and CLI arguments
 remain unchanged. The structured-document mapper is a Python API only.
 
-## 19. Known Gaps
+## 21. Known Gaps
 
 - No true table row, column, cell, merged-cell, or continuation mapping.
 - No figure asset extraction, figure number extraction, or figure-region
@@ -290,20 +314,22 @@ remain unchanged. The structured-document mapper is a Python API only.
   extraction.
 - No inferred admonition safety severity or typography-only admonition
   detection.
-- No root cross-reference entities.
+- Cross-reference detection is explicit-text only; no PDF links, bookmarks,
+  fuzzy matching, external lookup, or fabricated target IDs.
 - No source checksum ownership beyond explicit caller-supplied values.
 - No printed page-label extraction.
 - No character offsets.
-- No confidence semantics beyond omission of placeholder values.
+- No confidence semantics beyond omission of placeholder values and validation
+  of future real numeric confidence values.
 - No CLI structured-document output.
 - No manifest integration for structured-document artifacts.
 - Heading hierarchy accuracy remains bounded by the current `HeadingBlock`
   evidence.
 
-## 20. Next Phase
+## 22. Next Phase
 
-Phase 13E2 is implemented as contract-local equation and admonition mapping from
-truthful parser evidence. Next work should keep CLI/manifest integration
-separate from entity mapping and should not add cross-references, true table
-structure, figure assets, or confidence fields until the parser has truthful
-evidence for them.
+Phase 13F is implemented as contract-local cross-reference mapping and
+confidence policy. Next work should keep CLI/manifest integration separate from
+entity mapping and should not add true table structure, figure assets, broad
+formula discovery, or confidence fields until the parser has truthful evidence
+for them.

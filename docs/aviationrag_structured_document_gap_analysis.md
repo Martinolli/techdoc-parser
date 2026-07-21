@@ -1,16 +1,18 @@
 # AviationRAG StructuredDocument Contract Gap Analysis
 
-Repository state reflected: Phase 13C working tree after
-`9ff79fb` (`feat(contract): add structured document foundation`) on `main`,
+Repository state reflected: Phase 13F working tree after
+`e9dc24f` (`feat(contract): add equation and admonition evidence`) on `main`,
 aligned with `origin/main` after `git fetch origin --prune`.
 
 This document was created for Phase 13A analysis and documentation only. Phase
 13B later added an isolated `techdoc_parser.contracts` foundation for
 `techdoc-structured-document / 0.1.0`. Phase 13C adds a pure parser-model mapper
 for existing document, page, block, source-location, and bounding-box evidence.
-It still does not change parser behavior, change extraction or chunking
-behavior, add CLI arguments, modify current output formats, process real
-documents, or modify AviationRAG.
+Phases 13D through 13F add section hierarchy, candidate entities, explicit
+textual cross-references, and confidence omission policy. They still do not
+change parser behavior, change extraction or chunking behavior, add CLI
+arguments, modify current output formats, process real documents, or modify
+AviationRAG.
 
 ## 8.1 Executive Summary
 
@@ -40,23 +42,25 @@ and page numbers but not exact source-span objects.
 
 Entire target areas remain absent or only placeholders: printed page label
 extraction; source checksum; revision, issue, and effective-date metadata; true
-table rows/columns/cells; figure assets or figure-region understanding;
-equation detection; warning/caution/note classification; cross-reference
-extraction and resolution; and real confidence models beyond
+table rows/columns/cells; figure assets or figure-region understanding; formula
+discovery from PDF layout; broad warning/caution/note classification; PDF link
+or bookmark references; and real confidence models beyond placeholder
 `SourceLocation.confidence`. The internal structured-document mapper now
-populates `sections`, `tables`, and `figures` only from existing heading,
-table-candidate, table-region, and figure-caption evidence.
+populates `sections`, `tables`, `figures`, `equations`, `admonitions`, and
+`cross_references` only from existing heading, candidate entity, and explicit
+textual reference evidence.
 
 The contract can start primarily as an additional exporter over the current
 core model for a minimum valid record, provided the exporter is truthful about
-missing data and does not fabricate metadata. Parser-core changes are required
-for high-fidelity sections, admonitions, cross-references, table reconstruction,
-figure regions, equations, page labels, source hashes, and confidence scoring.
+missing data and does not fabricate metadata. Parser-core changes are still
+required for high-fidelity section accuracy, table reconstruction, figure
+regions, page labels, source hashes, PDF link/bookmark capture, and real
+confidence scoring.
 
-Recommended sequence: add contract constants and exporter-only mapping first;
-then page/block/source-span export; then section hierarchy; then specialized
-entities from truthful evidence; then CLI/API optional integration; then
-synthetic compatibility validation against the AviationRAG validator.
+Recommended sequence after Phase 13F: add optional CLI/API structured-document
+output, then formalize synthetic compatibility validation against the
+AviationRAG validator, then decide whether parser-core enhancements are needed
+for table structure, source checksums, PDF references, or confidence evidence.
 
 ## 8.2 Current Parser Pipeline
 
@@ -168,9 +172,9 @@ Mapping statuses used: `direct`, `rename`, `derive_safely`,
 | equations | equation_id | FormulaBlock/ParagraphBlock | `id`, `text` | implemented-contract-api | Phase 13E2 emits deterministic root equation IDs from conservative equation evidence. | Medium. | techdoc-parser contract mapper |
 | equations | raw/normalized representation | FormulaBlock/ParagraphBlock | `text`, `latex` | partial-implemented | Phase 13E2 preserves raw source form and emits existing `latex` only when present. | Medium. | techdoc-parser contract mapper |
 | admonitions | admonition_id/type/body | ParagraphBlock | `text` | implemented-contract-api | Phase 13E2 emits explicit-label warning/caution/note/important/safety-notice entities only. | High. | techdoc-parser contract mapper |
-| cross_references | reference_id/raw_text/status/target | none | none | missing | Add reference extraction and optional resolution. | High. | parser enhancement |
+| cross_references | reference_id/raw_text/status/target | ParagraphBlock/unknown Block text | `text`, `source` | implemented-contract-api | Phase 13F emits explicit textual references with exact-resolution status only. | High if over-resolved. | techdoc-parser contract mapper |
 | relationships | containment/cross-links | none | none | missing | Could derive simple contained_by only after sections/entities exist. | Medium. | exporter/model extension |
-| confidence | confidence fields | SourceLocation | `confidence` | partial | Map real extraction confidence only; null for missing classifier scores. | High if fabricated. | techdoc-parser exporter |
+| confidence | confidence fields | SourceLocation | `confidence` | policy-implemented | Phase 13F omits placeholder `SourceLocation.confidence`; map only real numeric evidence. | High if fabricated. | techdoc-parser contract mapper |
 
 ## 8.5 Root Schema Identity
 
@@ -354,35 +358,35 @@ real parser `image_path` value exists.
 ## 8.13 Equations
 
 `FormulaBlock` exists with `latex` and `variables`, but no current detector
-creates formula/equation blocks in `PDFLoader`. The target can only be served
-truthfully once detection exists or caller-supplied formula blocks exist.
-Future equation export should preserve raw source representation and optional
-normalized representation; equations should not be converted into prose when
-the source form can be retained.
+creates formula/equation blocks in `PDFLoader`. Phase 13E2 adds conservative
+paragraph equation evidence and maps existing `FormulaBlock` records into root
+`equations`, preserving raw source representation and optional existing
+normalized representation. It does not discover formulas from PDF layout,
+interpret mathematical semantics, or convert equations into prose.
 
 ## 8.14 Warnings, Cautions, And Notes
 
-The parser does not currently distinguish `WARNING`, `CAUTION`, `NOTE`,
-`IMPORTANT`, `SAFETY_NOTICE`, or unknown admonitions as structured entities.
-Those labels may survive as ordinary `TextBlock` or `ParagraphBlock` text, and
-possibly as chunk text, but there is no admonition model, exact raw label field,
-normalized admonition type, atomic block behavior, or root `admonitions` list.
-
-Implementing the target contract requires classification logic, model/export
-representation, tests and fixtures, and clear confidence/null handling. It is
-not exporter-only unless the current parser treats admonitions as ordinary
-blocks and maps them only as `unknown`, which would fail to preserve the
-semantics requested by AviationRAG.
+Explicit labels such as `WARNING`, `CAUTION`, `NOTE`, `IMPORTANT`, and
+`SAFETY NOTICE` may survive as ordinary paragraph text. Phase 13E2 maps those
+explicit labels into root `admonitions` with exact raw label and body evidence.
+It does not infer safety severity, classify typography-only labels, detect
+admonitions inside tables or figures, or rewrite warning text.
 
 ## 8.15 Cross-References
 
-There is no `Reference` model or cross-reference extractor. References such as
-"see Section", "refer to Table", or figure references are preserved only as
-ordinary text when they appear in source blocks. The target requires
-`reference_id`, raw reference text, resolution status, and optional target ID.
-Resolution should not be fabricated. Initial support can emit no
-`cross_references` or only `not_attempted` records when actual extraction logic
-exists.
+There is no parser-core `Reference` model and no PDF internal link/bookmark
+capture. Phase 13F adds a contract-local explicit textual reference detector
+for paragraph/unknown blocks. It detects phrases such as "see Section",
+"refer to Table", figure references, equation references, appendix/annex
+references, AMC/GM clauses, and external document IDs when they appear in
+source text.
+
+Resolution is exact only against known contract-local section, table, figure,
+and equation identifiers. `resolved` records include `target_id`; unmatched
+local targets remain `unresolved`; duplicate matches become `ambiguous`;
+external document IDs become `external`; unsupported cases remain
+`not_attempted`. No fuzzy matching, external lookup, PDF link parsing, or
+target fabrication is performed.
 
 ## 8.16 Confidence Model
 
@@ -403,9 +407,11 @@ Real parser outputs:
 - Classification confidence: absent.
 - Provenance confidence: absent beyond source location presence.
 
-Phase 13A recommendation: map only factual source-location confidence if the
-project accepts its current semantics, and leave other confidence fields null or
-absent. Do not fabricate confidence scores to satisfy downstream preference.
+Phase 13F policy: do not promote current `SourceLocation.confidence` because
+native PyMuPDF values are placeholder evidence. Confidence fields remain absent
+unless a real numeric evidence source exists. Booleans, strings, and
+out-of-range values are rejected. OCR confidence can be mapped only when the
+source explicitly identifies OCR and carries a valid numeric confidence value.
 
 ## 8.17 Validation Compatibility
 
@@ -422,10 +428,10 @@ structured-document record. Expected failures include:
 | Source spans | Current `source` object is not target `source_span`; can be mapped. |
 | Tables | Phase 13E1 root table entities carry deterministic `table_id`, known page refs, and source block refs; true root table rows/cells are intentionally empty. |
 | Figures | Phase 13E1 root figure entities carry deterministic `figure_id`, known page refs, source block refs, and caption text only. |
-| Equations | Empty list can pass; emitted equation records would need raw representation. |
-| Admonitions | Empty list can pass; emitted records need allowed type and body text. |
-| Cross-references | Empty list can pass; emitted records need ID, raw text, status, and valid target policy. |
-| Confidence | Current `1.0` values are in range; missing specialized confidence fields should remain null/absent. |
+| Equations | Phase 13E2 root equation entities preserve raw representation and optional existing notation; formula discovery remains limited. |
+| Admonitions | Phase 13E2 root admonition entities emit allowed types and body text for explicit labels only. |
+| Cross-references | Phase 13F root reference entities emit IDs, raw text, status, source evidence, and target IDs only for exact resolved local targets. |
+| Confidence | Phase 13F omits placeholder `SourceLocation.confidence`; missing specialized confidence fields remain absent. |
 
 The validator is a coherence validator, not an extraction-accuracy validator.
 Passing it would not prove heading, table, page-label, or admonition accuracy.
@@ -513,8 +519,10 @@ contract permits it.
 | Figure asset/region extraction | parser-enhancement | P3 | high | low | later |
 | Equation detection | parser-enhancement | P2 | high | low | 13E/later |
 | Warning/caution/note classification | parser-enhancement | P1 | high | low | 13E |
-| Cross-reference extraction | parser-enhancement | P2 | high | low | 13F |
-| Confidence model | model-extension | P1 | medium | low | 13F |
+| Explicit text cross-reference extraction | contract mapper | P2 | high | low | 13F completed |
+| PDF link/bookmark reference extraction | parser-enhancement | P2 | high | low | later |
+| Confidence omission/validation policy | contract mapper | P1 | medium | low | 13F completed |
+| Real confidence model | model-extension | P1 | medium | low | later |
 | Validator fixture alignment | fixture/test requirement | P0 | low | low | 13H |
 | CLI optional output flag | export-only | P1 | medium | medium | 13G |
 | Retention policy | policy decision | P1 | medium | low | 13G/13H |
@@ -582,6 +590,14 @@ Constraints: unresolved/not-attempted references must stay explicit; no false
 resolution. Acceptance: cross-reference records validate and confidence fields
 are numeric or null.
 
+Phase 13F status: completed as contract-local explicit text reference mapping
+and confidence policy. The mapper emits root `cross_references` from explicit
+paragraph/unknown block phrases only, resolves local targets by exact known
+identifiers only, preserves `unresolved`, `external`, `ambiguous`, and
+`not_attempted` statuses, and omits current placeholder confidence values. It
+does not change parser extraction, current outputs, CLI behavior, AviationRAG,
+or runtime ingestion.
+
 ### 13G - Optional CLI/API Structured-Document Output
 
 Goal: expose the exporter as optional output. Likely files: CLI, exporters,
@@ -619,7 +635,8 @@ Required for first valid export:
 - Empty `equations` and `admonitions` where no truthful candidate records are
   emitted; otherwise Phase 13E2 may populate them from conservative or explicit
   evidence.
-- Empty `cross_references` until truthful records exist.
+- Empty `cross_references` where no truthful explicit textual references are
+  emitted; otherwise Phase 13F may populate them with explicit status policy.
 
 Required before AviationRAG D.4c:
 
@@ -636,14 +653,14 @@ Optional parser-enhanced fields:
 - Figure regions/assets.
 - Equation raw/normalized records.
 - Admonition and cross-reference records.
-- Specialized confidence fields.
+- Specialized confidence fields only when truthful numeric evidence exists.
 
 Deferred advanced fields:
 
 - OCR confidence and OCR text.
 - Multi-column reading-order confidence.
 - Merged table cells, table footnotes, and table continuations.
-- Resolved cross-reference graph.
+- PDF-link and bookmark-derived cross-reference graph.
 - Controlled-document revision/effective-date extraction.
 
 The minimum contract must remain truthful. Use nulls, empty lists, or explicit
@@ -703,7 +720,11 @@ evidence and explicit admonition labels without claiming mathematical
 understanding, safety severity inference, confidence fields, or changes to
 current output behavior.
 
-Recommended next phase: **Phase 13F - Cross-Reference/Confidence Policy**,
-**Phase 13G - Optional CLI/API Structured-Document Output**, or formula
-discovery/table-structure parser enhancement, depending on which downstream
-contract gap matters first.
+Phase 13F adds root `cross_references` from explicit textual reference phrases
+with exact local resolution only, and defines a confidence policy that omits
+current placeholder values without changing current output behavior.
+
+Recommended next phase: **Phase 13G - Optional CLI/API Structured-Document
+Output** or **Phase 13H - Synthetic Compatibility Validation Against
+AviationRAG**, depending on whether downstream consumers need files first or a
+formal cross-project validator gate first.

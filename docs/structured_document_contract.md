@@ -1,12 +1,13 @@
 # StructuredDocument Contract Foundation
 
 Date: 2026-07-21
-Status: Foundation, parser-model mapping, section hierarchy, and entity mapping implemented as Python API
-Phase: 13B foundation; 13C mapper; 13D section hierarchy; 13E1 tables/figures; 13E2 equations/admonitions
+Status: Foundation, parser-model mapping, section hierarchy, entity mapping, references, and confidence policy implemented as Python API
+Phase: 13B foundation; 13C mapper; 13D section hierarchy; 13E1 tables/figures; 13E2 equations/admonitions; 13F references/confidence policy
 
 This document describes the internal foundation for emitting
 `techdoc-structured-document / 0.1.0` records, the Phase 13C parser-model
-mapper, Phase 13D section hierarchy enrichment, and Phase 13E entity mapping.
+mapper, Phase 13D section hierarchy enrichment, Phase 13E entity mapping, and
+Phase 13F cross-reference plus confidence-policy mapping.
 The foundation and mapper are additive and isolated. They do not change parser
 extraction, reading order, heading detection, chunking, validation gates,
 existing JSON outputs, Markdown outputs, manifest outputs, or CLI behavior.
@@ -29,7 +30,7 @@ Phase 13B through Phase 13E2 does not:
 - Generate embeddings, use Astra, use FAISS, or perform ingestion.
 - Infer checksums, revisions, issue numbers, dates, page labels, confidence
   scores, table cells, figure assets, figure regions, mathematical meaning,
-  safety severity, or cross-references.
+  safety severity, or false cross-reference targets.
 - Detect new headings or repair parser heading levels.
 
 ## 2.1 Phase 13C Parser Mapping
@@ -102,8 +103,36 @@ references, optional bounding boxes, optional section IDs, and label/type fields
 where truthful.
 
 Equation semantics, formula discovery from PDF layout, safety severity
-classification, typography-only admonition detection, confidence scores, and
-cross-references remain absent.
+classification, typography-only admonition detection, and confidence scores
+remain absent.
+
+## 2.5 Phase 13F Cross-References And Confidence Policy
+
+Phase 13F adds explicit textual cross-reference detection in:
+
+```text
+src/techdoc_parser/structure/cross_references.py
+```
+
+and contract-local mapping in:
+
+```text
+src/techdoc_parser/contracts/structured_document_references.py
+src/techdoc_parser/contracts/structured_document_confidence.py
+```
+
+The mapper reads paragraph and unknown blocks only, extracts explicit
+references introduced by phrases such as `see`, `refer to`,
+`in accordance with`, `as specified in`, `as described in`, and
+`according to`, then resolves only by exact local identifiers already present in
+sections, tables, figures, or equations. Supported statuses are `resolved`,
+`unresolved`, `external`, `ambiguous`, and `not_attempted`.
+
+Confidence policy is intentionally conservative. Current
+`SourceLocation.confidence` values are not promoted into structured-document
+confidence fields because native PyMuPDF values are placeholders. Confidence
+fields are emitted only when a real numeric value in the inclusive range
+`0.0..1.0` exists; booleans and out-of-range values are rejected.
 
 ## 3. Module
 
@@ -157,9 +186,9 @@ cross_references
 ```
 
 Unsupported or not-yet-populated entity collections are emitted as empty lists.
-As of Phase 13E2, `tables`, `figures`, `equations`, and `admonitions` may be
-populated from current candidate evidence by the parser-model mapper;
-`cross_references` remains empty unless callers supply records explicitly.
+As of Phase 13F, `tables`, `figures`, `equations`, `admonitions`, and
+`cross_references` may be populated from current candidate evidence by the
+parser-model mapper.
 
 ## 6. Document Metadata Policy
 
@@ -237,10 +266,12 @@ Root collections for `tables`, `figures`, `equations`, `admonitions`, and
 `cross_references` exist so phases can populate them without changing the root
 shape. Phase 13E1 populates `tables` and `figures` only from existing
 candidate-level parser evidence. Phase 13E2 populates `equations` and
-`admonitions` only from conservative or explicit evidence. These phases do not
-reconstruct table cells, infer table continuation, extract figure assets, infer
-figure numbers, parse mathematical meaning, infer safety severity, or create
-cross-reference records.
+`admonitions` only from conservative or explicit evidence. Phase 13F populates
+`cross_references` only from explicit textual reference phrases and exact
+target evidence. These phases do not reconstruct table cells, infer table
+continuation, extract figure assets, infer figure numbers, parse mathematical
+meaning, infer safety severity, fabricate reference targets, or emit
+placeholder confidence values.
 
 ## 12. Determinism And Side Effects
 
@@ -253,7 +284,7 @@ network operations.
 The current parser model, JSON exporters, Markdown exporters, validation
 exports, gate exports, output manifest, and CLI behavior remain unchanged.
 Existing `document.json` and `manifest.json` do not gain `schema_name` or
-structured-document root fields in Phase 13B through Phase 13E2.
+structured-document root fields in Phase 13B through Phase 13F.
 
 ## 14. Fixture
 
@@ -264,6 +295,7 @@ tests/fixtures/structured_document/minimal_structured_document.json
 tests/fixtures/structured_document/mapped_structured_document_with_sections.json
 tests/fixtures/structured_document/mapped_structured_document_with_tables_figures.json
 tests/fixtures/structured_document/mapped_structured_document_with_equations_admonitions.json
+tests/fixtures/structured_document/mapped_structured_document_with_references_confidence.json
 ```
 
 It is intentionally not derived from real source material. It contains no
@@ -281,6 +313,9 @@ Phase 13E1 completed contract-local table and figure-caption root mapping from
 existing candidate evidence only.
 
 Phase 13E2 completed contract-local equation and admonition root mapping from
-truthful parser evidence only. Recommended next work is cross-reference mapping,
-confidence policy, true table structure/parser enhancements, formula discovery,
-or optional CLI/manifest integration as a separate scoped phase.
+truthful parser evidence only.
+
+Phase 13F completed contract-local cross-reference mapping and confidence
+policy. Recommended next work is optional CLI/manifest integration, synthetic
+AviationRAG compatibility validation as a formal phase, true table
+structure/parser enhancements, or formula discovery as a separate scoped phase.

@@ -17,6 +17,14 @@ from techdoc_parser.contracts.structured_document import (
     structured_document_to_dict,
     structured_document_to_json,
 )
+from techdoc_parser.contracts.structured_document_confidence import (
+    CONFIDENCE_FIELDS,
+    add_confidence_if_available,
+    map_ocr_confidence,
+    map_source_extraction_confidence,
+    map_structure_confidence,
+    normalize_confidence,
+)
 from techdoc_parser.contracts.structured_document_entities import (
     StructuredEntityEvidence,
     map_figure_caption_evidence,
@@ -37,11 +45,18 @@ from techdoc_parser.contracts.structured_document_mapper import (
     map_document_to_structured_document,
     map_document_with_options,
 )
+from techdoc_parser.contracts.structured_document_references import (
+    ResolvedCrossReferenceCandidate,
+    map_cross_reference_evidence,
+    resolve_cross_reference_candidates,
+)
 
 __all__ = [
     "STRUCTURED_DOCUMENT_SCHEMA_NAME",
     "STRUCTURED_DOCUMENT_SCHEMA_VERSION",
     "SUPPORTED_STRUCTURED_DOCUMENT_SCHEMA_VERSIONS",
+    "CONFIDENCE_FIELDS",
+    "ResolvedCrossReferenceCandidate",
     "StructuredBoundingBox",
     "StructuredDocument",
     "StructuredDocumentMappingOptions",
@@ -53,6 +68,7 @@ __all__ = [
     "StructuredHeadingEvidence",
     "StructuredSourceSpan",
     "SectionHierarchyResult",
+    "add_confidence_if_available",
     "build_structured_document",
     "enrich_structured_document_hierarchy",
     "is_supported_structured_document_version",
@@ -62,8 +78,14 @@ __all__ = [
     "map_document_with_options",
     "map_equation_evidence",
     "map_figure_caption_evidence",
+    "map_cross_reference_evidence",
+    "map_ocr_confidence",
+    "map_source_extraction_confidence",
+    "map_structure_confidence",
+    "normalize_confidence",
     "map_table_evidence",
     "require_supported_structured_document_version",
+    "resolve_cross_reference_candidates",
     "structured_document_to_dict",
     "structured_document_to_json",
 ]

@@ -28,6 +28,9 @@ from techdoc_parser.contracts.structured_document_hierarchy import (
     StructuredHeadingEvidence,
     enrich_structured_document_hierarchy,
 )
+from techdoc_parser.contracts.structured_document_references import (
+    map_cross_reference_evidence,
+)
 from techdoc_parser.core import (
     Block,
     BoundingBox,
@@ -171,6 +174,14 @@ def map_document_with_options(
         evidence=entity_evidence,
         sections=sections,
     )
+    cross_references = map_cross_reference_evidence(
+        document_id=options.document_id,
+        evidence=entity_evidence,
+        sections=sections,
+        tables=tables,
+        figures=figures,
+        equations=equations,
+    )
 
     metadata = StructuredDocumentMetadata(
         document_id=options.document_id,
@@ -192,7 +203,7 @@ def map_document_with_options(
         figures=figures,
         equations=equations,
         admonitions=admonitions,
-        cross_references=(),
+        cross_references=cross_references,
     )
 
 

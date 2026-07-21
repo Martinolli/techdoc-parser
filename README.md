@@ -96,8 +96,9 @@ contract dataclasses, deterministic JSON serialization helpers, and a pure
 parser-model mapper for document, page, block, source-location, bounding-box,
 heading-derived section hierarchy, and current table/figure-caption candidate
 evidence already present in the parser model. It also maps conservative
-equation evidence and explicit-label admonition evidence into internal contract
-root entities.
+equation evidence, explicit-label admonition evidence, and explicit textual
+cross-reference evidence into internal contract root entities. Current
+placeholder confidence values are intentionally omitted.
 
 This API is not wired into the CLI or current output package. Existing JSON,
 Markdown, validation, gate, and manifest outputs remain unchanged.
@@ -112,6 +113,7 @@ Markdown, validation, gate, and manifest outputs remain unchanged.
 - [Structured-document section hierarchy](docs/structured_document_hierarchy.md)
 - [Structured-document table and figure-caption mapping](docs/structured_document_tables_figures.md)
 - [Structured-document equation and admonition mapping](docs/structured_document_equations_admonitions.md)
+- [Structured-document cross-reference and confidence policy](docs/structured_document_references_confidence.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -131,6 +133,11 @@ Markdown, validation, gate, and manifest outputs remain unchanged.
   conservative paragraph equation evidence as root equation entities
 - Admonition mapping is explicit-label only for warning, caution, note,
   important, and safety-notice text in the internal structured-document mapper
+- Cross-reference mapping is explicit-text only in the internal
+  structured-document mapper and preserves unresolved, external, ambiguous, and
+  not-attempted statuses
+- Confidence fields are omitted unless truthful numeric evidence exists; current
+  placeholder `SourceLocation.confidence` values are not promoted
 - `techdoc-structured-document / 0.1.0` has an internal contract API and
   parser-model mapper, but CLI export and manifest integration are not
   implemented

@@ -238,5 +238,8 @@ decisions, and human-readable validation summaries with source traceability.
 
 It is suitable for pilot AviationRAG ingestion with known limitations. It is not
 yet a complete technical-document understanding engine: advanced table
-reconstruction, full section hierarchy, OCR, formula recognition, confidence
-scoring, and cross-reference modeling remain future work.
+reconstruction, OCR, formula discovery from PDF layout, broad confidence
+scoring, PDF link/bookmark reference capture, and high-fidelity real-document
+accuracy validation remain future work. Later Phase 13 work added an internal
+structured-document section/entity/reference contract API, but that API is not
+part of the current CLI output package described by this audit.

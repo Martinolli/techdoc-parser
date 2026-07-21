@@ -99,5 +99,6 @@ future scoped phase adds explicit CLI/export integration.
   not implemented.
 - Admonition body grouping is bounded and same-page only.
 - Safety severity inference is not implemented.
-- Cross-reference and confidence mapping remain future work.
+- Cross-reference mapping and confidence policy are handled separately by Phase
+  13F.
 - Structured-document CLI and manifest output remain future work.

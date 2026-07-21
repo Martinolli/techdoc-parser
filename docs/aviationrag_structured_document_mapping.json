@@ -537,14 +537,14 @@
     {
       "target_entity": "cross_references",
       "target_field": "reference_id_raw_text_status_target",
-      "current_source": null,
-      "current_field": null,
-      "mapping_status": "missing",
-      "required_transformation": "Add extraction and explicit resolution status; do not fabricate targets.",
-      "gap_class": "parser-enhancement",
+      "current_source": "techdoc_parser.core.models.ParagraphBlock/Block",
+      "current_field": "text, source",
+      "mapping_status": "implemented-contract-api",
+      "required_transformation": "Phase 13F emits explicit textual references with exact local resolution status; do not fabricate targets.",
+      "gap_class": "implemented-contract-api",
       "priority": "P2",
       "risk": "high",
-      "notes": "Current parser has no Reference model."
+      "notes": "Implemented in src/techdoc_parser/contracts/structured_document_references.py for explicit text only; no PDF links, bookmarks, fuzzy matching, or external lookup."
     },
     {
       "target_entity": "relationships",
@@ -568,7 +568,7 @@
       "gap_class": "policy decision",
       "priority": "P1",
       "risk": "high",
-      "notes": "Current value is hard-coded for native PyMuPDF blocks. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
+      "notes": "Current value is hard-coded for native PyMuPDF blocks. Phase 13F confidence policy is implemented in src/techdoc_parser/contracts/structured_document_confidence.py."
     },
     {
       "target_entity": "confidence",
@@ -609,5 +609,11 @@
     "status": "implemented",
     "mapper_module": "src/techdoc_parser/contracts/structured_document_equations_admonitions.py",
     "notes": "Maps existing FormulaBlock evidence, conservative paragraph equation evidence, and explicit-label admonition evidence only; no mathematical understanding, safety severity inference, confidence fields, CLI integration, current-output changes, or AviationRAG integration."
+  },
+  "phase_13f": {
+    "status": "implemented",
+    "reference_mapper_module": "src/techdoc_parser/contracts/structured_document_references.py",
+    "confidence_policy_module": "src/techdoc_parser/contracts/structured_document_confidence.py",
+    "notes": "Maps explicit textual cross-references with resolved, unresolved, external, ambiguous, and not_attempted status policy; omits placeholder confidence values; no CLI, manifest, current-output, runtime AviationRAG, PDF link/bookmark, fuzzy matching, or external lookup integration."
   }
 }

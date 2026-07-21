@@ -4,6 +4,10 @@ from techdoc_parser.structure.admonitions import (
     AdmonitionCandidate,
     detect_admonition_candidates,
 )
+from techdoc_parser.structure.cross_references import (
+    CrossReferenceCandidate,
+    detect_cross_reference_candidates,
+)
 from techdoc_parser.structure.equations import (
     EquationCandidate,
     detect_equation_candidate,
@@ -34,6 +38,7 @@ from techdoc_parser.structure.tables import (
 
 __all__ = [
     "AdmonitionCandidate",
+    "CrossReferenceCandidate",
     "EquationCandidate",
     "classify_text_block_page_furniture",
     "create_figure_blocks_for_page",
@@ -42,6 +47,7 @@ __all__ = [
     "create_table_blocks_for_page",
     "create_table_region_blocks_for_page",
     "detect_admonition_candidates",
+    "detect_cross_reference_candidates",
     "detect_equation_candidate",
     "detect_heading_level",
     "extract_heading_blocks_from_text_block",
