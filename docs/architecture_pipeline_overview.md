@@ -157,9 +157,10 @@ external contract consumer
 
 The contract foundation and mapper are implemented under
 `techdoc_parser.contracts`. The mapper covers document, page, block, source-span,
-and bounding-box data that already exists in the parser model. CLI output,
-manifest integration, runtime ingestion, section hierarchy mapping, and advanced
-entity root collections are not implemented. Current outputs remain unchanged.
+bounding-box, and heading-derived section hierarchy data that already exists in
+the parser model. CLI output, manifest integration, runtime ingestion, and
+advanced entity root collections are not implemented. Current outputs remain
+unchanged.
 AviationRAG is one intended consumer, but the parser remains independent and has
 no direct runtime dependency on AviationRAG.
 
@@ -167,6 +168,7 @@ no direct runtime dependency on AviationRAG.
 
 - Add optional validation profiles or strictness modes.
 - Add an architecture diagram later if the pipeline grows more complex.
-- Implement a full section hierarchy when downstream consumers need parent-child structure.
+- Add optional structured-document CLI/manifest output when downstream consumers
+  need files rather than the Python API.
 - Add a dedicated confidence scoring model.
 - Add an advanced table extraction adapter for more reliable table structure.

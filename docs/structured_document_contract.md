@@ -1,15 +1,15 @@
 # StructuredDocument Contract Foundation
 
-Date: 2026-07-19
-Status: Foundation implemented; parser-model mapping implemented as Python API
-Phase: 13B foundation; 13C mapper
+Date: 2026-07-21
+Status: Foundation, parser-model mapping, and section hierarchy implemented as Python API
+Phase: 13B foundation; 13C mapper; 13D section hierarchy
 
 This document describes the internal foundation for emitting
-`techdoc-structured-document / 0.1.0` records and the Phase 13C parser-model
-mapper. The foundation and mapper are additive and isolated. They do not change
-parser extraction, reading order, heading detection, chunking, validation
-gates, existing JSON outputs, Markdown outputs, manifest outputs, or CLI
-behavior.
+`techdoc-structured-document / 0.1.0` records, the Phase 13C parser-model
+mapper, and the Phase 13D section hierarchy enrichment. The foundation and
+mapper are additive and isolated. They do not change parser extraction, reading
+order, heading detection, chunking, validation gates, existing JSON outputs,
+Markdown outputs, manifest outputs, or CLI behavior.
 
 ## 1. Scope
 
@@ -27,9 +27,10 @@ Phase 13B/13C does not:
 - Import or modify AviationRAG.
 - Parse real or proprietary documents.
 - Generate embeddings, use Astra, use FAISS, or perform ingestion.
-- Infer checksums, revisions, issue numbers, dates, page labels, sections,
-  confidence scores, table cells, figures, equations, admonitions, or
+- Infer checksums, revisions, issue numbers, dates, page labels, confidence
+  scores, table cells, figures, equations, admonitions, or
   cross-references.
+- Detect new headings or repair parser heading levels.
 
 ## 2.1 Phase 13C Parser Mapping
 
@@ -44,8 +45,26 @@ The mapper converts existing parser `Document`, `Page`, `Block`, and
 metadata, pages, blocks, source spans, bounding boxes, raw text, normalized
 text, deterministic page/block indexes, and conservative block content types.
 
-Sections and advanced entity root collections remain empty. No CLI integration
-exists, current outputs remain unchanged, and no provenance is fabricated.
+Advanced entity root collections remain empty. No CLI integration exists,
+current outputs remain unchanged, and no provenance is fabricated.
+
+## 2.2 Phase 13D Section Hierarchy
+
+Phase 13D adds a pure hierarchy builder in:
+
+```text
+src/techdoc_parser/contracts/structured_document_hierarchy.py
+```
+
+The mapper uses current `HeadingBlock` objects to create
+`StructuredDocumentSection` records, parent-child relationships, block
+`section_id` assignments, and section source spans. The builder preserves raw
+heading text, optional normalized heading text, existing heading levels,
+explicit section numbers, appendix/annex labels, and AMC/GM-style clause
+identifiers when present. Section paths use validator-compatible display text
+while `raw_heading` preserves the exact source heading. It does not create
+missing headings, missing parent levels, confidence scores, page labels,
+character offsets, checksums, or advanced entity records.
 
 ## 3. Module
 
@@ -130,10 +149,24 @@ validator.
 
 ## 8. Section Policy
 
-Sections are optional in the foundation. Empty `sections` is valid foundation
-output when no truthful section tree is available. When supplied,
-`StructuredDocumentSection` preserves caller-provided hierarchy fields without
-constructing parents, titles, paths, or confidence scores.
+Sections are optional in the foundation. Empty `sections` remains valid when no
+truthful section tree is available or when section enrichment is disabled. When
+supplied, `StructuredDocumentSection` preserves hierarchy fields plus optional
+source evidence:
+
+- `section_id`
+- `level`
+- `title`
+- `parent_section_id`
+- `section_number`
+- `path`
+- `source_span`
+- `raw_heading`
+- `normalized_heading`
+- `clause_identifier`
+
+No confidence value is emitted unless a future phase adds a truthful confidence
+model.
 
 ## 9. Block Policy
 
@@ -182,6 +215,7 @@ The synthetic fixture is:
 
 ```text
 tests/fixtures/structured_document/minimal_structured_document.json
+tests/fixtures/structured_document/mapped_structured_document_with_sections.json
 ```
 
 It is intentionally not derived from real source material. It contains no
@@ -193,6 +227,6 @@ Phase 13C completed contract-local mapping from the current `Document`, `Page`,
 `Block`, `SourceLocation`, and `BoundingBox` objects into this root shape, with
 explicit tests that existing outputs remain unchanged.
 
-Recommended next work is Phase 13D: durable section hierarchy and source-span
-enrichment. That phase should keep CLI integration and current output-package
-changes separate unless explicitly scoped.
+Phase 13D completed contract-local section hierarchy and source-span enrichment.
+Recommended next work is either advanced entity mapping from truthful parser
+evidence or optional CLI/manifest integration as a separate scoped phase.

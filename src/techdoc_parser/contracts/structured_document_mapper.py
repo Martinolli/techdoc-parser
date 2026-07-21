@@ -11,13 +11,19 @@ from techdoc_parser.contracts.structured_document import (
     StructuredDocumentBlock,
     StructuredDocumentMetadata,
     StructuredDocumentPage,
+    StructuredDocumentSection,
     StructuredSourceSpan,
     build_structured_document,
+)
+from techdoc_parser.contracts.structured_document_hierarchy import (
+    StructuredHeadingEvidence,
+    enrich_structured_document_hierarchy,
 )
 from techdoc_parser.core import (
     Block,
     BoundingBox,
     Document,
+    HeadingBlock,
     Page,
     TextBlock,
 )
@@ -44,6 +50,7 @@ class StructuredDocumentMappingOptions:
     effective_date: str | None = None
     source_checksum: str | None = None
     include_normalized_text: bool = True
+    include_sections: bool = True
 
 
 def map_document_to_structured_document(
@@ -56,6 +63,7 @@ def map_document_to_structured_document(
     effective_date: str | None = None,
     source_checksum: str | None = None,
     include_normalized_text: bool = True,
+    include_sections: bool = True,
 ) -> StructuredDocument:
     """Map a parser ``Document`` to a structured-document contract object.
 
@@ -72,6 +80,7 @@ def map_document_to_structured_document(
         effective_date=effective_date,
         source_checksum=source_checksum,
         include_normalized_text=include_normalized_text,
+        include_sections=include_sections,
     )
     return map_document_with_options(document, options)
 
@@ -83,23 +92,41 @@ def map_document_with_options(
     """Map a parser ``Document`` using immutable mapping options."""
     pages = [_map_page(page) for page in document.pages]
     blocks: list[StructuredDocumentBlock] = []
+    heading_evidence: list[StructuredHeadingEvidence] = []
 
     for page in document.pages:
         page_id = _page_id_for_page(page)
         page_pdf_index = _pdf_page_index_from_page_number(page.page_number)
         for page_block_index, block in enumerate(page.blocks):
-            blocks.append(
-                _map_block(
-                    block=block,
-                    page=page,
-                    page_id=page_id,
-                    page_pdf_index=page_pdf_index,
-                    page_block_index=page_block_index,
-                    document_block_index=len(blocks),
-                    document_id=options.document_id,
-                    include_normalized_text=options.include_normalized_text,
-                )
+            mapped_block = _map_block(
+                block=block,
+                page=page,
+                page_id=page_id,
+                page_pdf_index=page_pdf_index,
+                page_block_index=page_block_index,
+                document_block_index=len(blocks),
+                document_id=options.document_id,
+                include_normalized_text=options.include_normalized_text,
             )
+            blocks.append(mapped_block)
+            if isinstance(block, HeadingBlock):
+                heading_evidence.append(
+                    StructuredHeadingEvidence(
+                        heading=block,
+                        mapped_block=mapped_block,
+                        include_normalized_heading=options.include_normalized_text,
+                    )
+                )
+
+    sections: tuple[StructuredDocumentSection, ...] = ()
+    if options.include_sections:
+        hierarchy = enrich_structured_document_hierarchy(
+            document_id=options.document_id,
+            heading_evidence=heading_evidence,
+            blocks=blocks,
+        )
+        sections = hierarchy.sections
+        blocks = list(hierarchy.blocks)
 
     metadata = StructuredDocumentMetadata(
         document_id=options.document_id,
@@ -116,7 +143,7 @@ def map_document_with_options(
         document=metadata,
         pages=pages,
         blocks=blocks,
-        sections=(),
+        sections=sections,
         tables=(),
         figures=(),
         equations=(),

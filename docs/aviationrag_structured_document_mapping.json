@@ -225,50 +225,50 @@
     {
       "target_entity": "sections",
       "target_field": "section_id",
-      "current_source": null,
-      "current_field": null,
-      "mapping_status": "partial",
-      "required_transformation": "Build durable section IDs from heading candidates.",
-      "gap_class": "model-extension",
+      "current_source": "techdoc_parser.contracts.structured_document_hierarchy",
+      "current_field": "HeadingBlock sequence",
+      "mapping_status": "derive_safely",
+      "required_transformation": "Build durable document-local section IDs from existing heading candidates.",
+      "gap_class": "implemented-contract-api",
       "priority": "P1",
       "risk": "high",
-      "notes": "Current section context only exists during chunking."
+      "notes": "Implemented by contract-local hierarchy enrichment with IDs like <document_id>:s0001."
     },
     {
       "target_entity": "sections",
       "target_field": "parent_section_id",
-      "current_source": "techdoc_parser.chunking.semantic",
-      "current_field": "heading_context",
-      "mapping_status": "partial",
+      "current_source": "techdoc_parser.core.models.HeadingBlock",
+      "current_field": "level",
+      "mapping_status": "derive_safely",
       "required_transformation": "Convert heading levels into a validated hierarchy.",
-      "gap_class": "model-extension",
+      "gap_class": "implemented-contract-api",
       "priority": "P1",
       "risk": "high",
-      "notes": "No durable Section model exists."
+      "notes": "Uses nearest preceding lower-level heading; skipped levels do not fabricate parent sections."
     },
     {
       "target_entity": "sections",
       "target_field": "section_number",
       "current_source": "techdoc_parser.core.models.HeadingBlock",
       "current_field": "text",
-      "mapping_status": "partial",
+      "mapping_status": "derive_safely",
       "required_transformation": "Parse explicit heading numbers only; leave unnumbered headings null.",
-      "gap_class": "parser-enhancement",
+      "gap_class": "implemented-contract-api",
       "priority": "P1",
       "risk": "medium",
-      "notes": "Heading detection is heuristic."
+      "notes": "Supports narrow numeric, appendix, and annex prefixes without changing heading detection."
     },
     {
       "target_entity": "sections",
       "target_field": "title_path_confidence",
       "current_source": "techdoc_parser.core.models.HeadingBlock",
       "current_field": "text, level",
-      "mapping_status": "partial",
+      "mapping_status": "derive_safely",
       "required_transformation": "Create title/path fields and null confidence unless real values exist.",
-      "gap_class": "model-extension",
+      "gap_class": "implemented-contract-api",
       "priority": "P1",
       "risk": "medium",
-      "notes": "Chunk metadata has section_path strings but not section records."
+      "notes": "Preserves raw_heading and optional normalized_heading; confidence remains absent."
     },
     {
       "target_entity": "blocks",
@@ -345,14 +345,14 @@
     {
       "target_entity": "blocks",
       "target_field": "section_id",
-      "current_source": null,
-      "current_field": null,
-      "mapping_status": "missing",
-      "required_transformation": "Phase 13D must add durable section hierarchy before block section IDs are emitted.",
-      "gap_class": "model-extension",
+      "current_source": "techdoc_parser.contracts.structured_document_hierarchy",
+      "current_field": "active heading context",
+      "mapping_status": "derive_safely",
+      "required_transformation": "Assign block section IDs from durable section hierarchy.",
+      "gap_class": "implemented-contract-api",
       "priority": "P1",
       "risk": "high",
-      "notes": "Chunk section metadata is not enough for root blocks. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
+      "notes": "Blocks before the first heading remain unassigned; section enrichment can be disabled with include_sections=False."
     },
     {
       "target_entity": "source_span",

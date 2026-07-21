@@ -225,6 +225,9 @@ class StructuredDocumentSection:
     section_number: str | None = None
     path: tuple[str, ...] = ()
     source_span: StructuredSourceSpan | None = None
+    raw_heading: str | None = None
+    normalized_heading: str | None = None
+    clause_identifier: str | None = None
 
     def __post_init__(self) -> None:
         """Validate section fields."""
@@ -236,6 +239,15 @@ class StructuredDocumentSection:
             "parent_section_id",
         )
         _validate_optional_non_empty_string(self.section_number, "section_number")
+        _validate_optional_non_empty_string(self.raw_heading, "raw_heading")
+        _validate_optional_non_empty_string(
+            self.normalized_heading,
+            "normalized_heading",
+        )
+        _validate_optional_non_empty_string(
+            self.clause_identifier,
+            "clause_identifier",
+        )
         for path_item in self.path:
             _validate_non_empty_string(path_item, "path")
 
@@ -248,6 +260,9 @@ class StructuredDocumentSection:
         }
         _add_optional(data, "parent_section_id", self.parent_section_id)
         _add_optional(data, "section_number", self.section_number)
+        _add_optional(data, "raw_heading", self.raw_heading)
+        _add_optional(data, "normalized_heading", self.normalized_heading)
+        _add_optional(data, "clause_identifier", self.clause_identifier)
         if self.path:
             data["path"] = list(self.path)
         if self.source_span is not None:

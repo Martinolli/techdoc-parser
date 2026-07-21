@@ -1,7 +1,7 @@
 # StructuredDocument Parser Model Mapping
 
 Date: 2026-07-21
-Status: Phase 13C implemented as a Python contract API
+Status: Phase 13C/13D implemented as a Python contract API
 
 ## 1. Purpose
 
@@ -10,10 +10,17 @@ Phase 13C adds a pure mapper from the current parser core model to the
 minimum structured-document record from existing `Document`, `Page`, `Block`,
 and `SourceLocation` evidence.
 
+Phase 13D adds contract-local section hierarchy enrichment from existing
+`HeadingBlock` objects. It creates durable section records, parent-child links,
+block `section_id` assignments, and aggregate section source spans without
+changing parser extraction, heading detection, chunking, current output files,
+or CLI behavior.
+
 The implementation lives in:
 
 ```text
 src/techdoc_parser/contracts/structured_document_mapper.py
+src/techdoc_parser/contracts/structured_document_hierarchy.py
 ```
 
 It is available through `techdoc_parser.contracts` as:
@@ -36,6 +43,7 @@ The mapper uses the public core dataclasses in `techdoc_parser.core.models`:
 | `Page` | `page_number`, `blocks` |
 | `Block` | `id`, `source`, `block_type`, `text`, `normalized_text` |
 | `TextBlock` | page furniture flags |
+| `HeadingBlock` | `text`, `normalized_text`, `level` |
 | `SourceLocation` | `page_number`, `bbox`, `extraction_method` |
 | `BoundingBox` | `x0`, `y0`, `x1`, `y1` |
 
@@ -51,6 +59,7 @@ The mapper constructs the existing frozen contract dataclasses from
 - `StructuredDocumentMetadata`
 - `StructuredDocumentPage`
 - `StructuredDocumentBlock`
+- `StructuredDocumentSection`
 - `StructuredSourceSpan`
 - `StructuredBoundingBox`
 - `StructuredDocument`
@@ -165,11 +174,52 @@ Missing metadata remains absent. Unknown printed page labels remain `null`.
 Unknown block types map to `unknown` if raw text exists. Unknown section,
 revision, checksum, confidence, and character-offset data is not invented.
 
-## 13. Unsupported Entities
+## 13. Section Hierarchy Mapping
 
-Phase 13C leaves these root collections empty:
+When `include_sections=True` (the default), the mapper uses only existing
+`HeadingBlock` records as section evidence. It does not re-detect headings,
+repair heading levels, or inspect layout. If no heading blocks exist, `sections`
+remains an empty list and blocks do not receive `section_id`.
 
-- `sections`
+Section IDs use deterministic document-local sequence IDs:
+
+```text
+<document_id>:s0001
+<document_id>:s0002
+```
+
+Parent-child hierarchy follows the current `HeadingBlock.level` values:
+
+| Case | Decision |
+| --- | --- |
+| First heading level is greater than 1 | It becomes a root section; its original level is preserved. |
+| Next heading has a deeper level | It becomes a child of the nearest preceding lower-level heading. |
+| Next heading has the same level | It becomes a sibling; deeper stack entries are closed. |
+| Heading levels skip, such as 1 to 4 | No missing intermediary sections are fabricated. |
+| Blocks before the first heading | They remain unassigned. |
+| Blocks after a heading | They receive the active section ID until another heading changes context. |
+
+Number and title parsing is narrow. Explicit numeric headings, appendices,
+annexes, and AMC/GM-style clause prefixes are preserved when present. Paths use
+the validator-compatible display form `section_number + title`; exact source
+heading text remains available in `raw_heading`. Unnumbered headings keep their
+heading text as the section title and path item. The mapper does not fabricate
+section numbers, clause identifiers, confidence values, page labels, character
+offsets, or source hashes.
+
+Section source spans are computed from blocks directly assigned to the section.
+They include page and PDF-index ranges, ordered source block IDs, and a common
+extraction method when all direct blocks agree. Multi-block section spans do not
+merge bounding boxes; a section-level `bbox` is emitted only when a section has
+one directly assigned block with a real block bbox.
+
+Set `include_sections=False` to preserve the Phase 13C no-section contract
+shape for compatibility tests or callers that are not ready for section IDs.
+
+## 14. Unsupported Entities
+
+The mapper leaves these root collections empty:
+
 - `tables`
 - `figures`
 - `equations`
@@ -178,24 +228,23 @@ Phase 13C leaves these root collections empty:
 
 Candidate table, figure-caption, and formula parser blocks may appear as
 ordinary mapped blocks, but the mapper does not create root advanced entities
-or section trees.
+or advanced entity records.
 
-## 14. Guarantees
+## 15. Guarantees
 
 The mapper is deterministic, import-safe, filesystem-independent, and
 non-mutating. Repeated mapping of the same parser object with the same options
 produces identical contract JSON. The mapper does not invoke current exporters
 or depend on CLI orchestration.
 
-## 15. Backward Compatibility
+## 16. Backward Compatibility
 
 Existing parser public models, constructors, JSON exporters, Markdown exporters,
 validation report exports, gate exports, output manifests, and CLI arguments
 remain unchanged. The structured-document mapper is a Python API only.
 
-## 16. Known Gaps
+## 17. Known Gaps
 
-- No section hierarchy or block-to-section membership.
 - No root table, figure, equation, admonition, or cross-reference entities.
 - No source checksum ownership beyond explicit caller-supplied values.
 - No printed page-label extraction.
@@ -203,11 +252,12 @@ remain unchanged. The structured-document mapper is a Python API only.
 - No confidence semantics beyond omission of placeholder values.
 - No CLI structured-document output.
 - No manifest integration for structured-document artifacts.
+- Heading hierarchy accuracy remains bounded by the current `HeadingBlock`
+  evidence.
 
-## 17. Phase 13D Prerequisites
+## 18. Next Phase
 
-Phase 13D should design durable section IDs, parent-child section hierarchy,
-heading source spans, block membership, and section/source-span enrichment
-without changing current parser output behavior.
-
-CLI integration is not implemented in Phase 13C.
+Phase 13D is implemented as contract-local section hierarchy enrichment. Next
+work should keep CLI/manifest integration separate from advanced entity mapping,
+and should not map tables, figures, equations, admonitions, or cross-references
+until the parser has truthful entity-level evidence.

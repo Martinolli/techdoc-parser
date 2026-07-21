@@ -541,6 +541,11 @@ Constraints: preserve `HeadingBlock`; do not overclaim hierarchy. Acceptance:
 numbered/unnumbered synthetic heading cases produce stable `sections` and block
 section references.
 
+Phase 13D status: completed as a contract-local hierarchy builder. It derives
+section IDs, parent-child links, paths, block `section_id` values, and section
+source spans from existing `HeadingBlock` evidence only. It does not change
+heading detection, chunking, current outputs, CLI behavior, or AviationRAG.
+
 ### 13E - Tables, Figures, Equations, And Admonitions
 
 Goal: export candidate tables/figures truthfully and add initial admonition or
@@ -587,7 +592,9 @@ Required for first valid export:
   `printed_page_label`.
 - Flattened `blocks[]` with `block_id`, target-compatible `block_type`, text
   when textual, `document_block_index`, `page_block_index`, and `source_span`.
-- Empty `sections`, `tables`, `figures`, `equations`, `admonitions`, and
+- Empty `sections` where no truthful heading evidence is emitted or section
+  enrichment is disabled.
+- Empty `tables`, `figures`, `equations`, `admonitions`, and
   `cross_references` where no truthful records are emitted.
 
 Required before AviationRAG D.4c:
@@ -639,6 +646,9 @@ Phase 13B status: **completed as an isolated contract foundation**.
 
 Phase 13C status: **completed as a pure parser-model mapper**.
 
+Phase 13D status: **completed as pure section hierarchy and source-span
+enrichment**.
+
 Phase 13C maps current `Document`, `Page`, `Block`, `SourceLocation`, and
 `BoundingBox` evidence into the Phase 13B contract model while preserving all
 existing output formats. It added `structured_document_mapper.py`, focused
@@ -649,9 +659,11 @@ section hierarchy, advanced entity root records, confidence mapping, or changes
 to parser extraction, chunking, validation, current JSON, Markdown, or manifest
 behavior.
 
-Recommended next phase: **Phase 13D - Section Hierarchy And Source-Span
-Enrichment**.
+Phase 13D adds durable section records, section IDs, parent-child relationships,
+block-to-section membership, and enriched section source spans without replacing
+current parser models or changing current output behavior.
 
-Phase 13D should design durable section records, section IDs, parent-child
-relationships, block-to-section membership, and enriched heading/source spans
-without replacing current parser models or changing current output behavior.
+Recommended next phase: **Phase 13E - Advanced Entity Mapping From Truthful
+Parser Evidence** or **Phase 13G - Optional CLI/API Structured-Document
+Output**, depending on whether downstream work needs richer entities or file
+emission first.

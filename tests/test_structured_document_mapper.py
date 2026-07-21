@@ -39,6 +39,12 @@ FIXTURE_PATH = (
     / "structured_document"
     / "mapped_structured_document.json"
 )
+HIERARCHY_FIXTURE_PATH = (
+    Path(__file__).parent
+    / "fixtures"
+    / "structured_document"
+    / "mapped_structured_document_with_sections.json"
+)
 
 
 def test_parser_document_maps_successfully_to_contract_shape() -> None:
@@ -60,7 +66,30 @@ def test_parser_document_maps_successfully_to_contract_shape() -> None:
         "canonical_title": "Synthetic Metadata Title",
         "page_count": 2,
     }
-    assert data["sections"] == []
+    assert data["sections"] == [
+        {
+            "section_id": "explicit-doc-id:s0001",
+            "level": 1,
+            "title": "Synthetic Hydraulic Inspection Guide",
+            "section_number": "1",
+            "raw_heading": "1. Synthetic Hydraulic Inspection Guide",
+            "normalized_heading": "1. Synthetic Hydraulic Inspection Guide",
+            "path": ["1 Synthetic Hydraulic Inspection Guide"],
+            "source_span": {
+                "page_start": 1,
+                "page_end": 2,
+                "pdf_page_index_start": 0,
+                "pdf_page_index_end": 1,
+                "source_block_ids": [
+                    "page-1-heading-1",
+                    "page-1-paragraph-1",
+                    "page-2-paragraph-1",
+                    "explicit-doc-id:p1:b1",
+                ],
+                "extraction_method": "pymupdf",
+            },
+        }
+    ]
     assert data["tables"] == []
     assert data["figures"] == []
     assert data["equations"] == []
@@ -138,7 +167,11 @@ def test_block_mapping_preserves_text_order_indexes_ids_and_normalized_text() ->
         blocks[2]["normalized_text"]
         == "Inspect the synthetic pump housing. Record findings."
     )
-    assert "section_id" not in blocks[1]
+    assert "section_id" not in blocks[0]
+    assert blocks[1]["section_id"] == "explicit-doc-id:s0001"
+    assert blocks[2]["section_id"] == "explicit-doc-id:s0001"
+    assert blocks[3]["section_id"] == "explicit-doc-id:s0001"
+    assert blocks[4]["section_id"] == "explicit-doc-id:s0001"
 
 
 def test_content_type_mapping_is_exhaustive_for_current_known_block_types() -> None:
@@ -292,6 +325,20 @@ def test_normalized_text_can_be_excluded_without_changing_raw_text() -> None:
         == "Inspect the synthetic pump housing.\nRecord findings."
     )
     assert "normalized_text" not in data["blocks"][2]
+    assert "normalized_heading" not in data["sections"][0]
+
+
+def test_section_enrichment_can_be_disabled_for_phase_13c_shape() -> None:
+    data = structured_document_to_dict(
+        map_document_to_structured_document(
+            _parser_document(),
+            document_id="explicit-doc-id",
+            include_sections=False,
+        )
+    )
+
+    assert data["sections"] == []
+    assert "section_id" not in data["blocks"][1]
 
 
 def test_mapping_is_deterministic_and_does_not_mutate_inputs(
@@ -354,7 +401,7 @@ def test_map_document_with_options_matches_keyword_api() -> None:
 
 
 def test_expected_mapped_fixture_matches_output() -> None:
-    fixture = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+    fixture = json.loads(HIERARCHY_FIXTURE_PATH.read_text(encoding="utf-8"))
     generated = structured_document_to_dict(
         map_document_to_structured_document(
             _parser_document(),
@@ -366,12 +413,26 @@ def test_expected_mapped_fixture_matches_output() -> None:
     assert fixture == generated
 
 
-def test_expected_mapped_fixture_is_valid_json_object() -> None:
+def test_phase_13c_mapped_fixture_matches_output_without_section_enrichment() -> None:
     fixture = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+    generated = structured_document_to_dict(
+        map_document_to_structured_document(
+            _parser_document(),
+            document_id="explicit-doc-id",
+            document_title="Synthetic Hydraulic Inspection Guide",
+            include_sections=False,
+        )
+    )
+
+    assert fixture == generated
+
+
+def test_expected_mapped_fixture_is_valid_json_object() -> None:
+    fixture = json.loads(HIERARCHY_FIXTURE_PATH.read_text(encoding="utf-8"))
 
     assert fixture["schema_name"] == "techdoc-structured-document"
     assert fixture["schema_version"] == "0.1.0"
-    assert fixture["sections"] == []
+    assert len(fixture["sections"]) == 1
     assert fixture["tables"] == []
 
 

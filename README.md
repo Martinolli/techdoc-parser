@@ -93,8 +93,9 @@ For the detailed output contract audit, see
 An isolated internal contract API for `techdoc-structured-document / 0.1.0` is
 available under `techdoc_parser.contracts`. It defines schema constants,
 contract dataclasses, deterministic JSON serialization helpers, and a pure
-parser-model mapper for document, page, block, source-location, and bounding-box
-data already present in the current parser model.
+parser-model mapper for document, page, block, source-location, bounding-box,
+and heading-derived section hierarchy data already present in the current
+parser model.
 
 This API is not wired into the CLI or current output package. Existing JSON,
 Markdown, validation, gate, and manifest outputs remain unchanged.
@@ -106,6 +107,7 @@ Markdown, validation, gate, and manifest outputs remain unchanged.
 - [Output contract audit](docs/output_contract_0_1_0_audit.md)
 - [Structured-document contract foundation](docs/structured_document_contract.md)
 - [Structured-document parser mapping](docs/structured_document_mapping.md)
+- [Structured-document section hierarchy](docs/structured_document_hierarchy.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -113,7 +115,9 @@ Markdown, validation, gate, and manifest outputs remain unchanged.
 - Native-text PDFs are supported
 - Scanned/OCR documents are detected, but OCR is not implemented
 - Tables are candidate-level and partial
-- Full section hierarchy and formula recognition are future work
+- Section hierarchy is available only in the internal structured-document
+  mapper from current `HeadingBlock` evidence
+- Formula recognition is future work
 - `techdoc-structured-document / 0.1.0` has an internal contract API and
   parser-model mapper, but CLI export and manifest integration are not
   implemented
