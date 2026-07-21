@@ -122,7 +122,9 @@ results. Validation status is emitted in the validation and gate artifacts.
 - Table extraction is candidate-level and partial.
 - Figure support is caption-level.
 - `FormulaBlock` exists in the model, but formula detection is not implemented.
-- Section-aware chunk metadata exists, but a full section tree is not implemented.
+- Section-aware chunk metadata exists in current chunk outputs. A heading-derived
+  section tree exists only in the internal structured-document contract API; it
+  is not emitted by the current CLI output package.
 - Confidence scoring is not implemented as a dedicated model yet.
 
 ## 9. AviationRAG Integration Position
@@ -166,6 +168,9 @@ no direct runtime dependency on AviationRAG.
 
 ## 10. Recommended Near-Term Next Steps
 
+- Use `docs/legacy_repository_structure_audit.md` as the current repository
+  cleanup-readiness reference. Cleanup is useful but non-blocking before the next
+  contract mapping phase.
 - Add optional validation profiles or strictness modes.
 - Add an architecture diagram later if the pipeline grows more complex.
 - Add optional structured-document CLI/manifest output when downstream consumers

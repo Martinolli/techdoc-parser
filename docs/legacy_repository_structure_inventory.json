@@ -1,0 +1,355 @@
+{
+  "audit": {
+    "name": "legacy repository structure and cleanup-readiness audit",
+    "phase": "M.3",
+    "audit_version": "1.0",
+    "audit_date": "2026-07-21",
+    "repository_commit": "c6e2a84",
+    "scope": "documentation-only",
+    "cleanup_readiness": "cleanup useful but non-blocking",
+    "recommended_next_phase": "13E1 table and figure-caption mapping"
+  },
+  "repository_state": {
+    "branch": "main",
+    "upstream": "origin/main",
+    "remote": "https://github.com/Martinolli/techdoc-parser.git",
+    "remote_branches": [
+      "origin/HEAD -> origin/main",
+      "origin/main"
+    ],
+    "tags": [
+      "v0.1.0-mvp"
+    ],
+    "stashes": [],
+    "tracked_files": 73,
+    "tracked_source_files": 31,
+    "tracked_test_files": 29,
+    "tracked_docs_files_before_audit": 8,
+    "untracked_non_ignored_files_before_audit": 0
+  },
+  "summary": {
+    "must_retain": 9,
+    "backward_compatibility_layer": 2,
+    "active_runtime": 6,
+    "active_cli": 1,
+    "active_exporter": 1,
+    "active_validation": 1,
+    "active_contract_layer": 1,
+    "active_tests": 2,
+    "historical_documentation": 5,
+    "generated_artifacts": 7,
+    "obsolete_but_uncertain": 2,
+    "safe_to_archive": 2,
+    "safe_to_remove": 0
+  },
+  "entries": [
+    {
+      "path": ".gitignore",
+      "classification": "must retain",
+      "evidence": "Ignores Python, build, cache, environment, and local parser run artifacts.",
+      "risk": "medium",
+      "recommendation": "retain"
+    },
+    {
+      "path": "pyproject.toml",
+      "classification": "must retain",
+      "evidence": "Defines package metadata, dependencies, CLI entry point, Ruff, pytest, and mypy settings.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "README.md",
+      "classification": "must retain",
+      "evidence": "Current user-facing package, CLI, output package, and contract API documentation.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "TODO.md",
+      "classification": "must retain",
+      "evidence": "Current project phase tracking and quality checklist.",
+      "risk": "medium",
+      "recommendation": "retain"
+    },
+    {
+      "path": "PROJECTPLAN.md",
+      "classification": "historical documentation",
+      "evidence": "Broad historical roadmap; not the exact current package layout.",
+      "risk": "low",
+      "recommendation": "archive later after canonical docs fully cover retained planning value"
+    },
+    {
+      "path": "docs/architecture_pipeline_overview.md",
+      "classification": "must retain",
+      "evidence": "Current canonical architecture, package responsibilities, output artifacts, and integration boundary.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "docs/structured_document_contract.md",
+      "classification": "must retain",
+      "evidence": "Current structured-document contract reference.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "docs/structured_document_mapping.md",
+      "classification": "must retain",
+      "evidence": "Current parser-model to contract mapping reference.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "docs/structured_document_hierarchy.md",
+      "classification": "must retain",
+      "evidence": "Current Phase 13D hierarchy behavior reference.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "docs/aviationrag_structured_document_gap_analysis.md",
+      "classification": "historical documentation",
+      "evidence": "Phase 13A analysis updated through later phases; older sections are superseded by later appended status.",
+      "risk": "medium",
+      "recommendation": "document superseded sections or archive after replacement"
+    },
+    {
+      "path": "docs/aviationrag_structured_document_mapping.json",
+      "classification": "historical documentation",
+      "evidence": "Gap-analysis mapping matrix with later updates.",
+      "risk": "medium",
+      "recommendation": "retain until replaced by generated contract coverage matrix"
+    },
+    {
+      "path": "docs/output_contract_0_1_0_audit.md",
+      "classification": "historical documentation",
+      "evidence": "Phase 12A audit; several findings were superseded by Phases 12B, 13B, 13C, and 13D.",
+      "risk": "low",
+      "recommendation": "archive later or label as historical"
+    },
+    {
+      "path": "docs/mvp_readiness_checklist.md",
+      "classification": "historical documentation",
+      "evidence": "MVP release checklist; useful but includes limitations now narrowed by later internal contract work.",
+      "risk": "medium",
+      "recommendation": "refresh or label historical before next release checkpoint"
+    },
+    {
+      "path": "src/techdoc_parser/__init__.py",
+      "classification": "backward-compatibility layer",
+      "evidence": "Re-exports public core models, parse_document, and version.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/parser.py",
+      "classification": "active runtime",
+      "evidence": "Public parse_document path for PDF ingestion.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/cli.py",
+      "classification": "active CLI",
+      "evidence": "Implements techdoc-parse and current output package orchestration.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/core/",
+      "classification": "active runtime",
+      "evidence": "Core dataclasses and serializer methods used by parser, exporters, contracts, and tests.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/ingestion/",
+      "classification": "active runtime",
+      "evidence": "PDFLoader and PDF metadata extraction.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/structure/",
+      "classification": "active runtime",
+      "evidence": "Page furniture, heading, paragraph, table, table-region, figure, and semantic-block logic.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/normalization/",
+      "classification": "active runtime",
+      "evidence": "Text normalization used by ingestion and structure detection.",
+      "risk": "medium",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/chunking/",
+      "classification": "active runtime",
+      "evidence": "Semantic chunk generation and section metadata assignment.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/validation/",
+      "classification": "active validation",
+      "evidence": "Report-only quality findings and gate decision mapping.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/exporters/",
+      "classification": "active exporter",
+      "evidence": "JSON, Markdown, validation, gate, chunk, and manifest export helpers.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/contracts/",
+      "classification": "active contract layer",
+      "evidence": "Structured-document contract, mapper, and hierarchy enrichment API.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/version.py",
+      "classification": "backward-compatibility layer",
+      "evidence": "Central schema and parser metadata used by exports and contracts.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "src/techdoc_parser/py.typed",
+      "classification": "must retain",
+      "evidence": "PEP 561 marker for typed package consumers.",
+      "risk": "medium",
+      "recommendation": "retain"
+    },
+    {
+      "path": "tests/",
+      "classification": "active test support",
+      "evidence": "26 Python test modules cover CLI, exports, validation, parser, structure, chunking, and contracts.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "tests/fixtures/structured_document/",
+      "classification": "active test support",
+      "evidence": "Synthetic contract fixtures used by structured-document tests.",
+      "risk": "high",
+      "recommendation": "retain"
+    },
+    {
+      "path": "examples/",
+      "classification": "obsolete but uncertain",
+      "evidence": "Local empty directory; not tracked.",
+      "risk": "low",
+      "recommendation": "leave alone or remove locally after owner review"
+    },
+    {
+      "path": "input/",
+      "classification": "generated artifact",
+      "evidence": "Ignored local parser input directory.",
+      "risk": "low",
+      "recommendation": "leave ignored; optionally clean locally after owner review"
+    },
+    {
+      "path": "output/",
+      "classification": "generated artifact",
+      "evidence": "Ignored local parser output directory.",
+      "risk": "low",
+      "recommendation": "leave ignored; optionally clean locally after owner review"
+    },
+    {
+      "path": ".venv/",
+      "classification": "generated artifact",
+      "evidence": "Ignored virtual environment.",
+      "risk": "low",
+      "recommendation": "leave ignored; optionally recreate locally when needed"
+    },
+    {
+      "path": ".mypy_cache/",
+      "classification": "generated artifact",
+      "evidence": "Ignored type-check cache.",
+      "risk": "low",
+      "recommendation": "leave ignored; safe to delete locally"
+    },
+    {
+      "path": ".pytest_cache/",
+      "classification": "generated artifact",
+      "evidence": "Ignored pytest cache.",
+      "risk": "low",
+      "recommendation": "leave ignored; safe to delete locally"
+    },
+    {
+      "path": ".ruff_cache/",
+      "classification": "generated artifact",
+      "evidence": "Ignored Ruff cache.",
+      "risk": "low",
+      "recommendation": "leave ignored; safe to delete locally"
+    },
+    {
+      "path": "__pycache__/",
+      "classification": "generated artifact",
+      "evidence": "Ignored Python bytecode caches under source and tests.",
+      "risk": "low",
+      "recommendation": "leave ignored; safe to delete locally"
+    },
+    {
+      "path": "check_techdoc_parse_result.py",
+      "classification": "obsolete but uncertain",
+      "evidence": "Ignored local helper for manual parser-output inspection.",
+      "risk": "low",
+      "recommendation": "review before local removal; do not commit as-is"
+    }
+  ],
+  "canonical_active_structure": {
+    "runtime": [
+      "src/techdoc_parser/parser.py",
+      "src/techdoc_parser/core/",
+      "src/techdoc_parser/ingestion/",
+      "src/techdoc_parser/structure/",
+      "src/techdoc_parser/normalization/",
+      "src/techdoc_parser/chunking/"
+    ],
+    "cli": [
+      "src/techdoc_parser/cli.py"
+    ],
+    "exporters": [
+      "src/techdoc_parser/exporters/"
+    ],
+    "validation": [
+      "src/techdoc_parser/validation/"
+    ],
+    "contracts": [
+      "src/techdoc_parser/contracts/"
+    ],
+    "tests": [
+      "tests/",
+      "tests/fixtures/structured_document/"
+    ],
+    "current_docs": [
+      "README.md",
+      "TODO.md",
+      "docs/architecture_pipeline_overview.md",
+      "docs/structured_document_contract.md",
+      "docs/structured_document_mapping.md",
+      "docs/structured_document_hierarchy.md"
+    ],
+    "current_cli_outputs": [
+      "document.json",
+      "chunks.json",
+      "validation.json",
+      "gate.json",
+      "validation_summary.md",
+      "manifest.json"
+    ]
+  },
+  "boundary_statements": {
+    "parser_or_cli_behavior_changed": false,
+    "current_outputs_changed": false,
+    "files_removed_moved_or_renamed": false,
+    "proprietary_documents_processed": false,
+    "aviationrag_modified": false
+  }
+}
