@@ -1,0 +1,414 @@
+{
+  "schema_name": "techdoc-structured-document",
+  "schema_version": "0.1.0",
+  "parser_name": "techdoc-parser",
+  "parser_version": "0.1.0",
+  "document": {
+    "document_id": "entity-doc",
+    "source_filename": "synthetic-entity-guide.pdf",
+    "document_title": "Synthetic Entity Guide",
+    "canonical_title": "Synthetic Entity Guide",
+    "page_count": 3
+  },
+  "pages": [
+    {
+      "page_id": "page-0001",
+      "pdf_page_index": 0,
+      "page_number": 1,
+      "printed_page_label": null
+    },
+    {
+      "page_id": "page-0002",
+      "pdf_page_index": 1,
+      "page_number": 2,
+      "printed_page_label": null
+    },
+    {
+      "page_id": "page-0003",
+      "pdf_page_index": 2,
+      "page_number": 3,
+      "printed_page_label": null
+    }
+  ],
+  "sections": [
+    {
+      "section_id": "entity-doc:s0001",
+      "level": 1,
+      "title": "Hydraulic Inspection",
+      "section_number": "1",
+      "raw_heading": "1 Hydraulic Inspection",
+      "normalized_heading": "1 Hydraulic Inspection",
+      "path": [
+        "1 Hydraulic Inspection"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 3,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 2,
+        "source_block_ids": [
+          "heading-1",
+          "table-candidate-1",
+          "figure-caption-1",
+          "figure-caption-2",
+          "table-region-1"
+        ],
+        "extraction_method": "synthetic"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "block_id": "heading-1",
+      "block_type": "section_heading",
+      "text": "1 Hydraulic Inspection",
+      "document_block_index": 0,
+      "page_block_index": 0,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "entity-doc:s0001",
+      "normalized_text": "1 Hydraulic Inspection",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 72.0,
+          "x1": 420.0,
+          "y1": 96.0
+        },
+        "source_block_ids": [
+          "heading-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 72.0,
+        "x1": 420.0,
+        "y1": 96.0
+      }
+    },
+    {
+      "block_id": "table-candidate-1",
+      "block_type": "table",
+      "text": "Table 2 -- Inspection Intervals\nComponent Interval\nPump 10 hours",
+      "document_block_index": 1,
+      "page_block_index": 1,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "entity-doc:s0001",
+      "normalized_text": "Table 2 -- Inspection Intervals Component Interval Pump 10 hours",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 160.0,
+          "x1": 480.0,
+          "y1": 222.0
+        },
+        "source_block_ids": [
+          "table-candidate-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 160.0,
+        "x1": 480.0,
+        "y1": 222.0
+      }
+    },
+    {
+      "block_id": "figure-caption-1",
+      "block_type": "figure_caption",
+      "text": "Figure 3 -- Test Arrangement",
+      "document_block_index": 2,
+      "page_block_index": 0,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "entity-doc:s0001",
+      "normalized_text": "Figure 3 -- Test Arrangement",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 80.0,
+          "y0": 250.0,
+          "x1": 430.0,
+          "y1": 274.0
+        },
+        "source_block_ids": [
+          "figure-caption-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 80.0,
+        "y0": 250.0,
+        "x1": 430.0,
+        "y1": 274.0
+      }
+    },
+    {
+      "block_id": "figure-caption-2",
+      "block_type": "figure_caption",
+      "text": "Figure 3 -- Test Arrangement",
+      "document_block_index": 3,
+      "page_block_index": 1,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "entity-doc:s0001",
+      "normalized_text": "Figure 3 -- Test Arrangement",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 82.0,
+          "y0": 305.0,
+          "x1": 432.0,
+          "y1": 329.0
+        },
+        "source_block_ids": [
+          "figure-caption-2"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 82.0,
+        "y0": 305.0,
+        "x1": 432.0,
+        "y1": 329.0
+      }
+    },
+    {
+      "block_id": "table-region-1",
+      "block_type": "table",
+      "text": "Region evidence line 1\nRegion evidence line 2",
+      "document_block_index": 4,
+      "page_block_index": 0,
+      "page_id": "page-0003",
+      "page_number": 3,
+      "pdf_page_index": 2,
+      "section_id": "entity-doc:s0001",
+      "normalized_text": "Region evidence line 1 Region evidence line 2",
+      "source_span": {
+        "page_start": 3,
+        "page_end": 3,
+        "pdf_page_index_start": 2,
+        "pdf_page_index_end": 2,
+        "source_block_ids": [
+          "table-region-1"
+        ],
+        "extraction_method": "synthetic"
+      }
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "entity-doc:p0:t0001",
+      "page_start": 1,
+      "page_end": 1,
+      "pdf_page_index_start": 0,
+      "pdf_page_index_end": 0,
+      "source_block_ids": [
+        "table-candidate-1"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 160.0,
+          "x1": 480.0,
+          "y1": 222.0
+        },
+        "source_block_ids": [
+          "table-candidate-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "entity-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Inspection"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 160.0,
+        "x1": 480.0,
+        "y1": 222.0
+      },
+      "text": "Table 2 -- Inspection Intervals\nComponent Interval\nPump 10 hours",
+      "columns": [],
+      "rows": [],
+      "cells": [],
+      "header_rows": [],
+      "merged_cells": [],
+      "is_candidate": true,
+      "extraction_status": "candidate",
+      "caption": "Table 2 -- Inspection Intervals",
+      "source_text_block_ids": [
+        "text-table-source"
+      ]
+    },
+    {
+      "table_id": "entity-doc:p2:t0002",
+      "page_start": 3,
+      "page_end": 3,
+      "pdf_page_index_start": 2,
+      "pdf_page_index_end": 2,
+      "source_block_ids": [
+        "table-region-1"
+      ],
+      "source_span": {
+        "page_start": 3,
+        "page_end": 3,
+        "pdf_page_index_start": 2,
+        "pdf_page_index_end": 2,
+        "source_block_ids": [
+          "table-region-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0003",
+      "page_number": 3,
+      "pdf_page_index": 2,
+      "section_id": "entity-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Inspection"
+      ],
+      "text": "Region evidence line 1\nRegion evidence line 2",
+      "columns": [],
+      "rows": [],
+      "cells": [],
+      "header_rows": [],
+      "merged_cells": [],
+      "is_candidate": true,
+      "extraction_status": "region_only",
+      "source_text_block_ids": [
+        "text-region-source"
+      ],
+      "source_table_block_ids": [
+        "table-candidate-1"
+      ],
+      "source_paragraph_block_ids": [
+        "para-region-context"
+      ]
+    }
+  ],
+  "figures": [
+    {
+      "figure_id": "entity-doc:p1:f0001",
+      "page_start": 2,
+      "page_end": 2,
+      "pdf_page_index_start": 1,
+      "pdf_page_index_end": 1,
+      "source_block_ids": [
+        "figure-caption-1"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 80.0,
+          "y0": 250.0,
+          "x1": 430.0,
+          "y1": 274.0
+        },
+        "source_block_ids": [
+          "figure-caption-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "entity-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Inspection"
+      ],
+      "bbox": {
+        "x0": 80.0,
+        "y0": 250.0,
+        "x1": 430.0,
+        "y1": 274.0
+      },
+      "caption": "Figure 3 -- Test Arrangement",
+      "source_caption_text": "Figure 3 -- Test Arrangement",
+      "is_candidate": true,
+      "extraction_status": "caption_candidate",
+      "source_text_block_ids": [
+        "text-figure-source"
+      ]
+    },
+    {
+      "figure_id": "entity-doc:p1:f0002",
+      "page_start": 2,
+      "page_end": 2,
+      "pdf_page_index_start": 1,
+      "pdf_page_index_end": 1,
+      "source_block_ids": [
+        "figure-caption-2"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 82.0,
+          "y0": 305.0,
+          "x1": 432.0,
+          "y1": 329.0
+        },
+        "source_block_ids": [
+          "figure-caption-2"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "entity-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Inspection"
+      ],
+      "bbox": {
+        "x0": 82.0,
+        "y0": 305.0,
+        "x1": 432.0,
+        "y1": 329.0
+      },
+      "caption": "Figure 3 -- Test Arrangement",
+      "source_caption_text": "Figure 3 -- Test Arrangement",
+      "is_candidate": true,
+      "extraction_status": "caption_candidate",
+      "source_text_block_ids": [
+        "text-figure-source-duplicate"
+      ]
+    }
+  ],
+  "equations": [],
+  "admonitions": [],
+  "cross_references": []
+}

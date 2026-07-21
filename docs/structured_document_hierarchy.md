@@ -95,6 +95,6 @@ tests/fixtures/structured_document/mapped_structured_document_with_sections.json
 ```
 
 The Phase 13C no-section fixture remains covered with `include_sections=False`.
-Advanced root entities remain empty because candidate tables, figures,
-equations, admonitions, and references do not yet have truthful entity-level
-contract evidence.
+As of Phase 13E1, root table and figure-caption entities reuse the same
+block-level `section_id` and section path assigned by this hierarchy builder.
+Equation, admonition, and cross-reference root entities remain future work.

@@ -417,34 +417,34 @@
     {
       "target_entity": "tables",
       "target_field": "table_id",
-      "current_source": "techdoc_parser.core.models.TableBlock",
+      "current_source": "techdoc_parser.core.models.TableBlock/TableRegionBlock",
       "current_field": "id",
-      "mapping_status": "rename",
-      "required_transformation": "Map candidate table IDs to table_id.",
-      "gap_class": "export-only",
+      "mapping_status": "derive_safely",
+      "required_transformation": "Phase 13E1 emits deterministic root table IDs from current candidate table evidence.",
+      "gap_class": "implemented-contract-api",
       "priority": "P1",
       "risk": "medium",
-      "notes": "Need policy for TableBlock versus TableRegionBlock."
+      "notes": "Root table IDs are distinct from block IDs; source_block_ids preserve original evidence references."
     },
     {
       "target_entity": "tables",
       "target_field": "caption",
-      "current_source": "techdoc_parser.core.models.TableBlock",
+      "current_source": "techdoc_parser.core.models.TableBlock/TableRegionBlock",
       "current_field": "caption",
-      "mapping_status": "partial",
-      "required_transformation": "Emit when detected; otherwise leave absent/null.",
-      "gap_class": "parser-enhancement",
+      "mapping_status": "partial-implemented",
+      "required_transformation": "Phase 13E1 emits parser captions when present and preserves exact table text.",
+      "gap_class": "implemented-contract-api",
       "priority": "P1",
       "risk": "medium",
-      "notes": "Candidate caption support is incomplete."
+      "notes": "Candidate caption support remains bounded by existing parser evidence."
     },
     {
       "target_entity": "tables",
       "target_field": "rows_columns_cells",
-      "current_source": "techdoc_parser.core.models.TableBlock",
+      "current_source": "techdoc_parser.core.models.TableBlock/TableRegionBlock",
       "current_field": "rows",
       "mapping_status": "partial",
-      "required_transformation": "Implement true table reconstruction before claiming cell structure.",
+      "required_transformation": "Phase 13E1 leaves root columns, rows, and cells empty; implement true table reconstruction before claiming cell structure.",
       "gap_class": "parser-enhancement",
       "priority": "P2",
       "risk": "high",
@@ -467,21 +467,21 @@
       "target_field": "figure_id",
       "current_source": "techdoc_parser.core.models.FigureBlock",
       "current_field": "id",
-      "mapping_status": "rename",
-      "required_transformation": "Map candidate figure IDs to figure_id.",
-      "gap_class": "export-only",
+      "mapping_status": "derive_safely",
+      "required_transformation": "Phase 13E1 emits deterministic root figure IDs from current figure-caption candidate evidence.",
+      "gap_class": "implemented-contract-api",
       "priority": "P1",
       "risk": "medium",
-      "notes": "Current support is caption-level."
+      "notes": "Root figure IDs are distinct from block IDs; source_block_ids preserve original caption evidence references."
     },
     {
       "target_entity": "figures",
       "target_field": "caption",
       "current_source": "techdoc_parser.core.models.FigureBlock",
       "current_field": "caption",
-      "mapping_status": "partial",
-      "required_transformation": "Emit caption candidates only.",
-      "gap_class": "export-only",
+      "mapping_status": "partial-implemented",
+      "required_transformation": "Phase 13E1 emits caption candidates only and preserves source caption text.",
+      "gap_class": "implemented-contract-api",
       "priority": "P1",
       "risk": "medium",
       "notes": "No figure-region understanding exists."
@@ -599,5 +599,10 @@
     "status": "implemented",
     "mapper_module": "src/techdoc_parser/contracts/structured_document_mapper.py",
     "notes": "Pure Python contract API only; no CLI, manifest, current-output, or AviationRAG integration."
+  },
+  "phase_13e1": {
+    "status": "implemented",
+    "mapper_module": "src/techdoc_parser/contracts/structured_document_entities.py",
+    "notes": "Maps existing TableBlock, TableRegionBlock, and FigureBlock evidence only; no table reconstruction, figure asset extraction, CLI integration, current-output changes, or AviationRAG integration."
   }
 }

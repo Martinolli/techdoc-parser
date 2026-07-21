@@ -94,8 +94,8 @@ An isolated internal contract API for `techdoc-structured-document / 0.1.0` is
 available under `techdoc_parser.contracts`. It defines schema constants,
 contract dataclasses, deterministic JSON serialization helpers, and a pure
 parser-model mapper for document, page, block, source-location, bounding-box,
-and heading-derived section hierarchy data already present in the current
-parser model.
+heading-derived section hierarchy, and current table/figure-caption candidate
+evidence already present in the parser model.
 
 This API is not wired into the CLI or current output package. Existing JSON,
 Markdown, validation, gate, and manifest outputs remain unchanged.
@@ -108,13 +108,19 @@ Markdown, validation, gate, and manifest outputs remain unchanged.
 - [Structured-document contract foundation](docs/structured_document_contract.md)
 - [Structured-document parser mapping](docs/structured_document_mapping.md)
 - [Structured-document section hierarchy](docs/structured_document_hierarchy.md)
+- [Structured-document table and figure-caption mapping](docs/structured_document_tables_figures.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
 
 - Native-text PDFs are supported
 - Scanned/OCR documents are detected, but OCR is not implemented
-- Tables are candidate-level and partial
+- Tables are candidate-level and partial; the internal structured-document
+  mapper can expose existing table candidates as root entities, but it does
+  not reconstruct rows, columns, or cells
+- Figure support is caption-level; the internal structured-document mapper can
+  expose existing caption candidates as root figure entities, but it does not
+  extract image assets or understand visual regions
 - Section hierarchy is available only in the internal structured-document
   mapper from current `HeadingBlock` evidence
 - Formula recognition is future work

@@ -20,7 +20,7 @@ runtime or CLI.
 
 ## 2. Non-Scope
 
-Phase 13B/13C does not:
+Phase 13B through Phase 13E1 does not:
 
 - Add CLI flags or output files.
 - Modify the current output manifest.
@@ -28,8 +28,8 @@ Phase 13B/13C does not:
 - Parse real or proprietary documents.
 - Generate embeddings, use Astra, use FAISS, or perform ingestion.
 - Infer checksums, revisions, issue numbers, dates, page labels, confidence
-  scores, table cells, figures, equations, admonitions, or
-  cross-references.
+  scores, table cells, figure assets, figure regions, equations, admonitions,
+  or cross-references.
 - Detect new headings or repair parser heading levels.
 
 ## 2.1 Phase 13C Parser Mapping
@@ -45,8 +45,9 @@ The mapper converts existing parser `Document`, `Page`, `Block`, and
 metadata, pages, blocks, source spans, bounding boxes, raw text, normalized
 text, deterministic page/block indexes, and conservative block content types.
 
-Advanced entity root collections remain empty. No CLI integration exists,
-current outputs remain unchanged, and no provenance is fabricated.
+Advanced entity root collections remained empty in Phase 13C. No CLI
+integration exists, current outputs remain unchanged, and no provenance is
+fabricated.
 
 ## 2.2 Phase 13D Section Hierarchy
 
@@ -65,6 +66,25 @@ identifiers when present. Section paths use validator-compatible display text
 while `raw_heading` preserves the exact source heading. It does not create
 missing headings, missing parent levels, confidence scores, page labels,
 character offsets, checksums, or advanced entity records.
+
+## 2.3 Phase 13E1 Table And Figure-Caption Mapping
+
+Phase 13E1 adds pure root entity mapping in:
+
+```text
+src/techdoc_parser/contracts/structured_document_entities.py
+```
+
+The mapper reads existing `TableBlock`, `TableRegionBlock`, and `FigureBlock`
+candidate evidence that is already present in `Document.pages[].blocks`. It
+populates root `tables` and `figures` with deterministic IDs, exact source text
+or caption text, page refs, source spans, source block references, optional
+bounding boxes, optional section IDs, and candidate status.
+
+Table structure remains unclaimed: `columns`, `rows`, `cells`, `header_rows`,
+and `merged_cells` are emitted as empty lists because current parser rows are
+line fragments. Figure assets and visual-region understanding remain absent
+unless a future parser phase supplies real `image_path` evidence.
 
 ## 3. Module
 
@@ -118,6 +138,9 @@ cross_references
 ```
 
 Unsupported or not-yet-populated entity collections are emitted as empty lists.
+As of Phase 13E1, `tables` and `figures` may be populated from current
+candidate evidence by the parser-model mapper; `equations`, `admonitions`, and
+`cross_references` remain empty unless callers supply records explicitly.
 
 ## 6. Document Metadata Policy
 
@@ -192,9 +215,11 @@ confidence values.
 ## 11. Advanced Entity Policy
 
 Root collections for `tables`, `figures`, `equations`, `admonitions`, and
-`cross_references` exist so future phases can populate them without changing
-the root shape. Phase 13B initializes them as empty lists unless callers supply
-records explicitly. No advanced entity extraction is implemented.
+`cross_references` exist so phases can populate them without changing the root
+shape. Phase 13E1 populates `tables` and `figures` only from existing
+candidate-level parser evidence. It does not reconstruct table cells, infer
+table continuation, extract figure assets, infer figure numbers, or create
+equation, admonition, or cross-reference records.
 
 ## 12. Determinism And Side Effects
 
@@ -207,7 +232,7 @@ network operations.
 The current parser model, JSON exporters, Markdown exporters, validation
 exports, gate exports, output manifest, and CLI behavior remain unchanged.
 Existing `document.json` and `manifest.json` do not gain `schema_name` or
-structured-document root fields in Phase 13B.
+structured-document root fields in Phase 13B through Phase 13E1.
 
 ## 14. Fixture
 
@@ -216,6 +241,7 @@ The synthetic fixture is:
 ```text
 tests/fixtures/structured_document/minimal_structured_document.json
 tests/fixtures/structured_document/mapped_structured_document_with_sections.json
+tests/fixtures/structured_document/mapped_structured_document_with_tables_figures.json
 ```
 
 It is intentionally not derived from real source material. It contains no
@@ -228,5 +254,9 @@ Phase 13C completed contract-local mapping from the current `Document`, `Page`,
 explicit tests that existing outputs remain unchanged.
 
 Phase 13D completed contract-local section hierarchy and source-span enrichment.
-Recommended next work is either advanced entity mapping from truthful parser
-evidence or optional CLI/manifest integration as a separate scoped phase.
+
+Phase 13E1 completed contract-local table and figure-caption root mapping from
+existing candidate evidence only. Recommended next work is either equation,
+admonition, or cross-reference mapping from truthful parser evidence, true table
+structure/parser enhancements, or optional CLI/manifest integration as a
+separate scoped phase.

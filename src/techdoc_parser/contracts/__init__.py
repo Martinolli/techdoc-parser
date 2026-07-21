@@ -17,6 +17,11 @@ from techdoc_parser.contracts.structured_document import (
     structured_document_to_dict,
     structured_document_to_json,
 )
+from techdoc_parser.contracts.structured_document_entities import (
+    StructuredEntityEvidence,
+    map_figure_caption_evidence,
+    map_table_evidence,
+)
 from techdoc_parser.contracts.structured_document_hierarchy import (
     SectionHierarchyResult,
     StructuredHeadingEvidence,
@@ -40,6 +45,7 @@ __all__ = [
     "StructuredDocumentMetadata",
     "StructuredDocumentPage",
     "StructuredDocumentSection",
+    "StructuredEntityEvidence",
     "StructuredHeadingEvidence",
     "StructuredSourceSpan",
     "SectionHierarchyResult",
@@ -49,6 +55,8 @@ __all__ = [
     "map_block_type_to_content_type",
     "map_document_to_structured_document",
     "map_document_with_options",
+    "map_figure_caption_evidence",
+    "map_table_evidence",
     "require_supported_structured_document_version",
     "structured_document_to_dict",
     "structured_document_to_json",

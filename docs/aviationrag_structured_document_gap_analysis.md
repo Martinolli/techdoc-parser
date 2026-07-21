@@ -38,13 +38,14 @@ exists in chunk metadata but not as a durable section tree. Current chunking
 can discard page-level detail into chunk-level lists; it preserves block IDs
 and page numbers but not exact source-span objects.
 
-Entire target areas remain absent or only placeholders: structured document
-root lists for `sections`, `tables`, `figures`, `equations`, `admonitions`, and
-`cross_references`; printed page label extraction; source checksum; revision,
-issue, and effective-date metadata; true table rows/columns/cells; figure
-assets or figure-region understanding; equation detection; warning/caution/note
-classification; cross-reference extraction and resolution; and real confidence
-models beyond `SourceLocation.confidence`.
+Entire target areas remain absent or only placeholders: printed page label
+extraction; source checksum; revision, issue, and effective-date metadata; true
+table rows/columns/cells; figure assets or figure-region understanding;
+equation detection; warning/caution/note classification; cross-reference
+extraction and resolution; and real confidence models beyond
+`SourceLocation.confidence`. The internal structured-document mapper now
+populates `sections`, `tables`, and `figures` only from existing heading,
+table-candidate, table-region, and figure-caption evidence.
 
 The contract can start primarily as an additional exporter over the current
 core model for a minimum valid record, provided the exporter is truthful about
@@ -54,8 +55,8 @@ figure regions, equations, page labels, source hashes, and confidence scoring.
 
 Recommended sequence: add contract constants and exporter-only mapping first;
 then page/block/source-span export; then section hierarchy; then specialized
-entities and confidence; then CLI/API optional integration; then synthetic
-compatibility validation against the AviationRAG validator.
+entities from truthful evidence; then CLI/API optional integration; then
+synthetic compatibility validation against the AviationRAG validator.
 
 ## 8.2 Current Parser Pipeline
 
@@ -158,11 +159,11 @@ Mapping statuses used: `direct`, `rename`, `derive_safely`,
 | blocks | section_id | none durable | chunk metadata only | partial | Requires section model. | High. | model extension |
 | blocks | source_span | SourceLocation | page_number, bbox, extraction_method | rename | Build nested span; derive zero-based index. | Medium. | techdoc-parser exporter |
 | blocks | char_start/char_end | none | none | missing | Capture offsets during extraction if needed. | Medium. | parser enhancement |
-| tables | table_id | TableBlock/TableRegionBlock | `id` | rename | Map candidates; choose whether table regions become root tables. | Medium. | techdoc-parser exporter |
-| tables | caption | TableBlock/TableRegionBlock | `caption` | partial | Present only when candidate detection filled it. | Medium. | parser enhancement |
-| tables | columns/rows/cells | TableBlock/TableRegionBlock | `rows` list-of-single-lines | partial | True reconstruction is missing. | High. | parser enhancement |
-| figures | figure_id | FigureBlock | `id` | rename | Emit candidate figure IDs. | Medium. | techdoc-parser exporter |
-| figures | caption | FigureBlock | `caption` | partial | Caption candidates only. | Medium. | parser enhancement |
+| tables | table_id | TableBlock/TableRegionBlock | `id` | implemented-contract-api | Phase 13E1 emits deterministic root table IDs distinct from block IDs. | Medium. | techdoc-parser contract mapper |
+| tables | caption | TableBlock/TableRegionBlock | `caption` | partial-implemented | Phase 13E1 emits parser captions when present and preserves exact table text. | Medium. | techdoc-parser contract mapper |
+| tables | columns/rows/cells | TableBlock/TableRegionBlock | `rows` list-of-single-lines | partial | Phase 13E1 leaves root columns/rows/cells empty; true reconstruction is missing. | High. | parser enhancement |
+| figures | figure_id | FigureBlock | `id` | implemented-contract-api | Phase 13E1 emits deterministic root figure IDs distinct from block IDs. | Medium. | techdoc-parser contract mapper |
+| figures | caption | FigureBlock | `caption` | partial-implemented | Phase 13E1 emits caption candidates only and preserves source caption text. | Medium. | techdoc-parser contract mapper |
 | figures | asset reference | FigureBlock | `image_path` | partial | Field exists but loader does not extract images. | Medium. | parser enhancement |
 | equations | equation_id | FormulaBlock | `id` | partial | Model only; no detector creates formulas. | Medium. | parser enhancement |
 | equations | raw/normalized representation | FormulaBlock | `text`, `latex` | partial | Preserve source form if detector added later. | Medium. | parser enhancement |
@@ -327,10 +328,12 @@ lists by wrapping each non-empty line as a one-cell row. `create_table_region_bl
 improves grouping for some simple cases but does not infer true columns, cells,
 merged cells, table continuations, or semantic row/column identities.
 
-Current Markdown renders candidate table text, not Markdown table syntax.
-Current JSON preserves candidate fields but not a root `tables` entity list
-matching the target. Do not claim semantic table accuracy without additional
-fixtures and real validation evidence.
+Current Markdown and current output JSON render candidate table text, not
+Markdown table syntax or target root table entities. The internal
+structured-document mapper now creates root `tables` from `TableBlock` and
+`TableRegionBlock` evidence only, with empty structural row/column/cell
+collections. Do not claim semantic table accuracy without additional parser
+capabilities, fixtures, and real validation evidence.
 
 ## 8.12 Figures And Captions
 
@@ -344,7 +347,9 @@ Figure understanding does not exist. The parser preserves caption/reference-like
 text as candidate figures and uses figure-caption context to suppress some
 table false positives inside diagrams. It does not identify machine-readable
 visual content, figure type, region boundaries, or nearby explanatory blocks as
-relationships.
+relationships. The internal structured-document mapper now creates root
+`figures` from caption candidates only and omits `asset_reference` unless a
+real parser `image_path` value exists.
 
 ## 8.13 Equations
 
@@ -415,8 +420,8 @@ structured-document record. Expected failures include:
 | Blocks | Fails if current nested page blocks are not flattened to root `blocks`; current key is `id`, not `block_id`; `heading` is not an allowed target type. |
 | Sections | Current absence is allowed as an empty optional list, but blocks with section IDs would need known sections. |
 | Source spans | Current `source` object is not target `source_span`; can be mapped. |
-| Tables | Candidate table blocks need `table_id` and known page refs if flattened; true root table rows/cells are not available. |
-| Figures | Caption candidates can be mapped partially; missing captions produce warnings only for root figures. |
+| Tables | Phase 13E1 root table entities carry deterministic `table_id`, known page refs, and source block refs; true root table rows/cells are intentionally empty. |
+| Figures | Phase 13E1 root figure entities carry deterministic `figure_id`, known page refs, source block refs, and caption text only. |
 | Equations | Empty list can pass; emitted equation records would need raw representation. |
 | Admonitions | Empty list can pass; emitted records need allowed type and body text. |
 | Cross-references | Empty list can pass; emitted records need ID, raw text, status, and valid target policy. |
@@ -502,9 +507,9 @@ contract permits it.
 | Durable section tree | model-extension | P1 | high | medium | 13D |
 | Heading number/title parsing | parser-enhancement | P1 | medium | low | 13D |
 | Exact block membership in sections | model-extension | P1 | high | medium | 13D |
-| Candidate table root mapping | export-only | P1 | medium | low | 13E |
+| Candidate table root mapping | contract mapper | P1 | medium | low | 13E1 completed |
 | True table cells/merged cells | parser-enhancement | P2 | high | low | post-13E |
-| Figure caption root mapping | export-only | P1 | medium | low | 13E |
+| Figure caption root mapping | contract mapper | P1 | medium | low | 13E1 completed |
 | Figure asset/region extraction | parser-enhancement | P3 | high | low | later |
 | Equation detection | parser-enhancement | P2 | high | low | 13E/later |
 | Warning/caution/note classification | parser-enhancement | P1 | high | low | 13E |
@@ -554,6 +559,13 @@ extensions and tests. Constraints: no semantic table accuracy claims; no prose
 conversion of equations. Acceptance: target entity records validate with nulls
 or candidate status where permitted.
 
+Phase 13E1 status: completed for table and figure-caption mapping only. The
+contract mapper now emits root `tables` and `figures` from existing
+`TableBlock`, `TableRegionBlock`, and `FigureBlock` evidence. It leaves table
+rows/columns/cells empty, emits no figure assets unless a real `image_path`
+exists, and does not implement equation, admonition, or cross-reference entity
+mapping.
+
 ### 13F - Cross-References And Confidence Mapping
 
 Goal: add explicit reference extraction/status policy and confidence mapping.
@@ -594,8 +606,10 @@ Required for first valid export:
   when textual, `document_block_index`, `page_block_index`, and `source_span`.
 - Empty `sections` where no truthful heading evidence is emitted or section
   enrichment is disabled.
-- Empty `tables`, `figures`, `equations`, `admonitions`, and
-  `cross_references` where no truthful records are emitted.
+- Empty `tables` and `figures` where no truthful candidate records are emitted;
+  otherwise Phase 13E1 may populate them from current candidate evidence.
+- Empty `equations`, `admonitions`, and `cross_references` until truthful
+  records exist.
 
 Required before AviationRAG D.4c:
 
@@ -649,6 +663,9 @@ Phase 13C status: **completed as a pure parser-model mapper**.
 Phase 13D status: **completed as pure section hierarchy and source-span
 enrichment**.
 
+Phase 13E1 status: **completed for table and figure-caption mapping from
+existing candidate evidence only**.
+
 Phase 13C maps current `Document`, `Page`, `Block`, `SourceLocation`, and
 `BoundingBox` evidence into the Phase 13B contract model while preserving all
 existing output formats. It added `structured_document_mapper.py`, focused
@@ -663,7 +680,12 @@ Phase 13D adds durable section records, section IDs, parent-child relationships,
 block-to-section membership, and enriched section source spans without replacing
 current parser models or changing current output behavior.
 
-Recommended next phase: **Phase 13E - Advanced Entity Mapping From Truthful
-Parser Evidence** or **Phase 13G - Optional CLI/API Structured-Document
-Output**, depending on whether downstream work needs richer entities or file
-emission first.
+Phase 13E1 adds root `tables` and `figures` from current `TableBlock`,
+`TableRegionBlock`, and `FigureBlock` evidence without claiming table
+reconstruction, figure assets, figure-region understanding, or changes to
+current output behavior.
+
+Recommended next phase: **Phase 13E2 - Equation/Admonition Entity Mapping From
+Truthful Parser Evidence**, **Phase 13F - Cross-Reference/Confidence Policy**,
+or **Phase 13G - Optional CLI/API Structured-Document Output**, depending on
+which downstream contract gap matters first.

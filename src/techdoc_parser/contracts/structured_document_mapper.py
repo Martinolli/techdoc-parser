@@ -15,6 +15,11 @@ from techdoc_parser.contracts.structured_document import (
     StructuredSourceSpan,
     build_structured_document,
 )
+from techdoc_parser.contracts.structured_document_entities import (
+    StructuredEntityEvidence,
+    map_figure_caption_evidence,
+    map_table_evidence,
+)
 from techdoc_parser.contracts.structured_document_hierarchy import (
     StructuredHeadingEvidence,
     enrich_structured_document_hierarchy,
@@ -92,6 +97,7 @@ def map_document_with_options(
     """Map a parser ``Document`` using immutable mapping options."""
     pages = [_map_page(page) for page in document.pages]
     blocks: list[StructuredDocumentBlock] = []
+    entity_evidence: list[StructuredEntityEvidence] = []
     heading_evidence: list[StructuredHeadingEvidence] = []
 
     for page in document.pages:
@@ -109,6 +115,12 @@ def map_document_with_options(
                 include_normalized_text=options.include_normalized_text,
             )
             blocks.append(mapped_block)
+            entity_evidence.append(
+                StructuredEntityEvidence(
+                    source_block=block,
+                    mapped_block=mapped_block,
+                )
+            )
             if isinstance(block, HeadingBlock):
                 heading_evidence.append(
                     StructuredHeadingEvidence(
@@ -127,6 +139,24 @@ def map_document_with_options(
         )
         sections = hierarchy.sections
         blocks = list(hierarchy.blocks)
+        entity_evidence = [
+            StructuredEntityEvidence(
+                source_block=item.source_block,
+                mapped_block=mapped_block,
+            )
+            for item, mapped_block in zip(entity_evidence, blocks, strict=True)
+        ]
+
+    tables = map_table_evidence(
+        document_id=options.document_id,
+        evidence=entity_evidence,
+        sections=sections,
+    )
+    figures = map_figure_caption_evidence(
+        document_id=options.document_id,
+        evidence=entity_evidence,
+        sections=sections,
+    )
 
     metadata = StructuredDocumentMetadata(
         document_id=options.document_id,
@@ -144,8 +174,8 @@ def map_document_with_options(
         pages=pages,
         blocks=blocks,
         sections=sections,
-        tables=(),
-        figures=(),
+        tables=tables,
+        figures=figures,
         equations=(),
         admonitions=(),
         cross_references=(),

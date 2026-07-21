@@ -216,36 +216,61 @@ one directly assigned block with a real block bbox.
 Set `include_sections=False` to preserve the Phase 13C no-section contract
 shape for compatibility tests or callers that are not ready for section IDs.
 
-## 14. Unsupported Entities
+## 14. Table And Figure-Caption Entities
 
-The mapper leaves these root collections empty:
+Phase 13E1 maps existing `TableBlock`, `TableRegionBlock`, and `FigureBlock`
+candidate evidence into root `tables` and `figures` after block and section
+mapping. The root entities reuse mapped block source spans and section IDs so
+entity provenance matches the block collection.
 
-- `tables`
-- `figures`
+Table root entities preserve current text, optional captions, candidate status,
+source text/table/paragraph block references, page refs, source spans, optional
+bounding boxes, and section paths. `TableBlock` maps with
+`extraction_status: "candidate"`; `TableRegionBlock` maps with
+`extraction_status: "region_only"`.
+
+Figure root entities preserve exact caption text, source caption text, candidate
+status, source text block references, page refs, source spans, optional bounding
+boxes, and section paths. `FigureBlock` maps with
+`extraction_status: "caption_candidate"`.
+
+The mapper does not turn current table line fragments into semantic rows,
+columns, or cells. It does not infer table continuation, figure numbers, figure
+assets, figure regions, descriptions, or nearby explanatory relationships.
+`asset_reference` is emitted only when `FigureBlock.image_path` is a non-empty
+value.
+
+## 15. Unsupported Entities
+
+The mapper leaves these root collections empty unless callers supply records
+explicitly:
+
 - `equations`
 - `admonitions`
 - `cross_references`
 
-Candidate table, figure-caption, and formula parser blocks may appear as
-ordinary mapped blocks, but the mapper does not create root advanced entities
-or advanced entity records.
+Formula parser blocks may appear as ordinary mapped blocks, but the mapper does
+not create root equation records.
 
-## 15. Guarantees
+## 16. Guarantees
 
 The mapper is deterministic, import-safe, filesystem-independent, and
 non-mutating. Repeated mapping of the same parser object with the same options
 produces identical contract JSON. The mapper does not invoke current exporters
 or depend on CLI orchestration.
 
-## 16. Backward Compatibility
+## 17. Backward Compatibility
 
 Existing parser public models, constructors, JSON exporters, Markdown exporters,
 validation report exports, gate exports, output manifests, and CLI arguments
 remain unchanged. The structured-document mapper is a Python API only.
 
-## 17. Known Gaps
+## 18. Known Gaps
 
-- No root table, figure, equation, admonition, or cross-reference entities.
+- No true table row, column, cell, merged-cell, or continuation mapping.
+- No figure asset extraction, figure number extraction, or figure-region
+  understanding.
+- No root equation, admonition, or cross-reference entities.
 - No source checksum ownership beyond explicit caller-supplied values.
 - No printed page-label extraction.
 - No character offsets.
@@ -255,9 +280,10 @@ remain unchanged. The structured-document mapper is a Python API only.
 - Heading hierarchy accuracy remains bounded by the current `HeadingBlock`
   evidence.
 
-## 18. Next Phase
+## 19. Next Phase
 
-Phase 13D is implemented as contract-local section hierarchy enrichment. Next
-work should keep CLI/manifest integration separate from advanced entity mapping,
-and should not map tables, figures, equations, admonitions, or cross-references
-until the parser has truthful entity-level evidence.
+Phase 13E1 is implemented as contract-local table and figure-caption mapping
+from existing evidence. Next work should keep CLI/manifest integration separate
+from entity mapping and should not add equations, admonitions, cross-references,
+true table structure, figure assets, or confidence fields until the parser has
+truthful evidence for them.
