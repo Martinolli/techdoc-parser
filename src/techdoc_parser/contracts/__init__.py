@@ -22,6 +22,10 @@ from techdoc_parser.contracts.structured_document_entities import (
     map_figure_caption_evidence,
     map_table_evidence,
 )
+from techdoc_parser.contracts.structured_document_equations_admonitions import (
+    map_admonition_evidence,
+    map_equation_evidence,
+)
 from techdoc_parser.contracts.structured_document_hierarchy import (
     SectionHierarchyResult,
     StructuredHeadingEvidence,
@@ -53,8 +57,10 @@ __all__ = [
     "enrich_structured_document_hierarchy",
     "is_supported_structured_document_version",
     "map_block_type_to_content_type",
+    "map_admonition_evidence",
     "map_document_to_structured_document",
     "map_document_with_options",
+    "map_equation_evidence",
     "map_figure_caption_evidence",
     "map_table_evidence",
     "require_supported_structured_document_version",

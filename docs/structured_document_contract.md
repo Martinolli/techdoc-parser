@@ -1,15 +1,15 @@
 # StructuredDocument Contract Foundation
 
 Date: 2026-07-21
-Status: Foundation, parser-model mapping, and section hierarchy implemented as Python API
-Phase: 13B foundation; 13C mapper; 13D section hierarchy
+Status: Foundation, parser-model mapping, section hierarchy, and entity mapping implemented as Python API
+Phase: 13B foundation; 13C mapper; 13D section hierarchy; 13E1 tables/figures; 13E2 equations/admonitions
 
 This document describes the internal foundation for emitting
 `techdoc-structured-document / 0.1.0` records, the Phase 13C parser-model
-mapper, and the Phase 13D section hierarchy enrichment. The foundation and
-mapper are additive and isolated. They do not change parser extraction, reading
-order, heading detection, chunking, validation gates, existing JSON outputs,
-Markdown outputs, manifest outputs, or CLI behavior.
+mapper, Phase 13D section hierarchy enrichment, and Phase 13E entity mapping.
+The foundation and mapper are additive and isolated. They do not change parser
+extraction, reading order, heading detection, chunking, validation gates,
+existing JSON outputs, Markdown outputs, manifest outputs, or CLI behavior.
 
 ## 1. Scope
 
@@ -20,7 +20,7 @@ runtime or CLI.
 
 ## 2. Non-Scope
 
-Phase 13B through Phase 13E1 does not:
+Phase 13B through Phase 13E2 does not:
 
 - Add CLI flags or output files.
 - Modify the current output manifest.
@@ -28,8 +28,8 @@ Phase 13B through Phase 13E1 does not:
 - Parse real or proprietary documents.
 - Generate embeddings, use Astra, use FAISS, or perform ingestion.
 - Infer checksums, revisions, issue numbers, dates, page labels, confidence
-  scores, table cells, figure assets, figure regions, equations, admonitions,
-  or cross-references.
+  scores, table cells, figure assets, figure regions, mathematical meaning,
+  safety severity, or cross-references.
 - Detect new headings or repair parser heading levels.
 
 ## 2.1 Phase 13C Parser Mapping
@@ -86,6 +86,25 @@ and `merged_cells` are emitted as empty lists because current parser rows are
 line fragments. Figure assets and visual-region understanding remain absent
 unless a future parser phase supplies real `image_path` evidence.
 
+## 2.4 Phase 13E2 Equation And Admonition Mapping
+
+Phase 13E2 adds pure root entity mapping in:
+
+```text
+src/techdoc_parser/contracts/structured_document_equations_admonitions.py
+```
+
+The mapper reads existing `FormulaBlock` evidence, conservative paragraph
+equation evidence, and explicit-label admonition text that is already present in
+`Document.pages[].blocks`. It populates root `equations` and `admonitions` with
+deterministic IDs, exact raw text, page refs, source spans, source block
+references, optional bounding boxes, optional section IDs, and label/type fields
+where truthful.
+
+Equation semantics, formula discovery from PDF layout, safety severity
+classification, typography-only admonition detection, confidence scores, and
+cross-references remain absent.
+
 ## 3. Module
 
 The foundation is implemented in:
@@ -138,9 +157,9 @@ cross_references
 ```
 
 Unsupported or not-yet-populated entity collections are emitted as empty lists.
-As of Phase 13E1, `tables` and `figures` may be populated from current
-candidate evidence by the parser-model mapper; `equations`, `admonitions`, and
-`cross_references` remain empty unless callers supply records explicitly.
+As of Phase 13E2, `tables`, `figures`, `equations`, and `admonitions` may be
+populated from current candidate evidence by the parser-model mapper;
+`cross_references` remains empty unless callers supply records explicitly.
 
 ## 6. Document Metadata Policy
 
@@ -217,9 +236,11 @@ confidence values.
 Root collections for `tables`, `figures`, `equations`, `admonitions`, and
 `cross_references` exist so phases can populate them without changing the root
 shape. Phase 13E1 populates `tables` and `figures` only from existing
-candidate-level parser evidence. It does not reconstruct table cells, infer
-table continuation, extract figure assets, infer figure numbers, or create
-equation, admonition, or cross-reference records.
+candidate-level parser evidence. Phase 13E2 populates `equations` and
+`admonitions` only from conservative or explicit evidence. These phases do not
+reconstruct table cells, infer table continuation, extract figure assets, infer
+figure numbers, parse mathematical meaning, infer safety severity, or create
+cross-reference records.
 
 ## 12. Determinism And Side Effects
 
@@ -232,7 +253,7 @@ network operations.
 The current parser model, JSON exporters, Markdown exporters, validation
 exports, gate exports, output manifest, and CLI behavior remain unchanged.
 Existing `document.json` and `manifest.json` do not gain `schema_name` or
-structured-document root fields in Phase 13B through Phase 13E1.
+structured-document root fields in Phase 13B through Phase 13E2.
 
 ## 14. Fixture
 
@@ -242,6 +263,7 @@ The synthetic fixture is:
 tests/fixtures/structured_document/minimal_structured_document.json
 tests/fixtures/structured_document/mapped_structured_document_with_sections.json
 tests/fixtures/structured_document/mapped_structured_document_with_tables_figures.json
+tests/fixtures/structured_document/mapped_structured_document_with_equations_admonitions.json
 ```
 
 It is intentionally not derived from real source material. It contains no
@@ -256,7 +278,9 @@ explicit tests that existing outputs remain unchanged.
 Phase 13D completed contract-local section hierarchy and source-span enrichment.
 
 Phase 13E1 completed contract-local table and figure-caption root mapping from
-existing candidate evidence only. Recommended next work is either equation,
-admonition, or cross-reference mapping from truthful parser evidence, true table
-structure/parser enhancements, or optional CLI/manifest integration as a
-separate scoped phase.
+existing candidate evidence only.
+
+Phase 13E2 completed contract-local equation and admonition root mapping from
+truthful parser evidence only. Recommended next work is cross-reference mapping,
+confidence policy, true table structure/parser enhancements, formula discovery,
+or optional CLI/manifest integration as a separate scoped phase.

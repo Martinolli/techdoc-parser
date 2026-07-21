@@ -95,6 +95,7 @@ future scoped phase adds explicit CLI/export integration.
 - Table continuation and merged-cell detection are not implemented.
 - Figure asset extraction and image understanding are not implemented.
 - Figure numbers and figure relationships are not implemented.
-- Equation, admonition, and cross-reference root entity mapping remain future
-  work.
+- Cross-reference root entity mapping remains future work.
+- Equation and admonition root entity mapping is handled separately by Phase
+  13E2.
 - Structured-document CLI and manifest output remain future work.

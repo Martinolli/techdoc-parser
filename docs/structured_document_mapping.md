@@ -240,37 +240,57 @@ assets, figure regions, descriptions, or nearby explanatory relationships.
 `asset_reference` is emitted only when `FigureBlock.image_path` is a non-empty
 value.
 
-## 15. Unsupported Entities
+## 15. Equation And Admonition Entities
+
+Phase 13E2 maps conservative equation evidence and explicit-label admonition
+evidence into root `equations` and `admonitions` after block and section
+mapping. The root entities reuse mapped block source spans and section IDs so
+entity provenance matches the block collection.
+
+Equation root entities preserve exact `raw_text`, optional explicit equation
+labels, optional `FormulaBlock.latex` notation as `normalized_representation`,
+page refs, source spans, optional bounding boxes, and section paths. Plain
+paragraph equations are not normalized, interpreted, or converted into prose.
+
+Admonition root entities preserve exact labels, validator-compatible normalized
+types, body text, page refs, source spans, optional bounding boxes, and section
+paths. Detection requires explicit starting labels such as `WARNING`, `CAUTION`,
+`NOTE`, `IMPORTANT`, or `SAFETY NOTICE`; the mapper does not infer safety
+severity from wording or typography.
+
+## 16. Unsupported Entities
 
 The mapper leaves these root collections empty unless callers supply records
 explicitly:
 
-- `equations`
-- `admonitions`
 - `cross_references`
 
-Formula parser blocks may appear as ordinary mapped blocks, but the mapper does
-not create root equation records.
+Formula discovery from PDF layout and broad admonition classification remain
+future parser work.
 
-## 16. Guarantees
+## 17. Guarantees
 
 The mapper is deterministic, import-safe, filesystem-independent, and
 non-mutating. Repeated mapping of the same parser object with the same options
 produces identical contract JSON. The mapper does not invoke current exporters
 or depend on CLI orchestration.
 
-## 17. Backward Compatibility
+## 18. Backward Compatibility
 
 Existing parser public models, constructors, JSON exporters, Markdown exporters,
 validation report exports, gate exports, output manifests, and CLI arguments
 remain unchanged. The structured-document mapper is a Python API only.
 
-## 18. Known Gaps
+## 19. Known Gaps
 
 - No true table row, column, cell, merged-cell, or continuation mapping.
 - No figure asset extraction, figure number extraction, or figure-region
   understanding.
-- No root equation, admonition, or cross-reference entities.
+- No formula discovery from PDF layout, mathematical semantics, or variable
+  extraction.
+- No inferred admonition safety severity or typography-only admonition
+  detection.
+- No root cross-reference entities.
 - No source checksum ownership beyond explicit caller-supplied values.
 - No printed page-label extraction.
 - No character offsets.
@@ -280,10 +300,10 @@ remain unchanged. The structured-document mapper is a Python API only.
 - Heading hierarchy accuracy remains bounded by the current `HeadingBlock`
   evidence.
 
-## 19. Next Phase
+## 20. Next Phase
 
-Phase 13E1 is implemented as contract-local table and figure-caption mapping
-from existing evidence. Next work should keep CLI/manifest integration separate
-from entity mapping and should not add equations, admonitions, cross-references,
-true table structure, figure assets, or confidence fields until the parser has
-truthful evidence for them.
+Phase 13E2 is implemented as contract-local equation and admonition mapping from
+truthful parser evidence. Next work should keep CLI/manifest integration
+separate from entity mapping and should not add cross-references, true table
+structure, figure assets, or confidence fields until the parser has truthful
+evidence for them.

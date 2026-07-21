@@ -165,9 +165,9 @@ Mapping statuses used: `direct`, `rename`, `derive_safely`,
 | figures | figure_id | FigureBlock | `id` | implemented-contract-api | Phase 13E1 emits deterministic root figure IDs distinct from block IDs. | Medium. | techdoc-parser contract mapper |
 | figures | caption | FigureBlock | `caption` | partial-implemented | Phase 13E1 emits caption candidates only and preserves source caption text. | Medium. | techdoc-parser contract mapper |
 | figures | asset reference | FigureBlock | `image_path` | partial | Field exists but loader does not extract images. | Medium. | parser enhancement |
-| equations | equation_id | FormulaBlock | `id` | partial | Model only; no detector creates formulas. | Medium. | parser enhancement |
-| equations | raw/normalized representation | FormulaBlock | `text`, `latex` | partial | Preserve source form if detector added later. | Medium. | parser enhancement |
-| admonitions | admonition_id/type/body | none | none | missing | Add warning/caution/note classifier and model/export mapping. | High. | parser enhancement |
+| equations | equation_id | FormulaBlock/ParagraphBlock | `id`, `text` | implemented-contract-api | Phase 13E2 emits deterministic root equation IDs from conservative equation evidence. | Medium. | techdoc-parser contract mapper |
+| equations | raw/normalized representation | FormulaBlock/ParagraphBlock | `text`, `latex` | partial-implemented | Phase 13E2 preserves raw source form and emits existing `latex` only when present. | Medium. | techdoc-parser contract mapper |
+| admonitions | admonition_id/type/body | ParagraphBlock | `text` | implemented-contract-api | Phase 13E2 emits explicit-label warning/caution/note/important/safety-notice entities only. | High. | techdoc-parser contract mapper |
 | cross_references | reference_id/raw_text/status/target | none | none | missing | Add reference extraction and optional resolution. | High. | parser enhancement |
 | relationships | containment/cross-links | none | none | missing | Could derive simple contained_by only after sections/entities exist. | Medium. | exporter/model extension |
 | confidence | confidence fields | SourceLocation | `confidence` | partial | Map real extraction confidence only; null for missing classifier scores. | High if fabricated. | techdoc-parser exporter |
@@ -566,6 +566,14 @@ rows/columns/cells empty, emits no figure assets unless a real `image_path`
 exists, and does not implement equation, admonition, or cross-reference entity
 mapping.
 
+Phase 13E2 status: completed for conservative equation and explicit-label
+admonition mapping only. The contract mapper now emits root `equations` from
+existing `FormulaBlock` evidence and narrow paragraph equation evidence, and
+root `admonitions` from explicit labels such as `WARNING`, `CAUTION`, `NOTE`,
+`IMPORTANT`, and `SAFETY NOTICE`. It does not implement formula discovery from
+PDF layout, mathematical semantics, safety severity inference, typography-only
+admonition detection, confidence fields, or cross-reference mapping.
+
 ### 13F - Cross-References And Confidence Mapping
 
 Goal: add explicit reference extraction/status policy and confidence mapping.
@@ -608,8 +616,10 @@ Required for first valid export:
   enrichment is disabled.
 - Empty `tables` and `figures` where no truthful candidate records are emitted;
   otherwise Phase 13E1 may populate them from current candidate evidence.
-- Empty `equations`, `admonitions`, and `cross_references` until truthful
-  records exist.
+- Empty `equations` and `admonitions` where no truthful candidate records are
+  emitted; otherwise Phase 13E2 may populate them from conservative or explicit
+  evidence.
+- Empty `cross_references` until truthful records exist.
 
 Required before AviationRAG D.4c:
 
@@ -666,6 +676,9 @@ enrichment**.
 Phase 13E1 status: **completed for table and figure-caption mapping from
 existing candidate evidence only**.
 
+Phase 13E2 status: **completed for conservative equation and explicit-label
+admonition mapping from truthful parser evidence only**.
+
 Phase 13C maps current `Document`, `Page`, `Block`, `SourceLocation`, and
 `BoundingBox` evidence into the Phase 13B contract model while preserving all
 existing output formats. It added `structured_document_mapper.py`, focused
@@ -685,7 +698,12 @@ Phase 13E1 adds root `tables` and `figures` from current `TableBlock`,
 reconstruction, figure assets, figure-region understanding, or changes to
 current output behavior.
 
-Recommended next phase: **Phase 13E2 - Equation/Admonition Entity Mapping From
-Truthful Parser Evidence**, **Phase 13F - Cross-Reference/Confidence Policy**,
-or **Phase 13G - Optional CLI/API Structured-Document Output**, depending on
-which downstream contract gap matters first.
+Phase 13E2 adds root `equations` and `admonitions` from conservative equation
+evidence and explicit admonition labels without claiming mathematical
+understanding, safety severity inference, confidence fields, or changes to
+current output behavior.
+
+Recommended next phase: **Phase 13F - Cross-Reference/Confidence Policy**,
+**Phase 13G - Optional CLI/API Structured-Document Output**, or formula
+discovery/table-structure parser enhancement, depending on which downstream
+contract gap matters first.

@@ -1,0 +1,860 @@
+{
+  "schema_name": "techdoc-structured-document",
+  "schema_version": "0.1.0",
+  "parser_name": "techdoc-parser",
+  "parser_version": "0.1.0",
+  "document": {
+    "document_id": "eq-adm-doc",
+    "source_filename": "synthetic-equation-admonition-guide.pdf",
+    "document_title": "Synthetic Equation and Admonition Guide",
+    "canonical_title": "Synthetic Equation and Admonition Guide",
+    "page_count": 2
+  },
+  "pages": [
+    {
+      "page_id": "page-0001",
+      "pdf_page_index": 0,
+      "page_number": 1,
+      "printed_page_label": null
+    },
+    {
+      "page_id": "page-0002",
+      "pdf_page_index": 1,
+      "page_number": 2,
+      "printed_page_label": null
+    }
+  ],
+  "sections": [
+    {
+      "section_id": "eq-adm-doc:s0001",
+      "level": 1,
+      "title": "Hydraulic Test Setup",
+      "section_number": "1",
+      "raw_heading": "1 Hydraulic Test Setup",
+      "normalized_heading": "1 Hydraulic Test Setup",
+      "path": [
+        "1 Hydraulic Test Setup"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 2,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 1,
+        "source_block_ids": [
+          "heading-1",
+          "equation-pressure",
+          "equation-heat",
+          "warning-single",
+          "note-label",
+          "note-body",
+          "revision",
+          "table-boundary",
+          "formula-energy",
+          "caution-label",
+          "caution-body-1",
+          "caution-body-2",
+          "caution-outside",
+          "figure-boundary"
+        ],
+        "extraction_method": "synthetic"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "block_id": "heading-1",
+      "block_type": "section_heading",
+      "text": "1 Hydraulic Test Setup",
+      "document_block_index": 0,
+      "page_block_index": 0,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "normalized_text": "1 Hydraulic Test Setup",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 72.0,
+          "x1": 420.0,
+          "y1": 96.0
+        },
+        "source_block_ids": [
+          "heading-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 72.0,
+        "x1": 420.0,
+        "y1": 96.0
+      }
+    },
+    {
+      "block_id": "equation-pressure",
+      "block_type": "paragraph",
+      "text": "P = F / A",
+      "document_block_index": 1,
+      "page_block_index": 1,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 101.0,
+          "x1": 420.0,
+          "y1": 125.0
+        },
+        "source_block_ids": [
+          "equation-pressure"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 101.0,
+        "x1": 420.0,
+        "y1": 125.0
+      }
+    },
+    {
+      "block_id": "equation-heat",
+      "block_type": "paragraph",
+      "text": "Equation 4: Q = m × c × ΔT",
+      "document_block_index": 2,
+      "page_block_index": 2,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 101.0,
+          "x1": 420.0,
+          "y1": 125.0
+        },
+        "source_block_ids": [
+          "equation-heat"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 101.0,
+        "x1": 420.0,
+        "y1": 125.0
+      }
+    },
+    {
+      "block_id": "warning-single",
+      "block_type": "paragraph",
+      "text": "WARNING: Release stored hydraulic pressure first.",
+      "document_block_index": 3,
+      "page_block_index": 3,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 101.0,
+          "x1": 420.0,
+          "y1": 125.0
+        },
+        "source_block_ids": [
+          "warning-single"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 101.0,
+        "x1": 420.0,
+        "y1": 125.0
+      }
+    },
+    {
+      "block_id": "note-label",
+      "block_type": "paragraph",
+      "text": "NOTE:",
+      "document_block_index": 4,
+      "page_block_index": 4,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 101.0,
+          "x1": 420.0,
+          "y1": 125.0
+        },
+        "source_block_ids": [
+          "note-label"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 101.0,
+        "x1": 420.0,
+        "y1": 125.0
+      }
+    },
+    {
+      "block_id": "note-body",
+      "block_type": "paragraph",
+      "text": "Record the ambient temperature before the test.",
+      "document_block_index": 5,
+      "page_block_index": 5,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 101.0,
+          "x1": 420.0,
+          "y1": 125.0
+        },
+        "source_block_ids": [
+          "note-body"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 101.0,
+        "x1": 420.0,
+        "y1": 125.0
+      }
+    },
+    {
+      "block_id": "revision",
+      "block_type": "paragraph",
+      "text": "Revision = C",
+      "document_block_index": 6,
+      "page_block_index": 6,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 101.0,
+          "x1": 420.0,
+          "y1": 125.0
+        },
+        "source_block_ids": [
+          "revision"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 101.0,
+        "x1": 420.0,
+        "y1": 125.0
+      }
+    },
+    {
+      "block_id": "table-boundary",
+      "block_type": "table",
+      "text": "Table 1 -- Non equation P = F / A",
+      "document_block_index": 7,
+      "page_block_index": 7,
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 330.0,
+          "x1": 420.0,
+          "y1": 370.0
+        },
+        "source_block_ids": [
+          "table-boundary"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 330.0,
+        "x1": 420.0,
+        "y1": 370.0
+      }
+    },
+    {
+      "block_id": "formula-energy",
+      "block_type": "equation",
+      "text": "E = m c^2",
+      "document_block_index": 8,
+      "page_block_index": 0,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 112.0,
+          "x1": 300.0,
+          "y1": 132.0
+        },
+        "source_block_ids": [
+          "formula-energy"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 112.0,
+        "x1": 300.0,
+        "y1": 132.0
+      }
+    },
+    {
+      "block_id": "caution-label",
+      "block_type": "paragraph",
+      "text": "CAUTION",
+      "document_block_index": 9,
+      "page_block_index": 1,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "caution-label"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "block_id": "caution-body-1",
+      "block_type": "paragraph",
+      "text": "Do not exceed the synthetic test pressure.",
+      "document_block_index": 10,
+      "page_block_index": 2,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "caution-body-1"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "block_id": "caution-body-2",
+      "block_type": "paragraph",
+      "text": "Stop the test if leakage is observed.",
+      "document_block_index": 11,
+      "page_block_index": 3,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "caution-body-2"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "block_id": "caution-outside",
+      "block_type": "paragraph",
+      "text": "This paragraph remains outside the caution.",
+      "document_block_index": 12,
+      "page_block_index": 4,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 102.0,
+          "x1": 420.0,
+          "y1": 126.0
+        },
+        "source_block_ids": [
+          "caution-outside"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 102.0,
+        "x1": 420.0,
+        "y1": 126.0
+      }
+    },
+    {
+      "block_id": "figure-boundary",
+      "block_type": "figure_caption",
+      "text": "Figure 1 -- Safety Notice: not an admonition body",
+      "document_block_index": 13,
+      "page_block_index": 5,
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "eq-adm-doc:s0001",
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 350.0,
+          "x1": 420.0,
+          "y1": 370.0
+        },
+        "source_block_ids": [
+          "figure-boundary"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "bbox": {
+        "x0": 72.0,
+        "y0": 350.0,
+        "x1": 420.0,
+        "y1": 370.0
+      }
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "eq-adm-doc:p0:t0001",
+      "page_start": 1,
+      "page_end": 1,
+      "pdf_page_index_start": 0,
+      "pdf_page_index_end": 0,
+      "source_block_ids": [
+        "table-boundary"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 330.0,
+          "x1": 420.0,
+          "y1": 370.0
+        },
+        "source_block_ids": [
+          "table-boundary"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Test Setup"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 330.0,
+        "x1": 420.0,
+        "y1": 370.0
+      },
+      "text": "Table 1 -- Non equation P = F / A",
+      "columns": [],
+      "rows": [],
+      "cells": [],
+      "header_rows": [],
+      "merged_cells": [],
+      "is_candidate": true,
+      "extraction_status": "candidate"
+    }
+  ],
+  "figures": [
+    {
+      "figure_id": "eq-adm-doc:p1:f0001",
+      "page_start": 2,
+      "page_end": 2,
+      "pdf_page_index_start": 1,
+      "pdf_page_index_end": 1,
+      "source_block_ids": [
+        "figure-boundary"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 350.0,
+          "x1": 420.0,
+          "y1": 370.0
+        },
+        "source_block_ids": [
+          "figure-boundary"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "eq-adm-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Test Setup"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 350.0,
+        "x1": 420.0,
+        "y1": 370.0
+      },
+      "caption": "Figure 1 -- Safety Notice: not an admonition body",
+      "source_caption_text": "Figure 1 -- Safety Notice: not an admonition body",
+      "is_candidate": true,
+      "extraction_status": "caption_candidate"
+    }
+  ],
+  "equations": [
+    {
+      "equation_id": "eq-adm-doc:e0001",
+      "page_start": 1,
+      "page_end": 1,
+      "pdf_page_index_start": 0,
+      "pdf_page_index_end": 0,
+      "source_block_ids": [
+        "equation-pressure"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 101.0,
+          "x1": 420.0,
+          "y1": 125.0
+        },
+        "source_block_ids": [
+          "equation-pressure"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Test Setup"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 101.0,
+        "x1": 420.0,
+        "y1": 125.0
+      },
+      "raw_text": "P = F / A"
+    },
+    {
+      "equation_id": "eq-adm-doc:e0002",
+      "page_start": 1,
+      "page_end": 1,
+      "pdf_page_index_start": 0,
+      "pdf_page_index_end": 0,
+      "source_block_ids": [
+        "equation-heat"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 101.0,
+          "x1": 420.0,
+          "y1": 125.0
+        },
+        "source_block_ids": [
+          "equation-heat"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Test Setup"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 101.0,
+        "x1": 420.0,
+        "y1": 125.0
+      },
+      "raw_text": "Equation 4: Q = m × c × ΔT",
+      "equation_label": "Equation 4"
+    },
+    {
+      "equation_id": "eq-adm-doc:e0003",
+      "page_start": 2,
+      "page_end": 2,
+      "pdf_page_index_start": 1,
+      "pdf_page_index_end": 1,
+      "source_block_ids": [
+        "formula-energy"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 112.0,
+          "x1": 300.0,
+          "y1": 132.0
+        },
+        "source_block_ids": [
+          "formula-energy"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "eq-adm-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Test Setup"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 112.0,
+        "x1": 300.0,
+        "y1": 132.0
+      },
+      "raw_text": "E = m c^2",
+      "normalized_representation": "E = mc^2"
+    }
+  ],
+  "admonitions": [
+    {
+      "admonition_id": "eq-adm-doc:a0001",
+      "page_start": 1,
+      "page_end": 1,
+      "pdf_page_index_start": 0,
+      "pdf_page_index_end": 0,
+      "source_block_ids": [
+        "warning-single"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "bbox": {
+          "x0": 72.0,
+          "y0": 101.0,
+          "x1": 420.0,
+          "y1": 125.0
+        },
+        "source_block_ids": [
+          "warning-single"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Test Setup"
+      ],
+      "bbox": {
+        "x0": 72.0,
+        "y0": 101.0,
+        "x1": 420.0,
+        "y1": 125.0
+      },
+      "admonition_type": "WARNING",
+      "normalized_type": "WARNING",
+      "raw_label": "WARNING:",
+      "body_text": "Release stored hydraulic pressure first."
+    },
+    {
+      "admonition_id": "eq-adm-doc:a0002",
+      "page_start": 1,
+      "page_end": 1,
+      "pdf_page_index_start": 0,
+      "pdf_page_index_end": 0,
+      "source_block_ids": [
+        "note-label",
+        "note-body"
+      ],
+      "source_span": {
+        "page_start": 1,
+        "page_end": 1,
+        "pdf_page_index_start": 0,
+        "pdf_page_index_end": 0,
+        "source_block_ids": [
+          "note-label",
+          "note-body"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0001",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "section_id": "eq-adm-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Test Setup"
+      ],
+      "admonition_type": "NOTE",
+      "normalized_type": "NOTE",
+      "raw_label": "NOTE:",
+      "body_text": "Record the ambient temperature before the test."
+    },
+    {
+      "admonition_id": "eq-adm-doc:a0003",
+      "page_start": 2,
+      "page_end": 2,
+      "pdf_page_index_start": 1,
+      "pdf_page_index_end": 1,
+      "source_block_ids": [
+        "caution-label",
+        "caution-body-1",
+        "caution-body-2"
+      ],
+      "source_span": {
+        "page_start": 2,
+        "page_end": 2,
+        "pdf_page_index_start": 1,
+        "pdf_page_index_end": 1,
+        "source_block_ids": [
+          "caution-label",
+          "caution-body-1",
+          "caution-body-2"
+        ],
+        "extraction_method": "synthetic"
+      },
+      "page_id": "page-0002",
+      "page_number": 2,
+      "pdf_page_index": 1,
+      "section_id": "eq-adm-doc:s0001",
+      "section_path": [
+        "1 Hydraulic Test Setup"
+      ],
+      "admonition_type": "CAUTION",
+      "normalized_type": "CAUTION",
+      "raw_label": "CAUTION",
+      "body_text": "Do not exceed the synthetic test pressure.\nStop the test if leakage is observed."
+    }
+  ],
+  "cross_references": []
+}

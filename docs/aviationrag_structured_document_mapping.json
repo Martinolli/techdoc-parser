@@ -501,38 +501,38 @@
     {
       "target_entity": "equations",
       "target_field": "equation_id",
-      "current_source": "techdoc_parser.core.models.FormulaBlock",
-      "current_field": "id",
-      "mapping_status": "partial",
-      "required_transformation": "Map only if future parser creates formula blocks.",
-      "gap_class": "parser-enhancement",
+      "current_source": "techdoc_parser.core.models.FormulaBlock/ParagraphBlock",
+      "current_field": "id, text",
+      "mapping_status": "implemented-contract-api",
+      "required_transformation": "Phase 13E2 emits deterministic root equation IDs from conservative equation evidence.",
+      "gap_class": "implemented-contract-api",
       "priority": "P2",
       "risk": "high",
-      "notes": "FormulaBlock exists but detection is not implemented."
+      "notes": "Formula discovery from PDF layout and mathematical semantics remain out of scope."
     },
     {
       "target_entity": "equations",
       "target_field": "raw_text_normalized_text",
-      "current_source": "techdoc_parser.core.models.FormulaBlock",
+      "current_source": "techdoc_parser.core.models.FormulaBlock/ParagraphBlock",
       "current_field": "text, latex",
-      "mapping_status": "partial",
-      "required_transformation": "Preserve source representation and optional normalized notation.",
-      "gap_class": "parser-enhancement",
+      "mapping_status": "partial-implemented",
+      "required_transformation": "Phase 13E2 preserves source representation and existing FormulaBlock.latex when present.",
+      "gap_class": "implemented-contract-api",
       "priority": "P2",
       "risk": "high",
-      "notes": "Validator rejects equation records without raw representation."
+      "notes": "Plain paragraph equations are not normalized or converted into prose."
     },
     {
       "target_entity": "admonitions",
       "target_field": "admonition_id_type_label_body",
-      "current_source": null,
-      "current_field": null,
-      "mapping_status": "missing",
-      "required_transformation": "Add warning/caution/note classifier and exact label preservation.",
-      "gap_class": "parser-enhancement",
+      "current_source": "techdoc_parser.core.models.ParagraphBlock",
+      "current_field": "text",
+      "mapping_status": "implemented-contract-api",
+      "required_transformation": "Phase 13E2 emits explicit-label admonitions with exact label and body text preservation.",
+      "gap_class": "implemented-contract-api",
       "priority": "P1",
       "risk": "high",
-      "notes": "Current parser preserves admonition-like text only as ordinary text."
+      "notes": "Safety severity inference, typography-only labels, and table/figure admonition detection remain out of scope."
     },
     {
       "target_entity": "cross_references",
@@ -604,5 +604,10 @@
     "status": "implemented",
     "mapper_module": "src/techdoc_parser/contracts/structured_document_entities.py",
     "notes": "Maps existing TableBlock, TableRegionBlock, and FigureBlock evidence only; no table reconstruction, figure asset extraction, CLI integration, current-output changes, or AviationRAG integration."
+  },
+  "phase_13e2": {
+    "status": "implemented",
+    "mapper_module": "src/techdoc_parser/contracts/structured_document_equations_admonitions.py",
+    "notes": "Maps existing FormulaBlock evidence, conservative paragraph equation evidence, and explicit-label admonition evidence only; no mathematical understanding, safety severity inference, confidence fields, CLI integration, current-output changes, or AviationRAG integration."
   }
 }

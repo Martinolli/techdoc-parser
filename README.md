@@ -95,7 +95,9 @@ available under `techdoc_parser.contracts`. It defines schema constants,
 contract dataclasses, deterministic JSON serialization helpers, and a pure
 parser-model mapper for document, page, block, source-location, bounding-box,
 heading-derived section hierarchy, and current table/figure-caption candidate
-evidence already present in the parser model.
+evidence already present in the parser model. It also maps conservative
+equation evidence and explicit-label admonition evidence into internal contract
+root entities.
 
 This API is not wired into the CLI or current output package. Existing JSON,
 Markdown, validation, gate, and manifest outputs remain unchanged.
@@ -109,6 +111,7 @@ Markdown, validation, gate, and manifest outputs remain unchanged.
 - [Structured-document parser mapping](docs/structured_document_mapping.md)
 - [Structured-document section hierarchy](docs/structured_document_hierarchy.md)
 - [Structured-document table and figure-caption mapping](docs/structured_document_tables_figures.md)
+- [Structured-document equation and admonition mapping](docs/structured_document_equations_admonitions.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -123,7 +126,11 @@ Markdown, validation, gate, and manifest outputs remain unchanged.
   extract image assets or understand visual regions
 - Section hierarchy is available only in the internal structured-document
   mapper from current `HeadingBlock` evidence
-- Formula recognition is future work
+- Formula discovery from PDF layout is future work; the internal
+  structured-document mapper can expose existing `FormulaBlock` records and
+  conservative paragraph equation evidence as root equation entities
+- Admonition mapping is explicit-label only for warning, caution, note,
+  important, and safety-notice text in the internal structured-document mapper
 - `techdoc-structured-document / 0.1.0` has an internal contract API and
   parser-model mapper, but CLI export and manifest integration are not
   implemented

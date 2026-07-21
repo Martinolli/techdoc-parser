@@ -43,12 +43,12 @@ Output package and manifest
 | `techdoc_parser.core` | Dataclass models for documents, pages, blocks, source locations, bounding boxes, metadata, and chunks. |
 | `techdoc_parser.loaders` | Conceptual loader layer; currently implemented by `techdoc_parser.ingestion`. |
 | `techdoc_parser.ingestion` | PDF ingestion through `PDFLoader` and PyMuPDF. |
-| `techdoc_parser.structure` | Heuristic structure detection for page furniture, headings, paragraphs, tables, table regions, figures, and semantic block views. |
+| `techdoc_parser.structure` | Heuristic structure detection for page furniture, headings, paragraphs, tables, table regions, figures, conservative equation evidence, explicit-label admonitions, and semantic block views. |
 | `techdoc_parser.normalization` | Text normalization helpers that preserve raw text while storing normalized text separately. |
 | `techdoc_parser.chunking` | Semantic chunk creation, chunk text cleanup, source reference preservation, and section metadata assignment. |
 | `techdoc_parser.validation` | Quality report generation and ingestion gate decision mapping. |
 | `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, and semantic Markdown export helpers. |
-| `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, and deterministic serializers for future external structured-document artifacts. |
+| `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, equation/admonition entity mapper, and deterministic serializers for future external structured-document artifacts. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
 
@@ -62,12 +62,13 @@ Output package and manifest
 6. Table candidate detection: table-like text is marked as candidate `TableBlock` content without claiming full table reconstruction.
 7. Figure caption detection: obvious figure captions are represented as candidate `FigureBlock` objects.
 8. Table region grouping: nearby table fragments may be grouped into candidate `TableRegionBlock` objects.
-9. Semantic block filtering: raw text blocks and duplicate derived blocks are filtered from semantic views without modifying the source model.
-10. Semantic chunk creation: semantic blocks are aggregated into RAG-oriented chunks with source references.
-11. Chunk cleanup and section metadata: emitted chunk text is cleaned of furniture lines, and available heading context is stored as section metadata.
-12. Validation report: document and chunk quality findings are reported with info, warning, and error severity.
-13. Ingestion gate decision: validation findings are mapped to `pass`, `review`, or `fail`.
-14. Output package generation: document, chunk, validation, gate, Markdown summary, semantic Markdown, and manifest artifacts can be exported.
+9. Structured-document entity mapping: the internal contract API can map existing table/figure evidence, conservative equation evidence, and explicit-label admonitions without changing parser outputs.
+10. Semantic block filtering: raw text blocks and duplicate derived blocks are filtered from semantic views without modifying the source model.
+11. Semantic chunk creation: semantic blocks are aggregated into RAG-oriented chunks with source references.
+12. Chunk cleanup and section metadata: emitted chunk text is cleaned of furniture lines, and available heading context is stored as section metadata.
+13. Validation report: document and chunk quality findings are reported with info, warning, and error severity.
+14. Ingestion gate decision: validation findings are mapped to `pass`, `review`, or `fail`.
+15. Output package generation: document, chunk, validation, gate, Markdown summary, semantic Markdown, and manifest artifacts can be exported.
 
 ## 5. Data Flow and Preservation Principle
 
@@ -121,7 +122,8 @@ results. Validation status is emitted in the validation and gate artifacts.
 - Scanned/OCR documents are detected, but OCR is not performed.
 - Table extraction is candidate-level and partial.
 - Figure support is caption-level.
-- `FormulaBlock` exists in the model, but formula detection is not implemented.
+- Formula discovery from PDF layout is not implemented; the internal structured-document mapper can expose existing `FormulaBlock` records and conservative paragraph equation evidence.
+- Admonition mapping is explicit-label only in the internal structured-document mapper; safety severity inference is not implemented.
 - Section-aware chunk metadata exists in current chunk outputs. A heading-derived
   section tree exists only in the internal structured-document contract API; it
   is not emitted by the current CLI output package.
