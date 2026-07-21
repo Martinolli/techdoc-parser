@@ -4,67 +4,67 @@
     "schema_name": "techdoc-structured-document",
     "schema_version": "0.1.0"
   },
-  "repository_commit": "ce87826",
+  "repository_commit": "9ff79fb+phase-13c",
   "entities": [
     {
       "target_entity": "root",
       "target_field": "schema_name",
-      "current_source": null,
-      "current_field": null,
-      "mapping_status": "missing",
-      "required_transformation": "Add a contract-specific exporter constant.",
-      "gap_class": "export-only",
+      "current_source": "techdoc_parser.contracts.structured_document",
+      "current_field": "STRUCTURED_DOCUMENT_SCHEMA_NAME",
+      "mapping_status": "direct",
+      "required_transformation": "Implemented by contract root serializer.",
+      "gap_class": "implemented-contract-api",
       "priority": "P0",
       "risk": "low",
-      "notes": "Current outputs include schema_version but not schema_name."
+      "notes": "Current outputs include schema_version but not schema_name. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "root",
       "target_field": "schema_version",
-      "current_source": "techdoc_parser.version",
-      "current_field": "SCHEMA_VERSION",
-      "mapping_status": "rename",
-      "required_transformation": "Emit under the structured-document root.",
-      "gap_class": "export-only",
+      "current_source": "techdoc_parser.contracts.structured_document",
+      "current_field": "STRUCTURED_DOCUMENT_SCHEMA_VERSION",
+      "mapping_status": "direct",
+      "required_transformation": "Implemented by contract root serializer.",
+      "gap_class": "implemented-contract-api",
       "priority": "P0",
       "risk": "low",
-      "notes": "Current value is 0.1.0."
+      "notes": "Current value is 0.1.0. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "root",
       "target_field": "parser_name",
       "current_source": "techdoc_parser.version",
       "current_field": "PARSER_NAME",
-      "mapping_status": "rename",
-      "required_transformation": "Emit as flat target parser_name.",
-      "gap_class": "export-only",
+      "mapping_status": "direct",
+      "required_transformation": "Emitted as flat target parser_name.",
+      "gap_class": "implemented-contract-api",
       "priority": "P0",
       "risk": "low",
-      "notes": "Current exported metadata uses nested parser.name."
+      "notes": "Current exported metadata uses nested parser.name. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "root",
       "target_field": "parser_version",
       "current_source": "techdoc_parser.version",
       "current_field": "PARSER_VERSION",
-      "mapping_status": "rename",
-      "required_transformation": "Emit as flat target parser_version.",
-      "gap_class": "export-only",
+      "mapping_status": "direct",
+      "required_transformation": "Emitted as flat target parser_version.",
+      "gap_class": "implemented-contract-api",
       "priority": "P0",
       "risk": "low",
-      "notes": "AviationRAG validator warns when parser version is missing."
+      "notes": "AviationRAG validator warns when parser version is missing. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "document",
       "target_field": "document_id",
-      "current_source": "techdoc_parser.core.models.Document",
-      "current_field": "id",
-      "mapping_status": "rename",
-      "required_transformation": "Map to document.document_id.",
-      "gap_class": "export-only",
+      "current_source": "StructuredDocumentMappingOptions",
+      "current_field": "document_id",
+      "mapping_status": "direct",
+      "required_transformation": "Caller must provide explicit document_id; Document.id is not used as authority.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "medium",
-      "notes": "Current ID is derived from source path stem."
+      "notes": "Current ID is derived from source path stem. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "document",
@@ -72,11 +72,11 @@
       "current_source": "techdoc_parser.core.models.Document",
       "current_field": "source_path",
       "mapping_status": "derive_safely",
-      "required_transformation": "Emit basename rather than full local path.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper emits basename as source_filename and avoids absolute path leakage.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "Avoid machine-specific absolute paths in the contract."
+      "notes": "Avoid machine-specific absolute paths in the contract. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "document",
@@ -84,47 +84,47 @@
       "current_source": "techdoc_parser.core.models.DocumentMetadata",
       "current_field": "title",
       "mapping_status": "rename",
-      "required_transformation": "Map PDF title when present; otherwise leave absent or null according to policy.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper emits as canonical_title when parser metadata title is present.",
+      "gap_class": "implemented-mapper",
       "priority": "P1",
       "risk": "medium",
-      "notes": "PDF metadata may be incomplete or unreliable."
+      "notes": "PDF metadata may be incomplete or unreliable. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "document",
       "target_field": "source_hash",
-      "current_source": null,
-      "current_field": null,
-      "mapping_status": "missing",
-      "required_transformation": "Compute or receive a source checksum in a future phase.",
-      "gap_class": "model-extension",
+      "current_source": "StructuredDocumentMappingOptions",
+      "current_field": "source_checksum",
+      "mapping_status": "available_but_not_exported",
+      "required_transformation": "Mapper preserves caller-supplied checksum as source_hash but does not compute one.",
+      "gap_class": "policy decision",
       "priority": "P0",
       "risk": "medium",
-      "notes": "AviationRAG validator warns when source checksum is missing."
+      "notes": "AviationRAG validator warns when source checksum is missing. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "document",
       "target_field": "page_count",
-      "current_source": "techdoc_parser.core.models.Document",
-      "current_field": "pages",
+      "current_source": "mapped StructuredDocumentPage records",
+      "current_field": "len(pages)",
       "mapping_status": "derive_safely",
-      "required_transformation": "Use len(document.pages).",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper emits count of mapped pages.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "Can be checked against emitted page records."
+      "notes": "Can be checked against emitted page records. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "document",
       "target_field": "revision_issue_effective_date",
-      "current_source": null,
-      "current_field": null,
-      "mapping_status": "must_not_infer",
-      "required_transformation": "Require caller or future authoritative extraction; do not infer from filenames or timestamps.",
+      "current_source": "StructuredDocumentMappingOptions",
+      "current_field": "revision, issue, effective_date",
+      "mapping_status": "available_but_not_exported",
+      "required_transformation": "Mapper preserves caller-supplied values only; it does not infer from filename or timestamps.",
       "gap_class": "policy decision",
       "priority": "P1",
       "risk": "high",
-      "notes": "Document-control metadata is not currently extracted."
+      "notes": "Document-control metadata is not currently extracted. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "pages",
@@ -132,11 +132,11 @@
       "current_source": "techdoc_parser.core.models.Page",
       "current_field": "page_number",
       "mapping_status": "derive_safely",
-      "required_transformation": "Create deterministic page IDs from page_number.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper emits deterministic page IDs as page-0001, page-0002, etc.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "Use a stable format such as page-0001."
+      "notes": "Use a stable format such as page-0001. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "pages",
@@ -144,11 +144,11 @@
       "current_source": "techdoc_parser.core.models.Page",
       "current_field": "page_number",
       "mapping_status": "derive_safely",
-      "required_transformation": "Map one-based page_number to zero-based page_number - 1.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper converts one-based page_number to zero-based page_number - 1.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "Current loader enumerates PDF pages with start=1."
+      "notes": "Current loader enumerates PDF pages with start=1. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "pages",
@@ -156,23 +156,23 @@
       "current_source": "techdoc_parser.core.models.Page",
       "current_field": "page_number",
       "mapping_status": "direct",
-      "required_transformation": null,
-      "gap_class": "export-only",
+      "required_transformation": "Mapper preserves one-based page_number.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "Current page_number is positive and one-based."
+      "notes": "Current page_number is positive and one-based. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "pages",
       "target_field": "printed_page_label",
       "current_source": null,
       "current_field": null,
-      "mapping_status": "missing",
-      "required_transformation": "Add page-label detection; leave null until supported.",
+      "mapping_status": "must_not_infer",
+      "required_transformation": "Mapper emits null; page-label extraction remains future work.",
       "gap_class": "parser-enhancement",
       "priority": "P1",
       "risk": "medium",
-      "notes": "Do not copy physical page number into printed page label."
+      "notes": "Do not copy physical page number into printed page label. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "pages",
@@ -216,11 +216,11 @@
       "current_source": "techdoc_parser.core.models.Page",
       "current_field": "blocks",
       "mapping_status": "derive_safely",
-      "required_transformation": "Emit block IDs in deterministic page order.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper preserves Page.blocks order through page_block_index and document_block_index.",
+      "gap_class": "implemented-mapper",
       "priority": "P1",
       "risk": "medium",
-      "notes": "Order is deterministic but not a validated multi-column reading order."
+      "notes": "Order is deterministic but not a validated multi-column reading order. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "sections",
@@ -276,11 +276,11 @@
       "current_source": "techdoc_parser.core.models.Block",
       "current_field": "id",
       "mapping_status": "rename",
-      "required_transformation": "Map id to block_id.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper preserves non-empty IDs and generates deterministic fallback IDs only when missing.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "IDs are generated per page and block kind."
+      "notes": "IDs are generated per page and block kind. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "blocks",
@@ -288,11 +288,11 @@
       "current_source": "techdoc_parser.core.models.Block",
       "current_field": "block_type",
       "mapping_status": "rename",
-      "required_transformation": "Map parser block types to allowed target content types.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper uses a central conservative mapping to validator-supported content types.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "medium",
-      "notes": "Parser heading and table_region require target policy."
+      "notes": "Parser heading and table_region require target policy. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "blocks",
@@ -300,11 +300,11 @@
       "current_source": "techdoc_parser.core.models.Block",
       "current_field": "text",
       "mapping_status": "direct",
-      "required_transformation": null,
-      "gap_class": "export-only",
+      "required_transformation": "Mapper preserves non-empty raw text exactly and rejects blocks without raw text.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "Raw text is preserved on textual blocks."
+      "notes": "Raw text is preserved on textual blocks. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "blocks",
@@ -312,11 +312,11 @@
       "current_source": "techdoc_parser.core.models.Block",
       "current_field": "normalized_text",
       "mapping_status": "direct",
-      "required_transformation": "Emit only as optional extension if target allows it.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper emits normalized_text separately when present and enabled.",
+      "gap_class": "implemented-mapper",
       "priority": "P2",
       "risk": "low",
-      "notes": "Normalized text must not replace raw text."
+      "notes": "Normalized text must not replace raw text. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "blocks",
@@ -324,11 +324,11 @@
       "current_source": "techdoc_parser.core.models.Page",
       "current_field": "blocks",
       "mapping_status": "derive_safely",
-      "required_transformation": "Assign deterministic flattened traversal index.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper emits zero-based flattened traversal index.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "medium",
-      "notes": "Accuracy depends on current page/block order."
+      "notes": "Accuracy depends on current page/block order. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "blocks",
@@ -336,23 +336,23 @@
       "current_source": "techdoc_parser.core.models.Page",
       "current_field": "blocks",
       "mapping_status": "derive_safely",
-      "required_transformation": "Assign deterministic per-page index.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper emits zero-based page-local index from Page.blocks order.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "Validator expects non-negative indexes when present."
+      "notes": "Validator expects non-negative indexes when present. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "blocks",
       "target_field": "section_id",
       "current_source": null,
       "current_field": null,
-      "mapping_status": "partial",
-      "required_transformation": "Attach block membership after durable section hierarchy exists.",
+      "mapping_status": "missing",
+      "required_transformation": "Phase 13D must add durable section hierarchy before block section IDs are emitted.",
       "gap_class": "model-extension",
       "priority": "P1",
       "risk": "high",
-      "notes": "Chunk section metadata is not enough for root blocks."
+      "notes": "Chunk section metadata is not enough for root blocks. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "source_span",
@@ -360,11 +360,11 @@
       "current_source": "techdoc_parser.core.models.SourceLocation",
       "current_field": "page_number",
       "mapping_status": "rename",
-      "required_transformation": "Use page_number for single-page spans.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper emits single-page spans from SourceLocation.page_number or owning page_number.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "Current blocks are page-local."
+      "notes": "Current blocks are page-local. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "source_span",
@@ -372,11 +372,11 @@
       "current_source": "techdoc_parser.core.models.SourceLocation",
       "current_field": "page_number",
       "mapping_status": "derive_safely",
-      "required_transformation": "Use page_number - 1 for single-page spans.",
-      "gap_class": "export-only",
+      "required_transformation": "Mapper emits page_number - 1 for single-page spans.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "Requires current one-based numbering invariant."
+      "notes": "Requires current one-based numbering invariant. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "source_span",
@@ -384,11 +384,11 @@
       "current_source": "techdoc_parser.core.models.SourceLocation",
       "current_field": "bbox",
       "mapping_status": "direct",
-      "required_transformation": null,
-      "gap_class": "export-only",
+      "required_transformation": "Mapper preserves numeric x0/y0/x1/y1 coordinates when present.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "Current bbox serializes as x0/y0/x1/y1."
+      "notes": "Current bbox serializes as x0/y0/x1/y1. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "source_span",
@@ -408,11 +408,11 @@
       "current_source": "techdoc_parser.core.models.SourceLocation",
       "current_field": "extraction_method",
       "mapping_status": "direct",
-      "required_transformation": null,
-      "gap_class": "export-only",
+      "required_transformation": "Mapper emits extraction_method when present.",
+      "gap_class": "implemented-mapper",
       "priority": "P0",
       "risk": "low",
-      "notes": "Current native PDF extraction method is pymupdf."
+      "notes": "Current native PDF extraction method is pymupdf. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "tables",
@@ -563,12 +563,12 @@
       "target_field": "extraction_confidence",
       "current_source": "techdoc_parser.core.models.SourceLocation",
       "current_field": "confidence",
-      "mapping_status": "partial",
-      "required_transformation": "Map only if current 1.0 semantics are accepted; otherwise null.",
+      "mapping_status": "must_not_infer",
+      "required_transformation": "Mapper does not emit SourceLocation.confidence because current 1.0 values are placeholder extraction evidence.",
       "gap_class": "policy decision",
       "priority": "P1",
       "risk": "high",
-      "notes": "Current value is hard-coded for native PyMuPDF blocks."
+      "notes": "Current value is hard-coded for native PyMuPDF blocks. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
     },
     {
       "target_entity": "confidence",
@@ -594,5 +594,10 @@
       "risk": "low",
       "notes": "Do not import AviationRAG as a techdoc-parser runtime dependency."
     }
-  ]
+  ],
+  "phase_13c": {
+    "status": "implemented",
+    "mapper_module": "src/techdoc_parser/contracts/structured_document_mapper.py",
+    "notes": "Pure Python contract API only; no CLI, manifest, current-output, or AviationRAG integration."
+  }
 }

@@ -48,7 +48,7 @@ Output package and manifest
 | `techdoc_parser.chunking` | Semantic chunk creation, chunk text cleanup, source reference preservation, and section metadata assignment. |
 | `techdoc_parser.validation` | Quality report generation and ingestion gate decision mapping. |
 | `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, and semantic Markdown export helpers. |
-| `techdoc_parser.contracts` | Isolated versioned contract models and deterministic serializers for future external structured-document artifacts. |
+| `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, and deterministic serializers for future external structured-document artifacts. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
 
@@ -140,23 +140,28 @@ available for human review.
 ### Structured-Document Contract Boundary
 
 Future AviationRAG integration may use a dedicated structured-document export.
-The current foundation is an internal contract layer only:
+The current implementation is an internal contract layer plus a pure parser
+model mapper:
 
 ```text
 Current parser models
   ↓
+StructuredDocument mapper
+  ↓
 StructuredDocument contract serializer
   ↓
-techdoc-structured-document / 0.1.0 JSON object
+versioned techdoc-structured-document / 0.1.0 JSON object
   ↓
 external contract consumer
 ```
 
-The contract foundation is implemented under `techdoc_parser.contracts`, but
-parser-model mapping, CLI output, manifest integration, and runtime ingestion
-are not implemented. Current outputs remain unchanged. AviationRAG is one
-intended consumer, but the parser remains independent and has no direct runtime
-dependency on AviationRAG.
+The contract foundation and mapper are implemented under
+`techdoc_parser.contracts`. The mapper covers document, page, block, source-span,
+and bounding-box data that already exists in the parser model. CLI output,
+manifest integration, runtime ingestion, section hierarchy mapping, and advanced
+entity root collections are not implemented. Current outputs remain unchanged.
+AviationRAG is one intended consumer, but the parser remains independent and has
+no direct runtime dependency on AviationRAG.
 
 ## 10. Recommended Near-Term Next Steps
 

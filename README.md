@@ -88,15 +88,16 @@ Gate decision meanings:
 For the detailed output contract audit, see
 [`docs/output_contract_0_1_0_audit.md`](docs/output_contract_0_1_0_audit.md).
 
-## Structured-Document Contract Foundation
+## Structured-Document Contract API
 
-An isolated internal foundation for `techdoc-structured-document / 0.1.0` is
+An isolated internal contract API for `techdoc-structured-document / 0.1.0` is
 available under `techdoc_parser.contracts`. It defines schema constants,
-contract dataclasses, and deterministic JSON serialization helpers for future
-AviationRAG-compatible structured-document output.
+contract dataclasses, deterministic JSON serialization helpers, and a pure
+parser-model mapper for document, page, block, source-location, and bounding-box
+data already present in the current parser model.
 
-This foundation is not wired into the CLI or current output package. Existing
-JSON, Markdown, validation, gate, and manifest outputs remain unchanged.
+This API is not wired into the CLI or current output package. Existing JSON,
+Markdown, validation, gate, and manifest outputs remain unchanged.
 
 ## Documentation
 
@@ -104,6 +105,7 @@ JSON, Markdown, validation, gate, and manifest outputs remain unchanged.
 - [MVP readiness checklist](docs/mvp_readiness_checklist.md)
 - [Output contract audit](docs/output_contract_0_1_0_audit.md)
 - [Structured-document contract foundation](docs/structured_document_contract.md)
+- [Structured-document parser mapping](docs/structured_document_mapping.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -112,5 +114,6 @@ JSON, Markdown, validation, gate, and manifest outputs remain unchanged.
 - Scanned/OCR documents are detected, but OCR is not implemented
 - Tables are candidate-level and partial
 - Full section hierarchy and formula recognition are future work
-- `techdoc-structured-document / 0.1.0` has an internal contract foundation,
-  but parser mapping and CLI export are not implemented
+- `techdoc-structured-document / 0.1.0` has an internal contract API and
+  parser-model mapper, but CLI export and manifest integration are not
+  implemented

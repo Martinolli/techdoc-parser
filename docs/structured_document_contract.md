@@ -1,14 +1,15 @@
 # StructuredDocument Contract Foundation
 
 Date: 2026-07-19
-Status: Foundation implemented; parser mapping not implemented
-Phase: 13B
+Status: Foundation implemented; parser-model mapping implemented as Python API
+Phase: 13B foundation; 13C mapper
 
-This document describes the internal foundation for emitting future
-`techdoc-structured-document / 0.1.0` records. The foundation is additive and
-isolated. It does not change parser extraction, reading order, heading
-detection, chunking, validation gates, existing JSON outputs, Markdown outputs,
-manifest outputs, or CLI behavior.
+This document describes the internal foundation for emitting
+`techdoc-structured-document / 0.1.0` records and the Phase 13C parser-model
+mapper. The foundation and mapper are additive and isolated. They do not change
+parser extraction, reading order, heading detection, chunking, validation
+gates, existing JSON outputs, Markdown outputs, manifest outputs, or CLI
+behavior.
 
 ## 1. Scope
 
@@ -19,9 +20,8 @@ runtime or CLI.
 
 ## 2. Non-Scope
 
-Phase 13B does not:
+Phase 13B/13C does not:
 
-- Map `Document`, `Page`, or `Block` into the target contract.
 - Add CLI flags or output files.
 - Modify the current output manifest.
 - Import or modify AviationRAG.
@@ -30,6 +30,22 @@ Phase 13B does not:
 - Infer checksums, revisions, issue numbers, dates, page labels, sections,
   confidence scores, table cells, figures, equations, admonitions, or
   cross-references.
+
+## 2.1 Phase 13C Parser Mapping
+
+Phase 13C adds a pure mapper in:
+
+```text
+src/techdoc_parser/contracts/structured_document_mapper.py
+```
+
+The mapper converts existing parser `Document`, `Page`, `Block`, and
+`SourceLocation` objects into the contract dataclasses. It maps document
+metadata, pages, blocks, source spans, bounding boxes, raw text, normalized
+text, deterministic page/block indexes, and conservative block content types.
+
+Sections and advanced entity root collections remain empty. No CLI integration
+exists, current outputs remain unchanged, and no provenance is fabricated.
 
 ## 3. Module
 
@@ -173,6 +189,10 @@ source checksum because Phase 13B does not compute or fabricate checksums.
 
 ## 15. Future Phases
 
-Recommended next work is Phase 13C: contract-local mapping from the current
-`Document`, `Page`, `Block`, and `SourceLocation` objects into this root shape,
-with explicit tests that existing outputs remain unchanged.
+Phase 13C completed contract-local mapping from the current `Document`, `Page`,
+`Block`, `SourceLocation`, and `BoundingBox` objects into this root shape, with
+explicit tests that existing outputs remain unchanged.
+
+Recommended next work is Phase 13D: durable section hierarchy and source-span
+enrichment. That phase should keep CLI integration and current output-package
+changes separate unless explicitly scoped.

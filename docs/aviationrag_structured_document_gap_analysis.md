@@ -1,14 +1,16 @@
 # AviationRAG StructuredDocument Contract Gap Analysis
 
-Repository state reflected: `ce87826` (`Update TODO after MVP readiness checkpoint`) on
-`main`, aligned with `origin/main` after `git fetch origin --prune`.
+Repository state reflected: Phase 13C working tree after
+`9ff79fb` (`feat(contract): add structured document foundation`) on `main`,
+aligned with `origin/main` after `git fetch origin --prune`.
 
 This document was created for Phase 13A analysis and documentation only. Phase
 13B later added an isolated `techdoc_parser.contracts` foundation for
-`techdoc-structured-document / 0.1.0`, but it still does not implement parser
-mapping, change parser behavior, change extraction or chunking behavior, add
-CLI arguments, modify current output formats, process real documents, or modify
-AviationRAG.
+`techdoc-structured-document / 0.1.0`. Phase 13C adds a pure parser-model mapper
+for existing document, page, block, source-location, and bounding-box evidence.
+It still does not change parser behavior, change extraction or chunking
+behavior, add CLI arguments, modify current output formats, process real
+documents, or modify AviationRAG.
 
 ## 8.1 Executive Summary
 
@@ -212,6 +214,13 @@ Recommended metadata policy:
 File timestamps must not be treated as authoritative revision or effective-date
 data.
 
+Phase 13C status: `map_document_to_structured_document()` requires an explicit
+caller-supplied `document_id`, maps `Document.source_path` to a basename-only
+`source_filename`, maps `Document.metadata.title` to `canonical_title`, and
+preserves caller-supplied `document_title`, `revision`, `issue`,
+`effective_date`, and `source_checksum` only when provided. It does not derive
+titles, revisions, dates, or checksums from filenames or file metadata.
+
 ## 8.7 Page Model Mapping
 
 Current `Page` supports `page_number`, `width`, `height`, `has_native_text`,
@@ -232,6 +241,11 @@ Page labels are not supported. Page-level metadata is partly lost during
 chunking because chunks retain page numbers but not page records, dimensions,
 labels, OCR state, or per-page source spans.
 
+Phase 13C status: pages are mapped to `StructuredDocumentPage` records in
+`Document.pages` order. `page_number` remains one-based, `pdf_page_index` is
+derived as `page_number - 1`, `page_id` is deterministic (`page-0001`), and
+`printed_page_label` remains `null`.
+
 ## 8.8 Block And Reading-Order Mapping
 
 Current block IDs are stable within a parse run by page number and local block
@@ -250,6 +264,14 @@ Reading order is currently inferred from PDF block order plus geometric sort in
 not as a target field. Multi-column documents, sidebars, footnotes, headers,
 footers, detached captions, and page-spanning content remain risks because no
 dedicated reading-order or layout model exists.
+
+Phase 13C status: blocks are flattened from `Page.blocks` in existing page and
+block list order. Existing non-empty block IDs are preserved; empty block IDs
+receive deterministic fallback IDs based on document ID, PDF page index, and
+page-local block index. `page_block_index` and `document_block_index` are
+exporter-derived order indexes. Raw text is preserved exactly, normalized text
+is separate and optional, unknown block types map to `unknown`, and blocks
+without non-empty raw text are rejected rather than repaired.
 
 ## 8.9 Section Hierarchy Mapping
 
@@ -287,6 +309,13 @@ not carried into chunk JSON.
 Discarded or weakened provenance includes page dimensions/OCR state in chunks,
 block bounding boxes in chunks, exact page-label provenance, and any confidence
 distinction between extraction, structure, classification, OCR, and provenance.
+
+Phase 13C status: each mapped block receives a single-page `StructuredSourceSpan`
+from `SourceLocation.page_number` or the owning page number, the corresponding
+zero-based PDF page index, the mapped bounding box when present, the mapped
+block ID as a source block reference, and `extraction_method` when present.
+Character offsets, source hashes, printed page labels, multi-page spans, and
+confidence values are not fabricated.
 
 ## 8.11 Table Mapping
 
@@ -608,18 +637,21 @@ unknown/not-attempted status only where the target validator and policy permit.
 
 Phase 13B status: **completed as an isolated contract foundation**.
 
-Phase 13B added schema constants, contract-specific serialization types,
-deterministic JSON helpers, a synthetic minimum fixture, and regression tests.
-It did not add parser-model mapping, CLI integration, real-document processing,
-AviationRAG imports, AviationRAG modifications, embeddings, Astra, FAISS, or
-changes to parser extraction, chunking, validation, current JSON, Markdown, or
-manifest behavior.
+Phase 13C status: **completed as a pure parser-model mapper**.
 
-Recommended next phase: **Phase 13C - Document, Page, Block, And Source-Span
-Mapping**.
+Phase 13C maps current `Document`, `Page`, `Block`, `SourceLocation`, and
+`BoundingBox` evidence into the Phase 13B contract model while preserving all
+existing output formats. It added `structured_document_mapper.py`, focused
+mapper tests, a deterministic mapped fixture, and mapping documentation. It did
+not add CLI integration, manifest integration, real-document processing,
+AviationRAG imports, AviationRAG modifications, embeddings, Astra, FAISS,
+section hierarchy, advanced entity root records, confidence mapping, or changes
+to parser extraction, chunking, validation, current JSON, Markdown, or manifest
+behavior.
 
-Phase 13C should map current `Document`, `Page`, `Block`, and `SourceLocation`
-data into the Phase 13B contract model while preserving all existing output
-formats. It should continue to leave unknown checksums, page labels, sections,
-revision metadata, confidence values, and advanced entities absent, null, or
-empty unless the current parser supplies truthful evidence.
+Recommended next phase: **Phase 13D - Section Hierarchy And Source-Span
+Enrichment**.
+
+Phase 13D should design durable section records, section IDs, parent-child
+relationships, block-to-section membership, and enriched heading/source spans
+without replacing current parser models or changing current output behavior.
