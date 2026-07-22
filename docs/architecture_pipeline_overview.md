@@ -77,6 +77,20 @@ current semantic chunker
 proxy metrics and optional reports
 ```
 
+Approved pilot-corpus inventory follows locally ignored PDFs only:
+
+```text
+Approved local PDFs under ignored input/
+        ↓
+metadata-only PyMuPDF inspection
+        ↓
+corpus integrity and Git-protection checks
+        ↓
+representative-page proposal
+        ↓
+optional ignored reports under output/
+```
+
 ## 3. Main Packages and Responsibilities
 
 | Package / Module | Responsibility |
@@ -91,7 +105,7 @@ proxy metrics and optional reports
 | `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, semantic Markdown, and optional structured-document export helpers. |
 | `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, equation/admonition entity mapper, cross-reference mapper, confidence policy helpers, and deterministic serializers for future external structured-document artifacts. |
 | `techdoc_parser.compatibility` | Offline compatibility gates for downstream consumers; currently runs the AviationRAG structured-document validator by subprocess without importing AviationRAG. |
-| `techdoc_parser.evaluation` | Offline deterministic fixture-only chunk-quality proxy evaluation, JSON/Markdown report serialization, and explicit report-write gating. |
+| `techdoc_parser.evaluation` | Offline deterministic fixture-only chunk-quality proxy evaluation, approved pilot-corpus inventory planning, JSON/Markdown report serialization, and explicit report-write gating. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
 
@@ -113,6 +127,7 @@ proxy metrics and optional reports
 14. Ingestion gate decision: validation findings are mapped to `pass`, `review`, or `fail`.
 15. Output package generation: document, chunk, validation, gate, Markdown summary, semantic Markdown, optional structured-document, and manifest artifacts can be exported.
 16. Fixture chunk-quality evaluation: existing committed structured-document fixtures can be converted into in-memory parser objects and evaluated against current semantic chunk output as deterministic quality proxies.
+17. Approved pilot-corpus inventory: local ignored PDFs can be inspected for metadata-only corpus integrity, access status, text-mode classification, layout signals, and representative-page planning without OCR, source accuracy evaluation, parser repair, or downstream ingestion.
 
 ## 5. Data Flow and Preservation Principle
 
@@ -141,6 +156,7 @@ reports findings and gate decisions but does not modify parser output.
 | StructuredDocument output | Optional `techdoc-structured-document / 0.1.0` JSON artifact with exact source-byte SHA-256 and deterministic bytes. |
 | AviationRAG compatibility report | Optional report-only Phase 13H gate result for a structured-document artifact, manifest, source bytes, warning policy, determinism, and external validator report. |
 | Chunk quality evaluation report | Optional Phase 13I fixture-only proxy report for semantic chunk coverage, ordering, section coherence, provenance, size, duplication/overlap, and explicit special-content source evidence. |
+| Pilot corpus inventory report | Optional ignored Phase 13I-b1 local report for approved-PDF inventory, corpus integrity, Git protection, text-mode classification, layout signals, and representative-page planning. |
 
 Machine-readable JSON outputs include `schema_version` and parser metadata with
 parser name and parser version.
@@ -168,6 +184,12 @@ Fixture chunk-quality evaluation is a separate report-only tool. It uses
 It is deterministic and non-mutating, but it is intentionally proxy-only:
 source-page visual accuracy, OCR accuracy, semantic accuracy, and real
 aviation-document accuracy are not evaluated.
+
+Approved pilot-corpus inventory is also report-only. It uses the same `PASS`,
+`REVIEW`, and `FAIL` outcomes with CLI exit codes `0`, `2`, and `1`. It is a
+planning tool only: it does not evaluate source accuracy, run OCR, extract
+source text/images into committed files, modify PDFs, alter parser behavior, or
+authorize downstream ingestion.
 
 ## 8. Current MVP Scope
 
@@ -246,12 +268,18 @@ Phase 13I adds fixture-only chunk-quality proxy evaluation inside
 use FAISS, or authorize ingestion. The recommended follow-up is Phase 13I-b -
 Controlled approved-document source-accuracy pilot.
 
+Phase 13I-b1 adds approved pilot-corpus inventory and representative-page
+planning inside `techdoc-parser`. It inspects only user-approved local PDFs
+under ignored `input/`, writes optional reports only under ignored `output/`
+with explicit permission, and does not modify AviationRAG or perform ingestion.
+
 ## 10. Recommended Near-Term Next Steps
 
 - Use `docs/legacy_repository_structure_audit.md` as the current repository
   cleanup-readiness reference. Cleanup remains useful but non-blocking.
 - Add optional validation profiles or strictness modes.
 - Add an architecture diagram later if the pipeline grows more complex.
-- Phase 13I: run a controlled approved-document accuracy pilot.
+- Phase 13I-b2: after owner approval, run a controlled source-accuracy pilot on
+  approved representative pages.
 - Add a dedicated confidence scoring model only when truthful evidence exists.
 - Add an advanced table extraction adapter for more reliable table structure.

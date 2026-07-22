@@ -121,3 +121,7 @@ source-accuracy pilot.
 That follow-up should be explicitly approved and use approved source documents
 only. It should remain separate from parser repair, embeddings, AviationRAG
 runtime ingestion, Astra, FAISS, or external API work.
+
+Phase 13I-b1 now provides the approved pilot-corpus inventory and
+representative-page proposal. The next gated step is owner approval followed by
+Phase 13I-b2 controlled source-accuracy review.

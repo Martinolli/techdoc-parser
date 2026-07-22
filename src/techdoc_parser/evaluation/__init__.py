@@ -25,6 +25,24 @@ from techdoc_parser.evaluation.chunk_quality_reporting import (
     chunk_quality_evaluation_results_to_markdown,
     write_chunk_quality_reports,
 )
+from techdoc_parser.evaluation.pilot_corpus_inventory import (
+    ACCURACY_DISCLAIMER,
+    INVENTORY_SCOPE,
+    PilotCorpusFile,
+    PilotCorpusInventoryResult,
+    PilotCorpusIssue,
+    PilotDocumentInventory,
+    PilotDocumentPageProfile,
+    RepresentativePageSelection,
+    inventory_pilot_corpus,
+    pilot_corpus_inventory_result_to_dict,
+    pilot_corpus_inventory_result_to_json,
+    propose_representative_pages,
+)
+from techdoc_parser.evaluation.pilot_corpus_reporting import (
+    pilot_corpus_inventory_result_to_markdown,
+    write_pilot_corpus_inventory_reports,
+)
 
 __all__ = [
     "FAIL",
@@ -36,6 +54,14 @@ __all__ = [
     "ChunkQualityEvaluationResult",
     "ChunkQualityIssue",
     "ChunkQualityMetricResult",
+    "ACCURACY_DISCLAIMER",
+    "INVENTORY_SCOPE",
+    "PilotCorpusFile",
+    "PilotCorpusInventoryResult",
+    "PilotCorpusIssue",
+    "PilotDocumentInventory",
+    "PilotDocumentPageProfile",
+    "RepresentativePageSelection",
     "StructuredFixtureEvidence",
     "chunk_quality_evaluation_result_to_dict",
     "chunk_quality_evaluation_result_to_json",
@@ -45,7 +71,13 @@ __all__ = [
     "chunk_quality_evaluation_results_to_markdown",
     "evaluate_chunk_quality",
     "evaluate_chunk_quality_case",
+    "inventory_pilot_corpus",
     "load_chunk_quality_cases",
     "load_structured_fixture_document",
+    "pilot_corpus_inventory_result_to_dict",
+    "pilot_corpus_inventory_result_to_json",
+    "pilot_corpus_inventory_result_to_markdown",
+    "propose_representative_pages",
     "write_chunk_quality_reports",
+    "write_pilot_corpus_inventory_reports",
 ]

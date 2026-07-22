@@ -157,6 +157,25 @@ modify parser behavior, generate embeddings, call AviationRAG, use Astra or
 FAISS, or call external APIs. Optional JSON/Markdown report files require
 `--allow-report-write`.
 
+## Approved Pilot-Corpus Inventory
+
+Phase 13I-b1 adds a read-only approved-corpus inventory and representative-page
+planning tool:
+
+```powershell
+python tools/evaluation/run-pilot-corpus-inventory.py `
+  --input-dir input `
+  --list-documents
+```
+
+Report files are optional, must be written under ignored `output/`, and require
+`--allow-report-write`. The inventory records metadata-only planning signals
+such as filename, page count, access status, Git ignore status, native/scanned
+classification, outline/page-label presence, page geometry, and proposed
+representative page numbers. It does not evaluate source accuracy, run OCR,
+extract or commit source text/images, modify PDFs, repair parser behavior, call
+external APIs, or modify AviationRAG.
+
 ## Documentation
 
 - [Architecture and pipeline overview](docs/architecture_pipeline_overview.md)
@@ -172,6 +191,8 @@ FAISS, or call external APIs. Optional JSON/Markdown report files require
 - [AviationRAG compatibility gate](docs/aviationrag_compatibility_gate.md)
 - [Fixture chunk quality evaluation](docs/chunk_quality_evaluation.md)
 - [Chunk quality fixture baseline](docs/chunk_quality_fixture_baseline.md)
+- [Approved pilot-corpus inventory](docs/pilot_corpus_inventory.md)
+- [Pilot representative-page proposal](docs/pilot_representative_page_plan.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -201,3 +222,5 @@ FAISS, or call external APIs. Optional JSON/Markdown report files require
   AviationRAG compatibility gate, but parser accuracy pilots remain future work
 - Fixture chunk-quality evaluation is proxy-only and does not prove source-page,
   OCR, semantic, or real aviation-document accuracy
+- Approved pilot-corpus inventory is planning-only and does not evaluate source
+  accuracy, run OCR, or authorize downstream ingestion
