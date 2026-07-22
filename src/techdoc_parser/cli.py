@@ -282,8 +282,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     if structured_document_output_path is not None:
         message += (
-            " Wrote structured-document JSON to "
-            f"'{structured_document_output_path}'."
+            f" Wrote structured-document JSON to '{structured_document_output_path}'."
         )
     if manifest_output_path is not None:
         message += f" Wrote output manifest JSON to '{manifest_output_path}'."

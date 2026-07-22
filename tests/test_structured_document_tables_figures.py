@@ -45,7 +45,7 @@ def test_table_entities_preserve_text_and_do_not_fabricate_structure() -> None:
     first, second = _mapped_data()["tables"]
 
     assert first["text"] == (
-        "Table 2 -- Inspection Intervals\n" "Component Interval\n" "Pump 10 hours"
+        "Table 2 -- Inspection Intervals\nComponent Interval\nPump 10 hours"
     )
     assert first["caption"] == "Table 2 -- Inspection Intervals"
     assert first["columns"] == []

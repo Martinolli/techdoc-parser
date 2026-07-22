@@ -111,8 +111,7 @@ def _print_result(*, result: dict[str, object]) -> None:
     print(f"Validator warnings: {validator.get('warning_count')}")
     print(f"Unapproved warnings: {warning_policy.get('unapproved_warning_codes')}")
     print(
-        "Table count interpretation: "
-        f"{entity_counts.get('table_count_interpretation')}"
+        f"Table count interpretation: {entity_counts.get('table_count_interpretation')}"
     )
     print(f"Cross references: {result.get('reference_status_counts')}")
     confidence_count = len(_list_value(result.get("confidence_field_paths")))
