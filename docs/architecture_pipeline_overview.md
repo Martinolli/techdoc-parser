@@ -105,7 +105,7 @@ optional ignored reports under output/
 | `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, semantic Markdown, and optional structured-document export helpers. |
 | `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, equation/admonition entity mapper, cross-reference mapper, confidence policy helpers, and deterministic serializers for future external structured-document artifacts. |
 | `techdoc_parser.compatibility` | Offline compatibility gates for downstream consumers; currently runs the AviationRAG structured-document validator by subprocess without importing AviationRAG. |
-| `techdoc_parser.evaluation` | Offline deterministic fixture-only chunk-quality proxy evaluation, approved pilot-corpus inventory planning, JSON/Markdown report serialization, and explicit report-write gating. |
+| `techdoc_parser.evaluation` | Offline deterministic fixture-only chunk-quality proxy evaluation, approved pilot-corpus inventory planning, controlled approved-P0 source-accuracy evaluation, JSON/Markdown report serialization, and explicit report/evidence-write gating. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
 
@@ -128,6 +128,7 @@ optional ignored reports under output/
 15. Output package generation: document, chunk, validation, gate, Markdown summary, semantic Markdown, optional structured-document, and manifest artifacts can be exported.
 16. Fixture chunk-quality evaluation: existing committed structured-document fixtures can be converted into in-memory parser objects and evaluated against current semantic chunk output as deterministic quality proxies.
 17. Approved pilot-corpus inventory: local ignored PDFs can be inspected for metadata-only corpus integrity, access status, text-mode classification, layout signals, and representative-page planning without OCR, source accuracy evaluation, parser repair, or downstream ingestion.
+18. Approved P0 source-accuracy evaluation: local ignored PDFs can be scored on the committed representative P0 page plan with automated source proxies and optional human visual checklists, without OCR, parser repair, full-document accuracy scoring, downstream ingestion, or AviationRAG modification.
 
 ## 5. Data Flow and Preservation Principle
 
@@ -157,6 +158,7 @@ reports findings and gate decisions but does not modify parser output.
 | AviationRAG compatibility report | Optional report-only Phase 13H gate result for a structured-document artifact, manifest, source bytes, warning policy, determinism, and external validator report. |
 | Chunk quality evaluation report | Optional Phase 13I fixture-only proxy report for semantic chunk coverage, ordering, section coherence, provenance, size, duplication/overlap, and explicit special-content source evidence. |
 | Pilot corpus inventory report | Optional ignored Phase 13I-b1 local report for approved-PDF inventory, corpus integrity, Git protection, text-mode classification, layout signals, and representative-page planning. |
+| P0 source-accuracy pilot report | Optional Phase 13I-b2 sanitized aggregate report for approved representative P0 pages only; full local evidence remains ignored under `output/evaluation/source_accuracy_p0/`. |
 
 Machine-readable JSON outputs include `schema_version` and parser metadata with
 parser name and parser version.
@@ -273,13 +275,20 @@ planning inside `techdoc-parser`. It inspects only user-approved local PDFs
 under ignored `input/`, writes optional reports only under ignored `output/`
 with explicit permission, and does not modify AviationRAG or perform ingestion.
 
+Phase 13I-b2 adds a controlled approved-P0 source-accuracy pilot inside
+`techdoc-parser`. It scores only the committed P0 representative page plan,
+uses automated PDF native-text/page proxies plus optional human visual
+checklists, writes full local evidence only under ignored `output/` with
+explicit permission, and does not run OCR, evaluate full-document accuracy,
+repair parser behavior, change StructuredDocument output, or modify AviationRAG.
+
 ## 10. Recommended Near-Term Next Steps
 
 - Use `docs/legacy_repository_structure_audit.md` as the current repository
   cleanup-readiness reference. Cleanup remains useful but non-blocking.
 - Add optional validation profiles or strictness modes.
 - Add an architecture diagram later if the pipeline grows more complex.
-- Phase 13I-b2: after owner approval, run a controlled source-accuracy pilot on
-  approved representative pages.
+- Review the Phase 13I-b2 P0 source-accuracy `FAIL` findings before selecting a
+  scoped parser enhancement phase.
 - Add a dedicated confidence scoring model only when truthful evidence exists.
 - Add an advanced table extraction adapter for more reliable table structure.

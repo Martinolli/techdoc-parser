@@ -176,6 +176,26 @@ representative page numbers. It does not evaluate source accuracy, run OCR,
 extract or commit source text/images, modify PDFs, repair parser behavior, call
 external APIs, or modify AviationRAG.
 
+## P0 Source-Accuracy Pilot
+
+Phase 13I-b2 adds a controlled source-accuracy pilot for approved P0
+representative pages only:
+
+```powershell
+python tools/evaluation/run-source-accuracy-pilot.py `
+  --input-dir input `
+  --plan tests/fixtures/pilot_corpus/p0_source_accuracy_plan.json `
+  --all-p0
+```
+
+The pilot scores only the committed P0 page plan, supports optional ignored
+local evidence output with `--allow-local-write`, and writes sanitized aggregate
+JSON/Markdown reports only with `--allow-report-write`. It does not run OCR,
+process P1/P2 pages, score full-document accuracy, modify PDFs, alter parser
+behavior, change StructuredDocument output, call AviationRAG, use embeddings, or
+call external APIs. The current local P0 run returned `FAIL`: 25 final `FAIL`
+pages and 7 final `REVIEW` pages, with all human visual reviews still pending.
+
 ## Documentation
 
 - [Architecture and pipeline overview](docs/architecture_pipeline_overview.md)
@@ -193,6 +213,8 @@ external APIs, or modify AviationRAG.
 - [Chunk quality fixture baseline](docs/chunk_quality_fixture_baseline.md)
 - [Approved pilot-corpus inventory](docs/pilot_corpus_inventory.md)
 - [Pilot representative-page proposal](docs/pilot_representative_page_plan.md)
+- [Controlled P0 source-accuracy pilot framework](docs/source_accuracy_pilot_framework.md)
+- [P0 source-accuracy pilot result](docs/p0_source_accuracy_pilot.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -224,3 +246,6 @@ external APIs, or modify AviationRAG.
   OCR, semantic, or real aviation-document accuracy
 - Approved pilot-corpus inventory is planning-only and does not evaluate source
   accuracy, run OCR, or authorize downstream ingestion
+- The controlled P0 source-accuracy pilot currently fails on the approved P0
+  sample. It is report-only; it does not repair parser behavior, evaluate OCR,
+  or prove full-document accuracy

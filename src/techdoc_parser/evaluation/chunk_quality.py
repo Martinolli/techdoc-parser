@@ -1217,7 +1217,7 @@ def _section_path_by_id(artifact: Mapping[str, Any]) -> dict[str, tuple[str, ...
         if section_id is None:
             continue
         path = section.get("path")
-        if isinstance(path, Sequence) and not isinstance(path, (str, bytes, bytearray)):
+        if isinstance(path, Sequence) and not isinstance(path, str | bytes | bytearray):
             result[section_id] = tuple(str(item) for item in path)
         else:
             title = _string_or_none(section.get("title"))
@@ -1326,7 +1326,7 @@ def _block_sort_key(block: Mapping[str, Any]) -> tuple[int, int, str]:
 
 
 def _sequence(value: object) -> tuple[object, ...]:
-    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+    if isinstance(value, Sequence) and not isinstance(value, str | bytes | bytearray):
         return tuple(value)
     return ()
 
@@ -1338,7 +1338,7 @@ def _mapping(value: object) -> Mapping[str, Any]:
 
 
 def _string_tuple(value: object) -> tuple[str, ...]:
-    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+    if isinstance(value, Sequence) and not isinstance(value, str | bytes | bytearray):
         return tuple(str(item) for item in value if _string_or_none(item) is not None)
     return ()
 
