@@ -15,7 +15,6 @@ from pathlib import Path, PureWindowsPath
 from typing import Any
 
 from techdoc_parser.chunking import create_semantic_chunks
-from techdoc_parser.chunking.semantic import block_to_chunk_text
 from techdoc_parser.contracts import build_structured_document_artifact
 from techdoc_parser.contracts.structured_document import structured_document_to_dict
 from techdoc_parser.core import Block, Chunk, Document, Page
@@ -26,6 +25,12 @@ from techdoc_parser.evaluation.source_accuracy import (
     evaluate_representative_page,
     load_p0_source_accuracy_plan,
     source_accuracy_page_result_to_dict,
+)
+from techdoc_parser.evaluation.source_block_eligibility import (
+    SourceBlockEligibilityPolicy,
+    classify_source_block_chunk_eligibility,
+    missing_required_source_block_ids,
+    summarize_source_block_eligibility,
 )
 from techdoc_parser.ingestion import PDFLoader
 from techdoc_parser.structure import get_semantic_blocks_for_page
@@ -702,13 +707,18 @@ def _stage_data(
     structured_entities = _entities_for_page(structured_data, page_number)
     semantic_blocks = [block for block in ordered_blocks if _block_text(block)]
     chunk_ids = {block_id for chunk in chunks for block_id in chunk.source_block_ids}
+    eligibilities = tuple(
+        classify_source_block_chunk_eligibility(
+            block,
+            chunks,
+            entities=structured_entities,
+            policy=SourceBlockEligibilityPolicy(require_heading_chunks=False),
+        )
+        for block in ordered_blocks
+    )
+    corrected_missing = missing_required_source_block_ids(eligibilities)
     evaluator_missing = [
         block.id for block in semantic_blocks if block.id and block.id not in chunk_ids
-    ]
-    rendered_chunk_missing = [
-        block.id
-        for block in semantic_blocks
-        if block.id and block_to_chunk_text(block) and block.id not in chunk_ids
     ]
     return {
         "source_lines": _normalized_lines(str(source_proxy.get("text", ""))),
@@ -730,7 +740,11 @@ def _stage_data(
         "semantic_ids": tuple(block.id for block in semantic_blocks if block.id),
         "chunk_ids": tuple(sorted(chunk_ids)),
         "evaluator_missing_ids": tuple(evaluator_missing),
-        "rendered_chunk_missing_ids": tuple(rendered_chunk_missing),
+        "rendered_chunk_missing_ids": corrected_missing,
+        "policy_v2_missing_ids": corrected_missing,
+        "policy_v2_eligibility_summary": summarize_source_block_eligibility(
+            eligibilities
+        ),
     }
 
 
@@ -1016,23 +1030,27 @@ def _classify_reading_order(
 
 def _classify_chunk_gap(stage_data: Mapping[str, object]) -> dict[str, Any]:
     evaluator_missing = _stage_tuple(stage_data, "evaluator_missing_ids")
-    rendered_missing = _stage_tuple(stage_data, "rendered_chunk_missing_ids")
-    if evaluator_missing and not rendered_missing:
+    corrected_missing = _stage_tuple(stage_data, "policy_v2_missing_ids")
+    if evaluator_missing and not corrected_missing:
         return _classification(
             root_cause=EVALUATION_FRAMEWORK_DEFECT,
             certainty="confirmed",
             stage="source_accuracy_evaluator",
-            evidence_codes=("CHUNK_ELIGIBILITY_COUNTS_EMPTY_RENDERED_BLOCK",),
+            evidence_codes=("CHUNK_ELIGIBILITY_RECLASSIFIED_BY_POLICY_V2",),
             requires_visual=False,
             owner="evaluation",
             phase="13I-c2E",
             message=(
-                "The b2 evaluator counted a semantic block as missing even "
-                "though chunk rendering treats it as non-emitting."
+                "The b2 evaluator counted a semantic block as missing, but "
+                "policy v2 does not reproduce a required direct chunk gap."
             ),
-            details={"evaluator_missing_count": len(evaluator_missing)},
+            details={
+                "evaluator_missing_count": len(evaluator_missing),
+                "corrected_policy_reproduced": False,
+                "policy_v2_missing_count": 0,
+            },
         )
-    if rendered_missing:
+    if corrected_missing:
         return _classification(
             root_cause=CONFIRMED_PARSER_DEFECT,
             certainty="probable",
@@ -1042,7 +1060,10 @@ def _classify_chunk_gap(stage_data: Mapping[str, object]) -> dict[str, Any]:
             owner="chunking",
             phase="13I-c2D",
             message="A rendered semantic block is absent from selected page chunks.",
-            details={"rendered_missing_count": len(rendered_missing)},
+            details={
+                "rendered_missing_count": len(corrected_missing),
+                "corrected_policy_reproduced": True,
+            },
         )
     return _classification(
         root_cause=EVALUATION_FRAMEWORK_DEFECT,
@@ -1053,6 +1074,7 @@ def _classify_chunk_gap(stage_data: Mapping[str, object]) -> dict[str, Any]:
         owner="evaluation",
         phase="13I-c2E",
         message="The chunk source-coverage gap was not reproduced by diagnostics.",
+        details={"corrected_policy_reproduced": False},
     )
 
 

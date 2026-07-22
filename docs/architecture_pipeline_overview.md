@@ -106,6 +106,21 @@ targeted corrective phases
 P0 rerun
 ```
 
+Corrected source-accuracy policy reruns follow the triage evidence and still do
+not alter parser behavior:
+
+```text
+P0 triage evidence
+        ↓
+evaluation policy v2
+        ↓
+corrected P0 rerun
+        ↓
+visual review
+        ↓
+pilot acceptance
+```
+
 ## 3. Main Packages and Responsibilities
 
 | Package / Module | Responsibility |
@@ -120,7 +135,7 @@ P0 rerun
 | `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, semantic Markdown, and optional structured-document export helpers. |
 | `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, equation/admonition entity mapper, cross-reference mapper, confidence policy helpers, and deterministic serializers for future external structured-document artifacts. |
 | `techdoc_parser.compatibility` | Offline compatibility gates for downstream consumers; currently runs the AviationRAG structured-document validator by subprocess without importing AviationRAG. |
-| `techdoc_parser.evaluation` | Offline deterministic fixture-only chunk-quality proxy evaluation, approved pilot-corpus inventory planning, controlled approved-P0 source-accuracy evaluation, P0 failure triage, JSON/Markdown report serialization, and explicit report/evidence-write gating. |
+| `techdoc_parser.evaluation` | Offline deterministic fixture-only chunk-quality proxy evaluation, approved pilot-corpus inventory planning, controlled approved-P0 source-accuracy evaluation, source-accuracy policy v2 correction, P0 failure triage, JSON/Markdown report serialization, and explicit report/evidence-write gating. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
 
@@ -145,6 +160,7 @@ P0 rerun
 17. Approved pilot-corpus inventory: local ignored PDFs can be inspected for metadata-only corpus integrity, access status, text-mode classification, layout signals, and representative-page planning without OCR, source accuracy evaluation, parser repair, or downstream ingestion.
 18. Approved P0 source-accuracy evaluation: local ignored PDFs can be scored on the committed representative P0 page plan with automated source proxies and optional human visual checklists, without OCR, parser repair, full-document accuracy scoring, downstream ingestion, or AviationRAG modification.
 19. P0 failure triage: selected P0 pilot findings can be classified by pipeline stage and root-cause taxonomy before any corrective phase, without changing extraction, reading order, normalization, structure mapping, chunking, evaluator policy, StructuredDocument output, or the original P0 baseline.
+20. Source-accuracy policy v2 rerun: evaluator-policy defects proven by triage can be corrected and rerun with explicit policy identity, without changing parser extraction, reading order behavior, chunk generation, StructuredDocument mapping, source PDFs, dependencies, or downstream systems.
 
 ## 5. Data Flow and Preservation Principle
 
@@ -176,6 +192,7 @@ reports findings and gate decisions but does not modify parser output.
 | Pilot corpus inventory report | Optional ignored Phase 13I-b1 local report for approved-PDF inventory, corpus integrity, Git protection, text-mode classification, layout signals, and representative-page planning. |
 | P0 source-accuracy pilot report | Optional Phase 13I-b2 sanitized aggregate report for approved representative P0 pages only; full local evidence remains ignored under `output/evaluation/source_accuracy_p0/`. |
 | P0 failure triage report | Optional Phase 13I-c1 diagnosis-only sanitized report for selected P0 failures; full local evidence remains ignored under `output/evaluation/p0_failure_triage/`. |
+| Corrected source-accuracy policy report | Optional Phase 13I-c2E sanitized corrected rerun report with `p0-source-accuracy` policy version 2.0 identity; parser output is unchanged. |
 
 Machine-readable JSON outputs include `schema_version` and parser metadata with
 parser name and parser version.

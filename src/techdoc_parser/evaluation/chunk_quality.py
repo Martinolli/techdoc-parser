@@ -31,6 +31,11 @@ from techdoc_parser.core.models import (
     SourceLocation,
     TableBlock,
 )
+from techdoc_parser.evaluation.source_block_eligibility import (
+    SourceBlockEligibilityPolicy,
+    classify_source_block_chunk_eligibility,
+    eligible_source_block_ids,
+)
 from techdoc_parser.structure import get_semantic_blocks_for_page
 
 PASS = "PASS"
@@ -120,6 +125,7 @@ class ChunkQualityEvaluationPolicy:
     require_parser_identity_metadata: bool = True
     require_source_checksum_metadata: bool = True
     not_measurable_is_review: bool = True
+    require_heading_chunks: bool = True
 
 
 @dataclass(frozen=True)
@@ -344,10 +350,28 @@ def evaluate_chunk_quality(
 ) -> ChunkQualityEvaluationResult:
     """Evaluate current chunks against explicit fixture evidence."""
     active_policy = policy or ChunkQualityEvaluationPolicy()
-    source_block_ids = tuple(
+    block_by_id = _fixture_block_by_id(evidence.document)
+    eligibility_policy = SourceBlockEligibilityPolicy(
+        require_heading_chunks=active_policy.require_heading_chunks
+    )
+    eligibilities = tuple(
+        classify_source_block_chunk_eligibility(
+            block_by_id[block_id],
+            chunks,
+            policy=eligibility_policy,
+        )
+        for block_id in evidence.block_order
+        if block_id in block_by_id
+        and evidence.block_type_by_id.get(block_id) in STRUCTURED_BLOCK_TYPES
+    )
+    fallback_source_block_ids = tuple(
         block_id
         for block_id in evidence.block_order
-        if evidence.block_type_by_id.get(block_id) in STRUCTURED_BLOCK_TYPES
+        if block_id not in block_by_id
+        and evidence.block_type_by_id.get(block_id) in STRUCTURED_BLOCK_TYPES
+    )
+    source_block_ids = (
+        eligible_source_block_ids(eligibilities) + fallback_source_block_ids
     )
     known_block_ids = set(source_block_ids)
     chunk_refs = tuple(
@@ -1113,6 +1137,12 @@ def _covered_entity_blocks(
         ):
             text_missing.add(block_id)
     return covered, missing, text_missing
+
+
+def _fixture_block_by_id(document: Document) -> dict[str, Block]:
+    return {
+        block.id: block for page in document.pages for block in page.blocks if block.id
+    }
 
 
 def _chunk_provenance_status(

@@ -195,6 +195,11 @@ process P1/P2 pages, score full-document accuracy, modify PDFs, alter parser
 behavior, change StructuredDocument output, call AviationRAG, use embeddings, or
 call external APIs. The current local P0 run returned `FAIL`: 25 final `FAIL`
 pages and 7 final `REVIEW` pages, with all human visual reviews still pending.
+Phase 13I-c2E keeps that b2 result as historical policy-v1 evidence and adds a
+separate corrected evaluator-policy v2 rerun. The corrected rerun is
+`p0-source-accuracy / 2.0`, returns aggregate `REVIEW` with 32 final `REVIEW`
+pages and no final `FAIL`, and still requires human visual review before any
+page can receive final `PASS`.
 
 ## P0 Failure Triage
 
@@ -240,6 +245,7 @@ visual confirmation is still pending. See
 - [Approved pilot-corpus inventory](docs/pilot_corpus_inventory.md)
 - [Pilot representative-page proposal](docs/pilot_representative_page_plan.md)
 - [Controlled P0 source-accuracy pilot framework](docs/source_accuracy_pilot_framework.md)
+- [Source-accuracy evaluation policy v2](docs/source_accuracy_evaluation_policy_v2.md)
 - [P0 source-accuracy pilot result](docs/p0_source_accuracy_pilot.md)
 - [P0 failure root-cause analysis](docs/p0_failure_root_cause_analysis.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)

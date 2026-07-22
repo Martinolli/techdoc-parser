@@ -90,6 +90,50 @@ complete.
 See [`docs/p0_failure_root_cause_analysis.md`](p0_failure_root_cause_analysis.md)
 for the sanitized root-cause matrix and recommended corrective phases.
 
+## Corrected Evaluation-Policy Rerun
+
+Phase 13I-c2E corrected only evaluator-policy interpretation defects proven by
+Phase 13I-c1. The original Phase 13I-b2 result remains valid historical
+evidence under policy interpretation 1: 25 final `FAIL`, 7 final `REVIEW`, 0
+final `PASS`.
+
+The corrected rerun is identified separately:
+
+- `evaluation_policy_name`: `p0-source-accuracy`
+- `evaluation_policy_version`: `2.0`
+- `run_type`: `corrected_evaluator_rerun`
+- `supersedes_policy_interpretation`: `1`
+
+Corrected 32-page P0 rerun outcome:
+
+- Aggregate outcome: `REVIEW`.
+- Final page outcomes: 32 `REVIEW`, 0 `FAIL`, 0 `PASS`.
+- Automated outcomes: 2 `PASS`, 30 `REVIEW`, 0 `FAIL`.
+- Raw character coverage: 32 `pass`.
+- Duplicate line count: 17 `pass`, 15 `review`.
+- Order inversion count: 12 `pass`, 20 `review`.
+- Chunk source-block coverage: 32 `pass`.
+- Visual review status: 32 pending, 0 completed.
+
+Corrected policy records were emitted for 25 pages:
+
+- `DUPLICATION_DECOUPLED_FROM_COVERAGE`: 15
+- `SOURCE_PROXY_DUPLICATION_RECLASSIFIED`: 15
+- `READING_ORDER_VISUAL_REVIEW_REQUIRED`: 20
+- `SOURCE_BLOCK_ELIGIBILITY_RECLASSIFIED`: 2
+
+The corrected rerun does not make any page a final `PASS`; human visual review
+is still required. Parser output, semantic chunk output, StructuredDocument
+mapping, source PDFs, dependencies, AviationRAG, embeddings, and external APIs
+were unchanged.
+
+Corrected deterministic report hashes:
+
+- JSON:
+  `5DA319515370540CB2BE5F5103560DC297C6A5A7B704188201D8D1A3F61310CC`
+- Markdown:
+  `47CB106B7845B35CD27A39FDE2F343FBFD008912775DD132B67293D89997BD33`
+
 ## Determinism
 
 Two ignored reruns produced byte-identical sanitized reports:

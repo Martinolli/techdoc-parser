@@ -39,6 +39,59 @@ checklist is pending, so final `PASS` is not allowed until completed visual
 checks are supplied and pass. Table-cell accuracy and figure visual-content
 accuracy remain explicitly `not_measurable`.
 
+## Evaluation Policy v2
+
+The current source-accuracy evaluator uses:
+
+- `evaluation_policy_name`: `p0-source-accuracy`
+- `evaluation_policy_version`: `2.0`
+- `run_type`: `corrected_evaluator_rerun`
+- `supersedes_policy_interpretation`: `1`
+
+Policy v1 remains the historical interpretation for the Phase 13I-b2 baseline.
+The b2 result must not be rewritten: 25 final `FAIL`, 7 final `REVIEW`, 0 final
+`PASS`.
+
+Policy v2 applies these evaluator-only rules:
+
+- Raw character coverage is independent from duplicate-line findings.
+- Missing source lines and parser-only text loss remain failures.
+- Source-proxy duplicate evidence is a review condition unless parser-only
+  duplication is independently proven.
+- Parser-only duplication remains a parser-defect failure.
+- Reading-order coordinate inversions are `REVIEW` pending visual confirmation,
+  not automatic `FAIL`.
+- Candidate-level table evidence is an expected current-parser limitation and
+  requires review; it is not a parser failure by itself.
+- Table-cell accuracy remains `not_measurable`.
+- Metric statuses are independent; one metric does not inherit another metric's
+  failure state.
+
+## Source-Block Eligibility
+
+Source-accuracy, chunk-quality, and triage diagnostics share the
+`classify_source_block_chunk_eligibility(...)` function. The taxonomy is:
+
+| State | Meaning |
+| --- | --- |
+| `required_direct_chunk` | The block must be directly represented in chunk references unless covered by a stricter finding. |
+| `satisfied_by_entity_chunk` | Entity-derived or source-text replacement evidence satisfies chunk coverage. |
+| `excluded_heading` | Heading context is not required as a direct chunk source under this policy. |
+| `excluded_blank` | Empty source text is excluded from coverage denominators. |
+| `excluded_metadata` | Page furniture and metadata are excluded. |
+| `excluded_non_semantic` | Blocks that render no semantic chunk text are excluded. |
+| `unsupported` | The block lacks enough identity for deterministic eligibility. |
+
+This policy is evaluation-only. It does not mutate parser blocks, semantic
+chunks, chunk IDs, source PDFs, or StructuredDocument output.
+
+## Visual Review Requirements
+
+Policy v2 can remove false automated `FAIL` outcomes, but it cannot grant final
+`PASS`. Final `PASS` still requires completed visual checklists showing source
+text completeness, reading order, table/figure/equation/admonition evidence,
+chunk coherence, and absence of fabricated content.
+
 ## Commands
 
 List approved P0 pages:
@@ -97,6 +150,11 @@ correction must rerun the triage subset and the original 32-page P0 pilot
 without rewriting the b2 baseline. Parser changes are not justified by triage
 findings classified as source-proxy limitations, expected multi-representation,
 document-layout limitations, or pending visual confirmation.
+
+Phase 13I-c2E completed the evaluator-policy correction and reran both scopes.
+The corrected 32-page P0 source-accuracy rerun returned aggregate `REVIEW` with
+32 final `REVIEW`, 0 final `FAIL`, 0 final `PASS`, and 32 pending visual
+reviews.
 
 ## Non-Goals
 

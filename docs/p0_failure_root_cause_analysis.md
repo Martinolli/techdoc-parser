@@ -186,6 +186,41 @@ After `13I-c2E`, rerun the 10-case triage subset and the original 32-page P0
 source-accuracy report to verify the interpretation changes without changing
 parser output.
 
+## Phase 13I-c2E Resolution
+
+Phase 13I-c2E implemented the evaluator-policy correction recommended by this
+analysis. The c1 root-cause report remains historical and was not rewritten.
+
+Corrected policy identity:
+
+- `evaluation_policy_name`: `p0-source-accuracy`
+- `evaluation_policy_version`: `2.0`
+- `run_type`: `corrected_evaluator_rerun`
+- `supersedes_policy_interpretation`: `1`
+
+The 10-case triage subset was rerun twice under the corrected code path and
+remained deterministic. It still reports the historical c1 root-cause
+classifications for the 48 original findings: 0 confirmed parser defects, 9
+evaluator defects, 7 source-proxy limitations, 3 expected
+multi-representation findings, 4 document-layout limitations, and 25 findings
+needing visual confirmation.
+
+A direct corrected-policy comparison over the same 10 selected pages found 9
+original evaluator defects, 0 reproduced after policy v2, and 9 resolved after
+policy v2.
+
+The corrected 32-page P0 source-accuracy rerun no longer reproduces the
+evaluator fail conditions identified here:
+
+- Raw character coverage now passes on all 32 pages.
+- Source-proxy duplicate findings are review findings, not parser failures.
+- Reading-order inversions are review findings pending visual confirmation.
+- Chunk source-block coverage now passes on all 32 pages.
+- Candidate-level table evidence remains a contract limitation requiring review.
+
+The corrected full rerun returned aggregate `REVIEW` with 32 final `REVIEW`
+pages, 0 final `FAIL`, 0 final `PASS`, and 32 pending visual reviews.
+
 ## No Parser Fix Performed
 
 Phase 13I-c1 performed diagnosis only. It did not change PDF extraction,

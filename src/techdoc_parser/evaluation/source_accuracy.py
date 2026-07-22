@@ -22,6 +22,14 @@ from techdoc_parser.chunking import create_semantic_chunks
 from techdoc_parser.contracts import build_structured_document_artifact
 from techdoc_parser.contracts.structured_document import structured_document_to_dict
 from techdoc_parser.core import Block, Chunk, Document, Page
+from techdoc_parser.evaluation.source_block_eligibility import (
+    SourceBlockEligibilityPolicy,
+    classify_source_block_chunk_eligibility,
+    covered_source_block_ids,
+    eligible_source_block_ids,
+    missing_required_source_block_ids,
+    summarize_source_block_eligibility,
+)
 from techdoc_parser.ingestion import PDFLoader
 from techdoc_parser.structure import get_semantic_blocks_for_page
 
@@ -39,9 +47,15 @@ EVALUATION_SCOPE = "approved_p0_representative_pages"
 SOURCE_ACCURACY_SCOPE = "representative_p0_pages"
 AUTOMATED_SOURCE_PROXY = "automated_source_proxy"
 HUMAN_VISUAL_REVIEW = "human_visual_review"
+SOURCE_ACCURACY_POLICY_NAME = "p0-source-accuracy"
+SOURCE_ACCURACY_POLICY_VERSION = "2.0"
+SOURCE_ACCURACY_PREVIOUS_POLICY_VERSION = "1.0"
+SOURCE_ACCURACY_RUN_TYPE = "corrected_evaluator_rerun"
+SOURCE_ACCURACY_SUPERSEDES_POLICY_INTERPRETATION = "1"
 
 FINDING_CATEGORIES = (
     "PARSER_DEFECT",
+    "SOURCE_PROXY_LIMITATION",
     "CONTRACT_LIMITATION",
     "DOCUMENT_LAYOUT_LIMITATION",
     "OCR_OR_EXTRACTION_LIMITATION",
@@ -130,6 +144,18 @@ class SourceAccuracyMetricResult:
 
 
 @dataclass(frozen=True)
+class EvaluationPolicyCorrection:
+    """One additive correction record for a v1 evaluator-policy disposition."""
+
+    original_finding_code: str
+    corrected_policy_disposition: str
+    corrected_metric_status: str
+    correction_reason_code: str
+    message: str
+    metric_name: str | None = None
+
+
+@dataclass(frozen=True)
 class SourceAccuracyPageResult:
     """Evaluation result for one approved P0 page."""
 
@@ -156,6 +182,16 @@ class SourceAccuracyPageResult:
     context_pages: tuple[int, ...] = ()
     operational_full_document_parse: bool = False
     sr22_text_classification: str | None = None
+    evaluation_policy_name: str = SOURCE_ACCURACY_POLICY_NAME
+    evaluation_policy_version: str = SOURCE_ACCURACY_POLICY_VERSION
+    previous_evaluation_policy_version: str = SOURCE_ACCURACY_PREVIOUS_POLICY_VERSION
+    run_type: str = SOURCE_ACCURACY_RUN_TYPE
+    supersedes_policy_interpretation: str = (
+        SOURCE_ACCURACY_SUPERSEDES_POLICY_INTERPRETATION
+    )
+    original_automated_outcome: str | None = None
+    policy_corrections: tuple[EvaluationPolicyCorrection, ...] = ()
+    source_block_eligibility_summary: Mapping[str, int] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -180,6 +216,15 @@ class SourceAccuracyPilotResult:
     full_document_accuracy_evaluated: bool = False
     ocr_accuracy_evaluated: bool = False
     visual_layout_accuracy_evaluated: str = "true_only_where_review_completed"
+    evaluation_policy_name: str = SOURCE_ACCURACY_POLICY_NAME
+    evaluation_policy_version: str = SOURCE_ACCURACY_POLICY_VERSION
+    previous_evaluation_policy_version: str = SOURCE_ACCURACY_PREVIOUS_POLICY_VERSION
+    run_type: str = SOURCE_ACCURACY_RUN_TYPE
+    supersedes_policy_interpretation: str = (
+        SOURCE_ACCURACY_SUPERSEDES_POLICY_INTERPRETATION
+    )
+    automated_outcome_counts: Mapping[str, int] = field(default_factory=dict)
+    policy_correction_counts: Mapping[str, int] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -350,7 +395,12 @@ def evaluate_representative_page(
     chunks = create_semantic_chunks(document)
     selected_chunks = _chunks_for_page(chunks, expected_page_number)
     parser_text = _page_parser_text(parser_page)
-    metrics, finding_specs = _evaluate_page_metrics(
+    (
+        metrics,
+        finding_specs,
+        policy_corrections,
+        source_block_eligibility_summary,
+    ) = _evaluate_page_metrics(
         plan_page=base_plan,
         source_proxy=source_proxy,
         parser_page=parser_page,
@@ -411,6 +461,9 @@ def evaluate_representative_page(
             if document_key == SR22_DOCUMENT_KEY
             else None
         ),
+        original_automated_outcome=FAIL if policy_corrections else None,
+        policy_corrections=policy_corrections,
+        source_block_eligibility_summary=source_block_eligibility_summary,
     )
 
 
@@ -512,6 +565,21 @@ def source_accuracy_page_result_to_dict(
         "context_pages": list(result.context_pages),
         "operational_full_document_parse": result.operational_full_document_parse,
         "sr22_text_classification": result.sr22_text_classification,
+        "evaluation_policy_name": result.evaluation_policy_name,
+        "evaluation_policy_version": result.evaluation_policy_version,
+        "previous_evaluation_policy_version": (
+            result.previous_evaluation_policy_version
+        ),
+        "run_type": result.run_type,
+        "supersedes_policy_interpretation": result.supersedes_policy_interpretation,
+        "original_automated_outcome": result.original_automated_outcome,
+        "policy_corrections": [
+            _policy_correction_to_dict(correction)
+            for correction in result.policy_corrections
+        ],
+        "source_block_eligibility_summary": dict(
+            result.source_block_eligibility_summary
+        ),
         "sanitized": sanitized,
     }
 
@@ -524,6 +592,13 @@ def source_accuracy_pilot_result_to_dict(
         "outcome": result.outcome,
         "evaluation_scope": result.evaluation_scope,
         "source_accuracy_scope": result.source_accuracy_scope,
+        "evaluation_policy_name": result.evaluation_policy_name,
+        "evaluation_policy_version": result.evaluation_policy_version,
+        "previous_evaluation_policy_version": (
+            result.previous_evaluation_policy_version
+        ),
+        "run_type": result.run_type,
+        "supersedes_policy_interpretation": result.supersedes_policy_interpretation,
         "full_document_accuracy_evaluated": result.full_document_accuracy_evaluated,
         "ocr_accuracy_evaluated": result.ocr_accuracy_evaluated,
         "visual_layout_accuracy_evaluated": result.visual_layout_accuracy_evaluated,
@@ -533,6 +608,8 @@ def source_accuracy_pilot_result_to_dict(
         "category_counts": dict(result.category_counts),
         "severity_counts": dict(result.severity_counts),
         "page_outcome_counts": dict(result.page_outcome_counts),
+        "automated_outcome_counts": dict(result.automated_outcome_counts),
+        "policy_correction_counts": dict(result.policy_correction_counts),
         "metric_summaries": {
             key: dict(value) for key, value in sorted(result.metric_summaries.items())
         },
@@ -570,6 +647,13 @@ def source_accuracy_pilot_result_to_markdown(
         "# P0 Source Accuracy Pilot",
         "",
         "source_accuracy_scope: representative_p0_pages",
+        f"evaluation_policy_name: {result.evaluation_policy_name}",
+        f"evaluation_policy_version: {result.evaluation_policy_version}",
+        f"run_type: {result.run_type}",
+        (
+            "supersedes_policy_interpretation: "
+            f"{result.supersedes_policy_interpretation}"
+        ),
         "visual_review_status: pending_or_completed_per_page",
         "full_document_accuracy_evaluated: false",
         "ocr_accuracy_evaluated: false",
@@ -578,6 +662,9 @@ def source_accuracy_pilot_result_to_markdown(
         "",
         f"- Outcome: `{result.outcome}`",
         f"- Evaluation scope: `{result.evaluation_scope}`",
+        f"- Evaluation policy: `{result.evaluation_policy_name}` "
+        f"`{result.evaluation_policy_version}`",
+        f"- Run type: `{result.run_type}`",
         f"- Documents: `{result.document_count}`",
         f"- P0 pages: `{result.page_count}`",
         (
@@ -611,6 +698,10 @@ def source_accuracy_pilot_result_to_markdown(
             "## Severity Counts",
             "",
             _mapping_line(result.severity_counts),
+            "",
+            "## Policy Corrections",
+            "",
+            _mapping_line(result.policy_correction_counts),
             "",
             "## Limitations",
             "",
@@ -689,8 +780,14 @@ def _evaluate_page_metrics(
     parser_text: str,
     structured_data: Mapping[str, object],
     selected_chunks: Sequence[Chunk],
-) -> tuple[tuple[SourceAccuracyMetricResult, ...], list[dict[str, object]]]:
+) -> tuple[
+    tuple[SourceAccuracyMetricResult, ...],
+    list[dict[str, object]],
+    tuple[EvaluationPolicyCorrection, ...],
+    Mapping[str, int],
+]:
     findings: list[dict[str, object]] = []
+    corrections: list[EvaluationPolicyCorrection] = []
     metrics: list[SourceAccuracyMetricResult] = []
     source_text = str(source_proxy.get("text", ""))
     metrics.extend(
@@ -699,9 +796,12 @@ def _evaluate_page_metrics(
             source_text,
             parser_text,
             findings,
+            corrections,
         )
     )
-    metrics.extend(_reading_order_metrics(plan_page, parser_page, findings))
+    metrics.extend(
+        _reading_order_metrics(plan_page, parser_page, findings, corrections)
+    )
     metrics.extend(
         _provenance_metrics(
             plan_page,
@@ -713,9 +813,17 @@ def _evaluate_page_metrics(
     )
     metrics.extend(_hierarchy_metrics(plan_page, structured_data, findings))
     metrics.extend(_entity_metrics(plan_page, structured_data, findings))
-    metrics.extend(_chunk_metrics(plan_page, parser_page, selected_chunks, findings))
+    chunk_metrics, eligibility_summary = _chunk_metrics(
+        plan_page,
+        parser_page,
+        structured_data,
+        selected_chunks,
+        findings,
+        corrections,
+    )
+    metrics.extend(chunk_metrics)
     metrics.extend(_sr22_metrics(plan_page, source_proxy, findings))
-    return tuple(metrics), findings
+    return tuple(metrics), findings, tuple(corrections), eligibility_summary
 
 
 def _text_fidelity_metrics(
@@ -723,6 +831,7 @@ def _text_fidelity_metrics(
     source_text: str,
     parser_text: str,
     findings: list[dict[str, object]],
+    corrections: list[EvaluationPolicyCorrection],
 ) -> tuple[SourceAccuracyMetricResult, ...]:
     source_chars = len(source_text.strip())
     parser_chars = len(parser_text.strip())
@@ -730,13 +839,18 @@ def _text_fidelity_metrics(
     parser_lines = _normalized_lines(parser_text)
     coverage = 1.0 if source_chars == 0 else min(parser_chars / source_chars, 1.0)
     missing_lines = [line for line in source_lines if line not in parser_lines]
-    duplicate_lines = _duplicate_lines(parser_lines)
+    source_duplicate_lines = _duplicate_lines(source_lines)
+    parser_duplicate_lines = _duplicate_lines(parser_lines)
+    source_duplicate_set = set(source_duplicate_lines)
+    parser_only_duplicates = tuple(
+        line for line in parser_duplicate_lines if line not in source_duplicate_set
+    )
     source_symbols = _unicode_symbols(source_text)
     parser_symbols = _unicode_symbols(parser_text)
     symbol_loss = sorted(source_symbols - parser_symbols)
-    status = STATUS_PASS
+    coverage_status = STATUS_PASS
     if source_chars > 0 and coverage < 0.95:
-        status = STATUS_FAIL
+        coverage_status = STATUS_FAIL
         findings.append(
             _finding_spec(
                 category="PARSER_DEFECT",
@@ -747,7 +861,7 @@ def _text_fidelity_metrics(
             )
         )
     if missing_lines:
-        status = STATUS_FAIL
+        coverage_status = STATUS_FAIL
         findings.append(
             _finding_spec(
                 category="PARSER_DEFECT",
@@ -758,20 +872,78 @@ def _text_fidelity_metrics(
                 details={"missing_line_count": len(missing_lines)},
             )
         )
-    if duplicate_lines:
-        status = STATUS_FAIL
+    duplicate_status = STATUS_PASS
+    if parser_only_duplicates:
+        duplicate_status = STATUS_FAIL
         findings.append(
             _finding_spec(
                 category="PARSER_DEFECT",
                 severity="major",
                 code="DUPLICATE_TEXT_LINES",
-                message="Parser text includes duplicate normalized lines.",
+                message=(
+                    "Parser text includes duplicate normalized lines not present "
+                    "in the source proxy."
+                ),
                 metric_name="duplicate_line_count",
-                details={"duplicate_line_count": len(duplicate_lines)},
+                details={
+                    "duplicate_line_count": len(parser_duplicate_lines),
+                    "parser_only_duplicate_count": len(parser_only_duplicates),
+                    "corrected_policy_disposition": "parser_defect",
+                    "corrected_metric_status": STATUS_FAIL,
+                    "correction_reason_code": "PARSER_ONLY_DUPLICATION_REMAINS_FAIL",
+                },
+            )
+        )
+    elif parser_duplicate_lines:
+        duplicate_status = STATUS_REVIEW
+        findings.append(
+            _finding_spec(
+                category="SOURCE_PROXY_LIMITATION",
+                severity="minor",
+                code="DUPLICATE_TEXT_LINES",
+                message=(
+                    "Duplicate normalized lines are present in the source proxy; "
+                    "visual review is required before treating them as parser defects."
+                ),
+                metric_name="duplicate_line_count",
+                requires_manual_review=True,
+                details={
+                    "duplicate_line_count": len(parser_duplicate_lines),
+                    "source_proxy_duplicate_count": len(source_duplicate_lines),
+                    "corrected_policy_disposition": "source_proxy_review",
+                    "corrected_metric_status": STATUS_REVIEW,
+                    "correction_reason_code": "SOURCE_PROXY_DUPLICATION_RECLASSIFIED",
+                },
+            )
+        )
+        corrections.append(
+            EvaluationPolicyCorrection(
+                original_finding_code="DUPLICATE_TEXT_LINES",
+                corrected_policy_disposition="source_proxy_review",
+                corrected_metric_status=STATUS_REVIEW,
+                correction_reason_code="SOURCE_PROXY_DUPLICATION_RECLASSIFIED",
+                message=(
+                    "Duplicate-line findings no longer change raw text "
+                    "coverage status when the source proxy also contains duplicates."
+                ),
+                metric_name="duplicate_line_count",
+            )
+        )
+        corrections.append(
+            EvaluationPolicyCorrection(
+                original_finding_code="RAW_CHARACTER_COVERAGE_STATUS_FAIL",
+                corrected_policy_disposition="coverage_metric_independent",
+                corrected_metric_status=coverage_status,
+                correction_reason_code="DUPLICATION_DECOUPLED_FROM_COVERAGE",
+                message=(
+                    "Raw character coverage status is based on coverage, "
+                    "missing lines, native-text availability, and symbol loss only."
+                ),
+                metric_name="raw_character_coverage",
             )
         )
     if symbol_loss:
-        status = STATUS_FAIL
+        coverage_status = STATUS_FAIL
         findings.append(
             _finding_spec(
                 category="PARSER_DEFECT",
@@ -783,7 +955,7 @@ def _text_fidelity_metrics(
             )
         )
     if source_chars == 0:
-        status = STATUS_REVIEW
+        coverage_status = STATUS_REVIEW
         findings.append(
             _finding_spec(
                 category="OCR_OR_EXTRACTION_LIMITATION",
@@ -805,7 +977,7 @@ def _text_fidelity_metrics(
     return (
         SourceAccuracyMetricResult(
             name="raw_character_coverage",
-            status=status,
+            status=coverage_status,
             value=round(coverage, 6),
             threshold=0.95,
             unit="ratio",
@@ -813,6 +985,7 @@ def _text_fidelity_metrics(
             details={
                 "source_characters": source_chars,
                 "parser_characters": parser_chars,
+                "metric_independent_of_duplicate_line_count": True,
             },
         ),
         SourceAccuracyMetricResult(
@@ -831,10 +1004,14 @@ def _text_fidelity_metrics(
         ),
         SourceAccuracyMetricResult(
             name="duplicate_line_count",
-            status=STATUS_PASS if not duplicate_lines else STATUS_FAIL,
-            value=len(duplicate_lines),
+            status=duplicate_status,
+            value=len(parser_duplicate_lines),
             threshold=0,
             unit="lines",
+            details={
+                "source_proxy_duplicate_count": len(source_duplicate_lines),
+                "parser_only_duplicate_count": len(parser_only_duplicates),
+            },
         ),
         SourceAccuracyMetricResult(
             name="unicode_symbol_loss_count",
@@ -864,6 +1041,7 @@ def _reading_order_metrics(
     plan_page: SourceAccuracyPlanPage,
     parser_page: Page,
     findings: list[dict[str, object]],
+    corrections: list[EvaluationPolicyCorrection],
 ) -> tuple[SourceAccuracyMetricResult, ...]:
     text_blocks = [
         block for block in parser_page.text_blocks if block.source and block.source.bbox
@@ -877,16 +1055,38 @@ def _reading_order_metrics(
         if previous_y is not None and y0 + 2.0 < previous_y:
             inversions += 1
         previous_y = y0
-    status = STATUS_PASS if inversions == 0 else STATUS_FAIL
+    status = STATUS_PASS if inversions == 0 else STATUS_REVIEW
     if inversions:
         findings.append(
             _finding_spec(
-                category="PARSER_DEFECT",
-                severity="major",
+                category="MANUAL_REVIEW_REQUIRED",
+                severity="minor",
                 code="READING_ORDER_INVERSION",
-                message="Parser text-block order has coordinate inversions.",
+                message=(
+                    "Parser text-block order has coordinate inversions; visual "
+                    "review is required before treating this as a parser defect."
+                ),
                 metric_name="order_inversion_count",
-                details={"inversions": inversions},
+                requires_manual_review=True,
+                details={
+                    "inversions": inversions,
+                    "corrected_policy_disposition": "visual_review_required",
+                    "corrected_metric_status": STATUS_REVIEW,
+                    "correction_reason_code": "READING_ORDER_VISUAL_REVIEW_REQUIRED",
+                },
+            )
+        )
+        corrections.append(
+            EvaluationPolicyCorrection(
+                original_finding_code="READING_ORDER_INVERSION",
+                corrected_policy_disposition="visual_review_required",
+                corrected_metric_status=STATUS_REVIEW,
+                correction_reason_code="READING_ORDER_VISUAL_REVIEW_REQUIRED",
+                message=(
+                    "Coordinate-order inversions are not automatic parser "
+                    "failures under policy v2."
+                ),
+                metric_name="order_inversion_count",
             )
         )
     if _needs_visual_order_review(plan_page):
@@ -907,6 +1107,7 @@ def _reading_order_metrics(
             value=1.0 if inversions == 0 else 0.0,
             threshold=1.0,
             unit="ratio",
+            details={"visual_confirmation_required": inversions > 0},
         ),
         SourceAccuracyMetricResult(
             name="order_inversion_count",
@@ -914,6 +1115,7 @@ def _reading_order_metrics(
             value=inversions,
             threshold=0,
             unit="inversions",
+            details={"visual_confirmation_required": inversions > 0},
         ),
         SourceAccuracyMetricResult(
             name="multi_column_visual_review",
@@ -1166,19 +1368,33 @@ def _entity_metric(
 def _chunk_metrics(
     plan_page: SourceAccuracyPlanPage,
     parser_page: Page,
+    structured_data: Mapping[str, object],
     selected_chunks: Sequence[Chunk],
     findings: list[dict[str, object]],
-) -> tuple[SourceAccuracyMetricResult, ...]:
-    semantic_blocks = [
-        block
-        for block in get_semantic_blocks_for_page(parser_page)
-        if _block_text(block)
-    ]
-    semantic_ids = {block.id for block in semantic_blocks if block.id}
-    chunk_ids = {
+    corrections: list[EvaluationPolicyCorrection],
+) -> tuple[tuple[SourceAccuracyMetricResult, ...], Mapping[str, int]]:
+    semantic_blocks = list(get_semantic_blocks_for_page(parser_page))
+    entities = _entities_for_page(structured_data, plan_page.page_number)
+    eligibilities = tuple(
+        classify_source_block_chunk_eligibility(
+            block,
+            selected_chunks,
+            entities=entities,
+            policy=SourceBlockEligibilityPolicy(require_heading_chunks=False),
+        )
+        for block in semantic_blocks
+    )
+    eligible_ids = eligible_source_block_ids(eligibilities)
+    covered_ids = covered_source_block_ids(eligibilities)
+    missing = missing_required_source_block_ids(eligibilities)
+    eligibility_summary = summarize_source_block_eligibility(eligibilities)
+    v1_semantic_ids = {
+        block.id for block in semantic_blocks if block.id and _block_text(block)
+    }
+    v1_chunk_ids = {
         block_id for chunk in selected_chunks for block_id in chunk.source_block_ids
     }
-    missing = sorted(semantic_ids - chunk_ids)
+    v1_missing = sorted(v1_semantic_ids - v1_chunk_ids)
     if missing:
         findings.append(
             _finding_spec(
@@ -1187,14 +1403,32 @@ def _chunk_metrics(
                 code="CHUNK_SOURCE_COVERAGE_GAP",
                 message="Selected-page semantic blocks are missing from chunks.",
                 metric_name="chunk_source_block_coverage",
-                details={"missing_count": len(missing)},
+                details={
+                    "missing_count": len(missing),
+                    "eligible_source_block_count": len(eligible_ids),
+                    "covered_source_block_count": len(covered_ids),
+                    "eligibility_summary": eligibility_summary,
+                    "corrected_policy_disposition": "parser_or_chunk_gap",
+                    "corrected_metric_status": STATUS_FAIL,
+                    "correction_reason_code": "REQUIRED_DIRECT_CHUNK_MISSING",
+                },
             )
         )
-    coverage = (
-        1.0
-        if not semantic_ids
-        else (len(semantic_ids) - len(missing)) / len(semantic_ids)
-    )
+    elif v1_missing:
+        corrections.append(
+            EvaluationPolicyCorrection(
+                original_finding_code="CHUNK_SOURCE_COVERAGE_GAP",
+                corrected_policy_disposition="not_a_required_direct_chunk_gap",
+                corrected_metric_status=STATUS_PASS,
+                correction_reason_code="SOURCE_BLOCK_ELIGIBILITY_RECLASSIFIED",
+                message=(
+                    "Policy v2 excludes heading/blank/non-emitting blocks and "
+                    "accepts entity-derived chunk replacements."
+                ),
+                metric_name="chunk_source_block_coverage",
+            )
+        )
+    coverage = 1.0 if not eligible_ids else len(covered_ids) / len(eligible_ids)
     section_paths = {
         chunk.metadata.get("section_path")
         for chunk in selected_chunks
@@ -1213,30 +1447,39 @@ def _chunk_metrics(
             )
         )
     return (
-        SourceAccuracyMetricResult(
-            name="chunk_source_block_coverage",
-            status=STATUS_PASS if coverage >= 1.0 else STATUS_FAIL,
-            value=round(coverage, 6),
-            threshold=1.0,
-            unit="ratio",
+        (
+            SourceAccuracyMetricResult(
+                name="chunk_source_block_coverage",
+                status=STATUS_PASS if coverage >= 1.0 else STATUS_FAIL,
+                value=round(coverage, 6),
+                threshold=1.0,
+                unit="ratio",
+                details={
+                    "eligible_source_block_count": len(eligible_ids),
+                    "covered_source_block_count": len(covered_ids),
+                    "missing_source_block_count": len(missing),
+                    "eligibility_summary": eligibility_summary,
+                },
+            ),
+            SourceAccuracyMetricResult(
+                name="chunk_count",
+                status=STATUS_PASS if selected_chunks else STATUS_REVIEW,
+                value=len(selected_chunks),
+                threshold=1,
+                unit="chunks",
+            ),
+            SourceAccuracyMetricResult(
+                name="chunk_section_coherence",
+                status=STATUS_REVIEW if section_crossing else STATUS_PASS,
+                value=not section_crossing,
+            ),
+            SourceAccuracyMetricResult(
+                name="deterministic_ids",
+                status=STATUS_PASS,
+                value=all(chunk.id.startswith("chunk-") for chunk in selected_chunks),
+            ),
         ),
-        SourceAccuracyMetricResult(
-            name="chunk_count",
-            status=STATUS_PASS if selected_chunks else STATUS_REVIEW,
-            value=len(selected_chunks),
-            threshold=1,
-            unit="chunks",
-        ),
-        SourceAccuracyMetricResult(
-            name="chunk_section_coherence",
-            status=STATUS_REVIEW if section_crossing else STATUS_PASS,
-            value=not section_crossing,
-        ),
-        SourceAccuracyMetricResult(
-            name="deterministic_ids",
-            status=STATUS_PASS,
-            value=all(chunk.id.startswith("chunk-") for chunk in selected_chunks),
-        ),
+        eligibility_summary,
     )
 
 
@@ -1375,6 +1618,7 @@ def _pilot_result(
     page_results: tuple[SourceAccuracyPageResult, ...],
 ) -> SourceAccuracyPilotResult:
     final_counts = Counter(page.final_page_outcome for page in page_results)
+    automated_counts = Counter(page.automated_outcome for page in page_results)
     if final_counts.get(FAIL, 0):
         outcome = FAIL
     elif final_counts.get(REVIEW, 0):
@@ -1382,6 +1626,11 @@ def _pilot_result(
     else:
         outcome = PASS
     findings = [finding for page in page_results for finding in page.findings]
+    correction_counts = Counter(
+        correction.correction_reason_code
+        for page in page_results
+        for correction in page.policy_corrections
+    )
     metric_summary: dict[str, Counter[str]] = {}
     for page in page_results:
         for metric in page.metrics:
@@ -1455,6 +1704,8 @@ def _pilot_result(
         category_counts=dict(Counter(finding.category for finding in findings)),
         severity_counts=dict(Counter(finding.severity for finding in findings)),
         page_outcome_counts=dict(final_counts),
+        automated_outcome_counts=dict(automated_counts),
+        policy_correction_counts=dict(correction_counts),
         metric_summaries={
             key: dict(value) for key, value in sorted(metric_summary.items())
         },
@@ -1985,6 +2236,19 @@ def _finding_to_dict(finding: SourceAccuracyFinding) -> dict[str, object]:
     }
 
 
+def _policy_correction_to_dict(
+    correction: EvaluationPolicyCorrection,
+) -> dict[str, object]:
+    return {
+        "original_finding_code": correction.original_finding_code,
+        "corrected_policy_disposition": correction.corrected_policy_disposition,
+        "corrected_metric_status": correction.corrected_metric_status,
+        "correction_reason_code": correction.correction_reason_code,
+        "message": correction.message,
+        "metric_name": correction.metric_name,
+    }
+
+
 def _mapping_line(mapping: Mapping[str, object]) -> str:
     if not mapping:
         return "`none`"
@@ -2015,7 +2279,13 @@ __all__ = [
     "PASS",
     "REVIEW",
     "SEVERITIES",
+    "SOURCE_ACCURACY_POLICY_NAME",
+    "SOURCE_ACCURACY_POLICY_VERSION",
+    "SOURCE_ACCURACY_PREVIOUS_POLICY_VERSION",
+    "SOURCE_ACCURACY_RUN_TYPE",
     "SOURCE_ACCURACY_SCOPE",
+    "SOURCE_ACCURACY_SUPERSEDES_POLICY_INTERPRETATION",
+    "EvaluationPolicyCorrection",
     "LocalPageEvidence",
     "SourceAccuracyFinding",
     "SourceAccuracyMetricResult",

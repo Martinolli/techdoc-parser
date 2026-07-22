@@ -93,6 +93,20 @@ The current metric surface is:
 Metric statuses are `pass`, `review`, `fail`, `not_measurable`, and
 `not_applicable`. Overall outcomes are `PASS`, `REVIEW`, and `FAIL`.
 
+## Shared Source-Block Eligibility
+
+Chunk-quality source-block coverage now uses the shared evaluation-only
+eligibility function `classify_source_block_chunk_eligibility(...)`. The
+default fixture policy keeps heading chunks required to preserve the committed
+fixture baseline, while the source-accuracy policy can exclude heading context
+from direct chunk coverage.
+
+Shared eligibility states are `required_direct_chunk`,
+`satisfied_by_entity_chunk`, `excluded_heading`, `excluded_blank`,
+`excluded_metadata`, `excluded_non_semantic`, and `unsupported`. This policy is
+diagnostic only; it does not change semantic chunk generation, chunk IDs,
+parser blocks, StructuredDocument output, or fixture contents.
+
 ## Current Baseline
 
 The committed baseline is:
