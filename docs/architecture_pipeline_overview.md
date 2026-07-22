@@ -91,6 +91,21 @@ representative-page proposal
 optional ignored reports under output/
 ```
 
+P0 failure triage follows the completed source-accuracy pilot and does not
+alter parser behavior:
+
+```text
+P0 pilot findings
+        ↓
+pipeline-stage diagnostics
+        ↓
+root-cause classification
+        ↓
+targeted corrective phases
+        ↓
+P0 rerun
+```
+
 ## 3. Main Packages and Responsibilities
 
 | Package / Module | Responsibility |
@@ -105,7 +120,7 @@ optional ignored reports under output/
 | `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, semantic Markdown, and optional structured-document export helpers. |
 | `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, equation/admonition entity mapper, cross-reference mapper, confidence policy helpers, and deterministic serializers for future external structured-document artifacts. |
 | `techdoc_parser.compatibility` | Offline compatibility gates for downstream consumers; currently runs the AviationRAG structured-document validator by subprocess without importing AviationRAG. |
-| `techdoc_parser.evaluation` | Offline deterministic fixture-only chunk-quality proxy evaluation, approved pilot-corpus inventory planning, controlled approved-P0 source-accuracy evaluation, JSON/Markdown report serialization, and explicit report/evidence-write gating. |
+| `techdoc_parser.evaluation` | Offline deterministic fixture-only chunk-quality proxy evaluation, approved pilot-corpus inventory planning, controlled approved-P0 source-accuracy evaluation, P0 failure triage, JSON/Markdown report serialization, and explicit report/evidence-write gating. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
 
@@ -129,6 +144,7 @@ optional ignored reports under output/
 16. Fixture chunk-quality evaluation: existing committed structured-document fixtures can be converted into in-memory parser objects and evaluated against current semantic chunk output as deterministic quality proxies.
 17. Approved pilot-corpus inventory: local ignored PDFs can be inspected for metadata-only corpus integrity, access status, text-mode classification, layout signals, and representative-page planning without OCR, source accuracy evaluation, parser repair, or downstream ingestion.
 18. Approved P0 source-accuracy evaluation: local ignored PDFs can be scored on the committed representative P0 page plan with automated source proxies and optional human visual checklists, without OCR, parser repair, full-document accuracy scoring, downstream ingestion, or AviationRAG modification.
+19. P0 failure triage: selected P0 pilot findings can be classified by pipeline stage and root-cause taxonomy before any corrective phase, without changing extraction, reading order, normalization, structure mapping, chunking, evaluator policy, StructuredDocument output, or the original P0 baseline.
 
 ## 5. Data Flow and Preservation Principle
 
@@ -159,6 +175,7 @@ reports findings and gate decisions but does not modify parser output.
 | Chunk quality evaluation report | Optional Phase 13I fixture-only proxy report for semantic chunk coverage, ordering, section coherence, provenance, size, duplication/overlap, and explicit special-content source evidence. |
 | Pilot corpus inventory report | Optional ignored Phase 13I-b1 local report for approved-PDF inventory, corpus integrity, Git protection, text-mode classification, layout signals, and representative-page planning. |
 | P0 source-accuracy pilot report | Optional Phase 13I-b2 sanitized aggregate report for approved representative P0 pages only; full local evidence remains ignored under `output/evaluation/source_accuracy_p0/`. |
+| P0 failure triage report | Optional Phase 13I-c1 diagnosis-only sanitized report for selected P0 failures; full local evidence remains ignored under `output/evaluation/p0_failure_triage/`. |
 
 Machine-readable JSON outputs include `schema_version` and parser metadata with
 parser name and parser version.
@@ -282,13 +299,20 @@ checklists, writes full local evidence only under ignored `output/` with
 explicit permission, and does not run OCR, evaluate full-document accuracy,
 repair parser behavior, change StructuredDocument output, or modify AviationRAG.
 
+Phase 13I-c1 adds P0 failure triage inside `techdoc-parser`. It diagnoses a
+sanitized selected subset of b2 findings by pipeline stage and root cause,
+writes full local evidence only under ignored `output/` with explicit
+permission, and does not change parser behavior, source PDFs, OCR, reading
+order, normalization, entity detection, chunking, StructuredDocument output,
+evaluator policy, or the original b2 results.
+
 ## 10. Recommended Near-Term Next Steps
 
 - Use `docs/legacy_repository_structure_audit.md` as the current repository
   cleanup-readiness reference. Cleanup remains useful but non-blocking.
 - Add optional validation profiles or strictness modes.
 - Add an architecture diagram later if the pipeline grows more complex.
-- Review the Phase 13I-b2 P0 source-accuracy `FAIL` findings before selecting a
-  scoped parser enhancement phase.
+- Complete Phase 13I-c2E evaluator-policy correction, then rerun the 10-case
+  triage subset and the original 32-page P0 source-accuracy pilot.
 - Add a dedicated confidence scoring model only when truthful evidence exists.
 - Add an advanced table extraction adapter for more reliable table structure.

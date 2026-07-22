@@ -65,6 +65,31 @@ ocr_accuracy_evaluated: false
 | `introduction_flight_test_engineering` | 1, 23, 145, 453 | 4 `FAIL` | 19 |
 | `mil_std_882e` | 1, 14, 17, 33 | 2 `FAIL`, 2 `REVIEW` | 15 |
 
+## Post-Pilot Triage Status
+
+Phase 13I-c1 completed a diagnosis-only root-cause triage of 10 approved P0
+pages selected from the Phase 13I-b2 results. The original b2 report remains
+the baseline and was not rewritten: 25 final `FAIL` pages, 7 final `REVIEW`
+pages, 0 final `PASS` pages, and 32 pending human visual reviews.
+
+The triage subset classified 48 original findings and returned `REVIEW`.
+Automated evidence found no confirmed parser defects in the selected pages. It
+classified 9 findings as `EVALUATION_FRAMEWORK_DEFECT`, 7 duplicate-text
+findings as `SOURCE_PROXY_LIMITATION`, 3 table-candidate findings as
+`EXPECTED_MULTI_REPRESENTATION`, 4 section-context findings as
+`DOCUMENT_LAYOUT_LIMITATION`, and 25 findings as
+`NEEDS_VISUAL_CONFIRMATION`.
+
+The evidence-supported next corrective phase is `13I-c2E` for evaluator-policy
+correction, followed by a rerun of both the 10-case triage subset and the
+original 32-page P0 source-accuracy pilot. Parser corrective work for
+duplication, reading order, text coverage, and chunk coverage remains blocked
+until the required visual confirmation and evaluator-policy correction are
+complete.
+
+See [`docs/p0_failure_root_cause_analysis.md`](p0_failure_root_cause_analysis.md)
+for the sanitized root-cause matrix and recommended corrective phases.
+
 ## Determinism
 
 Two ignored reruns produced byte-identical sanitized reports:

@@ -1,0 +1,197 @@
+{
+  "plan_id": "phase_13i_c1_p0_failure_triage_plan",
+  "source": "output/evaluation/source_accuracy_p0/source_accuracy_p0_report.json",
+  "source_accuracy_scope": "representative_p0_pages",
+  "triage_scope": "selected_p0_failure_root_cause_isolation",
+  "cases": [
+    {
+      "case_id": "control_aircraft_stability_p1",
+      "document_key": "aircraft_stability_control",
+      "filename": "Introduction_Aircraft_Stability_And_Control_Course_Notes_M&AE_5070.pdf",
+      "pdf_page_index": 0,
+      "page_number": 1,
+      "original_finding_codes": ["VISUAL_REVIEW_PENDING"],
+      "failure_dimensions": ["control_page", "visual_review_pending"],
+      "selection_reason": ["automated_pass_control", "ordinary_text"],
+      "priority": "P0",
+      "visual_review_required": true
+    },
+    {
+      "case_id": "triage_aircraft_stability_p3",
+      "document_key": "aircraft_stability_control",
+      "filename": "Introduction_Aircraft_Stability_And_Control_Course_Notes_M&AE_5070.pdf",
+      "pdf_page_index": 2,
+      "page_number": 3,
+      "original_finding_codes": [
+        "DUPLICATE_TEXT_LINES",
+        "RAW_CHARACTER_COVERAGE_STATUS_FAIL",
+        "READING_ORDER_VISUAL_REVIEW_REQUIRED"
+      ],
+      "failure_dimensions": ["duplicate_text", "text_coverage", "reading_order"],
+      "selection_reason": ["duplicate_text_failure", "text_coverage_metric_status"],
+      "priority": "P0",
+      "visual_review_required": true
+    },
+    {
+      "case_id": "triage_aircraft_stability_p10",
+      "document_key": "aircraft_stability_control",
+      "filename": "Introduction_Aircraft_Stability_And_Control_Course_Notes_M&AE_5070.pdf",
+      "pdf_page_index": 9,
+      "page_number": 10,
+      "original_finding_codes": [
+        "DUPLICATE_TEXT_LINES",
+        "RAW_CHARACTER_COVERAGE_STATUS_FAIL",
+        "READING_ORDER_INVERSION",
+        "FIGURE_CAPTION_EVIDENCE_NOT_AUTOMATED",
+        "EQUATION_EVIDENCE_NOT_AUTOMATED",
+        "ADMONITION_EVIDENCE_NOT_AUTOMATED",
+        "CHUNK_SECTION_CROSSING_REVIEW"
+      ],
+      "failure_dimensions": [
+        "duplicate_text",
+        "text_coverage",
+        "reading_order",
+        "equation_or_text_box",
+        "admonition_or_procedure"
+      ],
+      "selection_reason": ["equation_text_box_page", "multi_column_failure"],
+      "priority": "P0",
+      "visual_review_required": true
+    },
+    {
+      "case_id": "triage_aircraft_system_safety_p18",
+      "document_key": "aircraft_system_safety",
+      "filename": "Aircraft_System_Safety_Military_Civil_Aeronautical_Applications.pdf",
+      "pdf_page_index": 17,
+      "page_number": 18,
+      "original_finding_codes": [
+        "DUPLICATE_TEXT_LINES",
+        "RAW_CHARACTER_COVERAGE_STATUS_FAIL",
+        "READING_ORDER_INVERSION",
+        "CROSS_REFERENCE_EVIDENCE_NOT_AUTOMATED",
+        "CHUNK_SECTION_CROSSING_REVIEW"
+      ],
+      "failure_dimensions": ["duplicate_text", "text_coverage", "reading_order", "cross_reference"],
+      "selection_reason": ["cross_reference_failure", "multi_column_failure"],
+      "priority": "P0",
+      "visual_review_required": true
+    },
+    {
+      "case_id": "triage_sr22_p7",
+      "document_key": "cirrus_sr22_maintenance_manual",
+      "filename": "Airplane_Maintenance_Manual_CIRRUS_Design_SR22.pdf",
+      "pdf_page_index": 6,
+      "page_number": 7,
+      "original_finding_codes": [
+        "READING_ORDER_INVERSION",
+        "TABLE_EVIDENCE_NOT_AUTOMATED",
+        "ADMONITION_EVIDENCE_NOT_AUTOMATED",
+        "CROSS_REFERENCE_EVIDENCE_NOT_AUTOMATED",
+        "CHUNK_SECTION_CROSSING_REVIEW"
+      ],
+      "failure_dimensions": ["reading_order", "table_entity", "admonition_or_procedure", "cross_reference"],
+      "selection_reason": ["sr22_selected_p0", "procedure_and_admonition_case"],
+      "priority": "P0",
+      "visual_review_required": true
+    },
+    {
+      "case_id": "triage_faa_order_p7_chunk_gap",
+      "document_key": "faa_order_4040_26b",
+      "filename": "FAA_Order_4040_26B.pdf",
+      "pdf_page_index": 6,
+      "page_number": 7,
+      "original_finding_codes": [
+        "READING_ORDER_INVERSION",
+        "CROSS_REFERENCE_EVIDENCE_NOT_AUTOMATED",
+        "TABLE_CANDIDATE_ONLY",
+        "FIGURE_CAPTION_VISUAL_REVIEW_REQUIRED",
+        "CHUNK_SOURCE_COVERAGE_GAP"
+      ],
+      "failure_dimensions": ["reading_order", "chunk_source_coverage", "table_entity", "figure_caption"],
+      "selection_reason": ["chunk_source_coverage_gap", "table_heavy_page"],
+      "priority": "P0",
+      "visual_review_required": true
+    },
+    {
+      "case_id": "triage_faa_order_p29_chunk_gap",
+      "document_key": "faa_order_4040_26b",
+      "filename": "FAA_Order_4040_26B.pdf",
+      "pdf_page_index": 28,
+      "page_number": 29,
+      "original_finding_codes": [
+        "DUPLICATE_TEXT_LINES",
+        "RAW_CHARACTER_COVERAGE_STATUS_FAIL",
+        "READING_ORDER_INVERSION",
+        "FIGURE_CAPTION_EVIDENCE_NOT_AUTOMATED",
+        "TABLE_CANDIDATE_ONLY",
+        "CHUNK_SOURCE_COVERAGE_GAP",
+        "CHUNK_SECTION_CROSSING_REVIEW"
+      ],
+      "failure_dimensions": [
+        "duplicate_text",
+        "text_coverage",
+        "reading_order",
+        "chunk_source_coverage",
+        "table_entity",
+        "figure_caption"
+      ],
+      "selection_reason": ["chunk_source_coverage_gap", "rotated_or_complex_page"],
+      "priority": "P0",
+      "visual_review_required": true
+    },
+    {
+      "case_id": "triage_airworthiness_p22",
+      "document_key": "airworthiness_certification_operations",
+      "filename": "Airworthiness_An_Introduction_Aircraft_Certification_And_Operations.pdf",
+      "pdf_page_index": 21,
+      "page_number": 22,
+      "original_finding_codes": [
+        "DUPLICATE_TEXT_LINES",
+        "RAW_CHARACTER_COVERAGE_STATUS_FAIL",
+        "READING_ORDER_INVERSION",
+        "FIGURE_CAPTION_EVIDENCE_NOT_AUTOMATED",
+        "TABLE_CANDIDATE_ONLY"
+      ],
+      "failure_dimensions": ["duplicate_text", "text_coverage", "reading_order", "table_entity", "figure_caption"],
+      "selection_reason": ["table_heavy_page", "figure_caption_case"],
+      "priority": "P0",
+      "visual_review_required": true
+    },
+    {
+      "case_id": "triage_intro_flight_test_p23",
+      "document_key": "introduction_flight_test_engineering",
+      "filename": "Introduction_Flight_Test_Engineering_RTO-AGARDograph_300_V14.pdf",
+      "pdf_page_index": 22,
+      "page_number": 23,
+      "original_finding_codes": [
+        "DUPLICATE_TEXT_LINES",
+        "RAW_CHARACTER_COVERAGE_STATUS_FAIL",
+        "READING_ORDER_INVERSION",
+        "TABLE_EVIDENCE_NOT_AUTOMATED",
+        "FIGURE_CAPTION_EVIDENCE_NOT_AUTOMATED"
+      ],
+      "failure_dimensions": ["duplicate_text", "text_coverage", "reading_order", "table_entity", "figure_caption"],
+      "selection_reason": ["multi_document_coverage", "table_and_figure_case"],
+      "priority": "P0",
+      "visual_review_required": true
+    },
+    {
+      "case_id": "triage_mil_std_p17",
+      "document_key": "mil_std_882e",
+      "filename": "MIL-STD-882E.pdf",
+      "pdf_page_index": 16,
+      "page_number": 17,
+      "original_finding_codes": [
+        "DUPLICATE_TEXT_LINES",
+        "RAW_CHARACTER_COVERAGE_STATUS_FAIL",
+        "READING_ORDER_INVERSION",
+        "TABLE_EVIDENCE_NOT_AUTOMATED",
+        "FIGURE_CAPTION_VISUAL_REVIEW_REQUIRED"
+      ],
+      "failure_dimensions": ["duplicate_text", "text_coverage", "reading_order", "table_entity", "figure_caption"],
+      "selection_reason": ["mil_standard_coverage", "figure_caption_control"],
+      "priority": "P0",
+      "visual_review_required": true
+    }
+  ]
+}

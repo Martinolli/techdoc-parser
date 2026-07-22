@@ -68,6 +68,36 @@ The source-accuracy CLI exits `0` for `PASS`, `2` for `REVIEW`, and `1` for
 `FAIL`. A failing report is still useful evidence; it is not a parser repair
 step.
 
+## Failure Triage Process
+
+Phase 13I-c1 adds diagnosis-only triage for selected Phase 13I-b2 P0 failures.
+The triage process starts from the committed P0 page plan and a separate
+sanitized triage plan. It does not change parser output, evaluator policy,
+source PDFs, local evidence, chunking, StructuredDocument mapping, or the
+original Phase 13I-b2 result.
+
+The triage taxonomy is:
+
+- `CONFIRMED_PARSER_DEFECT`
+- `EVALUATION_FRAMEWORK_DEFECT`
+- `SOURCE_PROXY_LIMITATION`
+- `EXPECTED_MULTI_REPRESENTATION`
+- `DOCUMENT_LAYOUT_LIMITATION`
+- `NEEDS_VISUAL_CONFIRMATION`
+
+For each selected page, diagnostics isolate where the evidence first appears:
+source proxy, raw parser blocks, ordered semantic blocks, normalized blocks,
+structured entities, semantic chunks, source-accuracy evaluator assumptions, or
+human visual review. Local full evidence can be written only with
+`--allow-local-write` under ignored `output/evaluation/p0_failure_triage/`.
+Sanitized JSON/Markdown reports require `--allow-report-write`.
+
+Corrective phases must target the isolated stage only. Any evaluator-policy
+correction must rerun the triage subset and the original 32-page P0 pilot
+without rewriting the b2 baseline. Parser changes are not justified by triage
+findings classified as source-proxy limitations, expected multi-representation,
+document-layout limitations, or pending visual confirmation.
+
 ## Non-Goals
 
 Phase 13I-b2 does not:

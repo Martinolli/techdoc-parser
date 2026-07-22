@@ -196,6 +196,32 @@ behavior, change StructuredDocument output, call AviationRAG, use embeddings, or
 call external APIs. The current local P0 run returned `FAIL`: 25 final `FAIL`
 pages and 7 final `REVIEW` pages, with all human visual reviews still pending.
 
+## P0 Failure Triage
+
+Phase 13I-c1 adds diagnosis-only triage for selected P0 source-accuracy
+failures:
+
+```powershell
+python tools/evaluation/run-p0-failure-triage.py `
+  --input-dir input `
+  --plan tests/fixtures/pilot_corpus/p0_failure_triage_plan.json `
+  --all-cases `
+  --output-dir output/evaluation/p0_failure_triage `
+  --allow-local-write `
+  --report-json output/evaluation/p0_failure_triage/p0_failure_triage_report.json `
+  --report-markdown output/evaluation/p0_failure_triage/p0_failure_triage_report.md `
+  --allow-report-write
+```
+
+The triage classifies selected b2 findings by pipeline stage and root cause.
+It is report-only and does not change parser behavior, source PDFs, OCR,
+reading order, normalization, structure detection, chunking,
+StructuredDocument output, AviationRAG, embeddings, dependencies, or the
+original Phase 13I-b2 results. Local full evidence remains ignored under
+`output/evaluation/p0_failure_triage/`, and the CLI may return `REVIEW` while
+visual confirmation is still pending. See
+[`docs/p0_failure_root_cause_analysis.md`](docs/p0_failure_root_cause_analysis.md).
+
 ## Documentation
 
 - [Architecture and pipeline overview](docs/architecture_pipeline_overview.md)
@@ -215,6 +241,7 @@ pages and 7 final `REVIEW` pages, with all human visual reviews still pending.
 - [Pilot representative-page proposal](docs/pilot_representative_page_plan.md)
 - [Controlled P0 source-accuracy pilot framework](docs/source_accuracy_pilot_framework.md)
 - [P0 source-accuracy pilot result](docs/p0_source_accuracy_pilot.md)
+- [P0 failure root-cause analysis](docs/p0_failure_root_cause_analysis.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -249,3 +276,6 @@ pages and 7 final `REVIEW` pages, with all human visual reviews still pending.
 - The controlled P0 source-accuracy pilot currently fails on the approved P0
   sample. It is report-only; it does not repair parser behavior, evaluate OCR,
   or prove full-document accuracy
+- P0 failure triage is diagnosis-only. It identifies evaluator-policy defects,
+  source-proxy limitations, expected multi-representation, layout limitations,
+  and findings still requiring visual confirmation before any parser repair
