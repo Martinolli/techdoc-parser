@@ -138,6 +138,25 @@ for `FAIL`. Compatibility report writing is optional and requires
 runtime modules, modify AviationRAG, run ingestion, generate embeddings, use
 Astra, or use FAISS.
 
+## Fixture Chunk Quality Evaluation
+
+An offline fixture-only chunk-quality evaluator is available for current
+semantic chunks:
+
+```powershell
+python tools/evaluation/run-chunk-quality-evaluation.py --all-cases
+```
+
+The evaluator uses existing committed synthetic fixtures only and reports
+quality proxies for source-block coverage, ordering, section coherence,
+provenance, chunk size, duplication/overlap, and explicit table, figure,
+equation, admonition, and cross-reference source evidence. Fixture metrics are
+quality proxies only; they do not prove source-page visual accuracy, OCR
+accuracy, semantic accuracy, or real aviation-document accuracy. It does not
+modify parser behavior, generate embeddings, call AviationRAG, use Astra or
+FAISS, or call external APIs. Optional JSON/Markdown report files require
+`--allow-report-write`.
+
 ## Documentation
 
 - [Architecture and pipeline overview](docs/architecture_pipeline_overview.md)
@@ -151,6 +170,8 @@ Astra, or use FAISS.
 - [Structured-document cross-reference and confidence policy](docs/structured_document_references_confidence.md)
 - [Structured-document export](docs/structured_document_export.md)
 - [AviationRAG compatibility gate](docs/aviationrag_compatibility_gate.md)
+- [Fixture chunk quality evaluation](docs/chunk_quality_evaluation.md)
+- [Chunk quality fixture baseline](docs/chunk_quality_fixture_baseline.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -178,3 +199,5 @@ Astra, or use FAISS.
 - `techdoc-structured-document / 0.1.0` has an optional API, CLI file export,
   checksum-backed output, manifest registration, and a formal offline
   AviationRAG compatibility gate, but parser accuracy pilots remain future work
+- Fixture chunk-quality evaluation is proxy-only and does not prove source-page,
+  OCR, semantic, or real aviation-document accuracy

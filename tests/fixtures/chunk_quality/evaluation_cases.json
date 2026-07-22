@@ -1,0 +1,38 @@
+{
+  "schema_name": "techdoc-parser-chunk-quality-evaluation-cases",
+  "schema_version": "0.1.0",
+  "scope": "fixture_chunk_quality_proxy",
+  "proxy_notice": "Fixture metrics are quality proxies only; they do not prove source-page visual accuracy, OCR accuracy, semantic accuracy, or real aviation-document accuracy.",
+  "cases": [
+    {
+      "case_id": "basic_structured_mapping",
+      "fixture_path": "tests/fixtures/structured_document/mapped_structured_document.json",
+      "description": "Basic structured-document block and provenance fixture.",
+      "expected_content_types": ["paragraph", "section_heading", "unknown"]
+    },
+    {
+      "case_id": "section_hierarchy",
+      "fixture_path": "tests/fixtures/structured_document/mapped_structured_document_with_sections.json",
+      "description": "Section hierarchy fixture with explicit section paths.",
+      "expected_content_types": ["paragraph", "section_heading"]
+    },
+    {
+      "case_id": "tables_figures",
+      "fixture_path": "tests/fixtures/structured_document/mapped_structured_document_with_tables_figures.json",
+      "description": "Table and figure-caption entity fixture.",
+      "expected_content_types": ["figure_caption", "section_heading", "table"]
+    },
+    {
+      "case_id": "equations_admonitions",
+      "fixture_path": "tests/fixtures/structured_document/mapped_structured_document_with_equations_admonitions.json",
+      "description": "Equation and explicit-label admonition fixture.",
+      "expected_content_types": ["equation", "note", "paragraph", "section_heading", "warning"]
+    },
+    {
+      "case_id": "references_confidence",
+      "fixture_path": "tests/fixtures/structured_document/mapped_structured_document_with_references_confidence.json",
+      "description": "Cross-reference and confidence-policy fixture.",
+      "expected_content_types": ["paragraph", "section_heading"]
+    }
+  ]
+}

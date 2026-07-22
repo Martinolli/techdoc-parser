@@ -1,0 +1,51 @@
+"""Offline evaluation helpers for fixture-based parser quality checks."""
+
+from techdoc_parser.evaluation.chunk_quality import (
+    FAIL,
+    PASS,
+    PROXY_NOTICE,
+    REVIEW,
+    ChunkQualityEvaluationCase,
+    ChunkQualityEvaluationPolicy,
+    ChunkQualityEvaluationResult,
+    ChunkQualityIssue,
+    ChunkQualityMetricResult,
+    StructuredFixtureEvidence,
+    evaluate_chunk_quality,
+    evaluate_chunk_quality_case,
+    load_chunk_quality_cases,
+    load_structured_fixture_document,
+)
+from techdoc_parser.evaluation.chunk_quality_reporting import (
+    chunk_quality_evaluation_result_to_dict,
+    chunk_quality_evaluation_result_to_json,
+    chunk_quality_evaluation_result_to_markdown,
+    chunk_quality_evaluation_results_to_dict,
+    chunk_quality_evaluation_results_to_json,
+    chunk_quality_evaluation_results_to_markdown,
+    write_chunk_quality_reports,
+)
+
+__all__ = [
+    "FAIL",
+    "PASS",
+    "PROXY_NOTICE",
+    "REVIEW",
+    "ChunkQualityEvaluationCase",
+    "ChunkQualityEvaluationPolicy",
+    "ChunkQualityEvaluationResult",
+    "ChunkQualityIssue",
+    "ChunkQualityMetricResult",
+    "StructuredFixtureEvidence",
+    "chunk_quality_evaluation_result_to_dict",
+    "chunk_quality_evaluation_result_to_json",
+    "chunk_quality_evaluation_result_to_markdown",
+    "chunk_quality_evaluation_results_to_dict",
+    "chunk_quality_evaluation_results_to_json",
+    "chunk_quality_evaluation_results_to_markdown",
+    "evaluate_chunk_quality",
+    "evaluate_chunk_quality_case",
+    "load_chunk_quality_cases",
+    "load_structured_fixture_document",
+    "write_chunk_quality_reports",
+]

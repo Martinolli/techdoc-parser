@@ -1,0 +1,1389 @@
+{
+  "case_count": 5,
+  "case_results": [
+    {
+      "chunk_count": 1,
+      "chunk_size_summary": {
+        "max_chars": 173,
+        "max_words": 20,
+        "mean_chars": 173,
+        "mean_words": 20,
+        "min_chars": 173,
+        "min_words": 20
+      },
+      "content_type_counts": {
+        "paragraph": 3,
+        "section_heading": 1,
+        "unknown": 1
+      },
+      "coverage_summary": {
+        "coverage_ratio": 1.0,
+        "covered_source_block_count": 4,
+        "duplicate_source_block_ids": [],
+        "duplicate_source_block_reference_count": 0,
+        "invalid_source_block_ids": [],
+        "invalid_source_block_reference_count": 0,
+        "missing_source_block_count": 0,
+        "missing_source_block_ids": []
+      },
+      "determinism_checked": true,
+      "determinism_passed": true,
+      "document_id": "explicit-doc-id",
+      "error_count": 0,
+      "evaluation_scope": "fixture_chunk_quality_proxy",
+      "fixture_name": "basic_structured_mapping",
+      "issue_count": 1,
+      "issues": [
+        {
+          "chunk_id": null,
+          "code": "SOURCE_CHECKSUM_NOT_MEASURABLE",
+          "details": {},
+          "message": "Source checksum provenance is unavailable in this fixture.",
+          "metric_name": "chunk_provenance_completeness",
+          "severity": "warning",
+          "source_block_ids": []
+        }
+      ],
+      "manual_review_required": true,
+      "metric_count": 17,
+      "metrics": [
+        {
+          "details": {
+            "covered": 4,
+            "missing_source_block_ids": [],
+            "total": 4
+          },
+          "message": "All fixture source blocks are represented by chunk source_block_ids.",
+          "name": "source_block_coverage",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "invalid_source_block_ids": []
+          },
+          "message": "Chunk source_block_ids resolve against the fixture.",
+          "name": "source_block_reference_integrity",
+          "status": "pass",
+          "threshold": 0,
+          "unit": "count",
+          "value": 0
+        },
+        {
+          "details": {
+            "comparison_count": 3,
+            "inversion_count": 0
+          },
+          "message": "Chunk source block order follows fixture document order.",
+          "name": "reading_order_consistency",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {},
+          "message": "No explicit section paths are present in this fixture.",
+          "name": "section_boundary_coherence",
+          "status": "not_applicable",
+          "threshold": 1,
+          "unit": "section_paths_per_chunk",
+          "value": null
+        },
+        {
+          "details": {
+            "too_large_chunk_ids": [],
+            "too_small_chunk_ids": []
+          },
+          "message": "Chunk sizes are inside fixture thresholds.",
+          "name": "chunk_size",
+          "status": "pass",
+          "threshold": {
+            "max_chars": 1200,
+            "min_chars": 1
+          },
+          "unit": "chars",
+          "value": {
+            "max_chars": 173,
+            "max_words": 20,
+            "mean_chars": 173,
+            "mean_words": 20,
+            "min_chars": 173,
+            "min_words": 20
+          }
+        },
+        {
+          "details": {
+            "duplicate_text_count": 0
+          },
+          "message": "No duplicate normalized chunk text was found.",
+          "name": "duplicate_text_ratio",
+          "status": "pass",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": 0.0
+        },
+        {
+          "details": {
+            "duplicate_source_block_ids": []
+          },
+          "message": "No duplicate source block references were found.",
+          "name": "duplicate_source_reference_ratio",
+          "status": "pass",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": 0.0
+        },
+        {
+          "details": {
+            "comparison_count": 0,
+            "overlap_pair_count": 0
+          },
+          "message": "Overlap is not applicable with fewer than two comparable chunks.",
+          "name": "exact_text_overlap_ratio",
+          "status": "not_applicable",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {
+            "parser_identity_present": true,
+            "provenance_status_counts": {
+              "structured": 1
+            },
+            "source_checksum_present": false
+          },
+          "message": "Chunks include complete current-model fixture provenance.",
+          "name": "chunk_provenance_completeness",
+          "status": "review",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {},
+          "message": "No explicit table fixture entities are present.",
+          "name": "table_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "No explicit figure fixture entities are present.",
+          "name": "figure_caption_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "No explicit equation fixture entities are present.",
+          "name": "equation_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "No explicit admonition fixture entities are present.",
+          "name": "admonition_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "No explicit cross_reference fixture entities are present.",
+          "name": "cross_reference_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Fixture chunking does not measure source table-cell visual accuracy.",
+          "name": "table_cell_accuracy",
+          "status": "not_measurable",
+          "threshold": null,
+          "unit": null,
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Fixture chunking does not measure source-page visual accuracy.",
+          "name": "source_page_visual_accuracy",
+          "status": "not_measurable",
+          "threshold": null,
+          "unit": null,
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Repeated fixture chunking produced identical chunk dictionaries.",
+          "name": "determinism",
+          "status": "pass",
+          "threshold": true,
+          "unit": null,
+          "value": true
+        }
+      ],
+      "ocr_accuracy_evaluated": false,
+      "outcome": "REVIEW",
+      "provenance_status_counts": {
+        "structured": 1
+      },
+      "proxy_notice": "Fixture metrics are quality proxies only; they do not prove source-page visual accuracy, OCR accuracy, semantic accuracy, or real aviation-document accuracy.",
+      "source_accuracy_evaluated": false,
+      "source_block_count": 4,
+      "special_content_summary": {
+        "admonition_source_block_count": 0,
+        "chunk_text_mentions_cross_reference_language": false,
+        "cross_reference_source_block_count": 0,
+        "equation_source_block_count": 0,
+        "figure_source_block_count": 0,
+        "source_page_visual_accuracy_evaluated": false,
+        "table_cell_accuracy_evaluated": false,
+        "table_source_block_count": 0
+      },
+      "visual_layout_accuracy_evaluated": false,
+      "warning_count": 1
+    },
+    {
+      "chunk_count": 1,
+      "chunk_size_summary": {
+        "max_chars": 473,
+        "max_words": 85,
+        "mean_chars": 473,
+        "mean_words": 85,
+        "min_chars": 473,
+        "min_words": 85
+      },
+      "content_type_counts": {
+        "equation": 1,
+        "figure_caption": 1,
+        "paragraph": 10,
+        "section_heading": 1,
+        "table": 1
+      },
+      "coverage_summary": {
+        "coverage_ratio": 1.0,
+        "covered_source_block_count": 14,
+        "duplicate_source_block_ids": [],
+        "duplicate_source_block_reference_count": 0,
+        "invalid_source_block_ids": [],
+        "invalid_source_block_reference_count": 0,
+        "missing_source_block_count": 0,
+        "missing_source_block_ids": []
+      },
+      "determinism_checked": true,
+      "determinism_passed": true,
+      "document_id": "eq-adm-doc",
+      "error_count": 0,
+      "evaluation_scope": "fixture_chunk_quality_proxy",
+      "fixture_name": "equations_admonitions",
+      "issue_count": 1,
+      "issues": [
+        {
+          "chunk_id": null,
+          "code": "SOURCE_CHECKSUM_NOT_MEASURABLE",
+          "details": {},
+          "message": "Source checksum provenance is unavailable in this fixture.",
+          "metric_name": "chunk_provenance_completeness",
+          "severity": "warning",
+          "source_block_ids": []
+        }
+      ],
+      "manual_review_required": true,
+      "metric_count": 17,
+      "metrics": [
+        {
+          "details": {
+            "covered": 14,
+            "missing_source_block_ids": [],
+            "total": 14
+          },
+          "message": "All fixture source blocks are represented by chunk source_block_ids.",
+          "name": "source_block_coverage",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "invalid_source_block_ids": []
+          },
+          "message": "Chunk source_block_ids resolve against the fixture.",
+          "name": "source_block_reference_integrity",
+          "status": "pass",
+          "threshold": 0,
+          "unit": "count",
+          "value": 0
+        },
+        {
+          "details": {
+            "comparison_count": 13,
+            "inversion_count": 0
+          },
+          "message": "Chunk source block order follows fixture document order.",
+          "name": "reading_order_consistency",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "chunks_with_sections": 1,
+            "crossing_chunk_ids": []
+          },
+          "message": "Chunks remain within explicit fixture section boundaries.",
+          "name": "section_boundary_coherence",
+          "status": "pass",
+          "threshold": 0,
+          "unit": "chunks",
+          "value": 0
+        },
+        {
+          "details": {
+            "too_large_chunk_ids": [],
+            "too_small_chunk_ids": []
+          },
+          "message": "Chunk sizes are inside fixture thresholds.",
+          "name": "chunk_size",
+          "status": "pass",
+          "threshold": {
+            "max_chars": 1200,
+            "min_chars": 1
+          },
+          "unit": "chars",
+          "value": {
+            "max_chars": 473,
+            "max_words": 85,
+            "mean_chars": 473,
+            "mean_words": 85,
+            "min_chars": 473,
+            "min_words": 85
+          }
+        },
+        {
+          "details": {
+            "duplicate_text_count": 0
+          },
+          "message": "No duplicate normalized chunk text was found.",
+          "name": "duplicate_text_ratio",
+          "status": "pass",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": 0.0
+        },
+        {
+          "details": {
+            "duplicate_source_block_ids": []
+          },
+          "message": "No duplicate source block references were found.",
+          "name": "duplicate_source_reference_ratio",
+          "status": "pass",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": 0.0
+        },
+        {
+          "details": {
+            "comparison_count": 0,
+            "overlap_pair_count": 0
+          },
+          "message": "Overlap is not applicable with fewer than two comparable chunks.",
+          "name": "exact_text_overlap_ratio",
+          "status": "not_applicable",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {
+            "parser_identity_present": true,
+            "provenance_status_counts": {
+              "structured": 1
+            },
+            "source_checksum_present": false
+          },
+          "message": "Chunks include complete current-model fixture provenance.",
+          "name": "chunk_provenance_completeness",
+          "status": "review",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "covered_source_block_ids": [
+              "table-boundary"
+            ],
+            "missing_source_block_ids": [],
+            "text_missing_source_block_ids": []
+          },
+          "message": "Explicit fixture table evidence is preserved by chunk IDs and text.",
+          "name": "table_source_preservation",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "covered_source_block_ids": [
+              "figure-boundary"
+            ],
+            "missing_source_block_ids": [],
+            "text_missing_source_block_ids": []
+          },
+          "message": "Explicit fixture figure evidence is preserved by chunk IDs and text.",
+          "name": "figure_caption_source_preservation",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "covered_source_block_ids": [
+              "equation-heat",
+              "equation-pressure",
+              "formula-energy"
+            ],
+            "missing_source_block_ids": [],
+            "text_missing_source_block_ids": []
+          },
+          "message": "Explicit fixture equation evidence is preserved by chunk IDs and text.",
+          "name": "equation_source_preservation",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "covered_source_block_ids": [
+              "caution-body-1",
+              "caution-body-2",
+              "caution-label",
+              "note-body",
+              "note-label",
+              "warning-single"
+            ],
+            "missing_source_block_ids": [],
+            "text_missing_source_block_ids": []
+          },
+          "message": "Explicit fixture admonition evidence is preserved by chunk IDs and text.",
+          "name": "admonition_source_preservation",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {},
+          "message": "No explicit cross_reference fixture entities are present.",
+          "name": "cross_reference_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Fixture chunking does not measure source table-cell visual accuracy.",
+          "name": "table_cell_accuracy",
+          "status": "not_measurable",
+          "threshold": null,
+          "unit": null,
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Fixture chunking does not measure source-page visual accuracy.",
+          "name": "source_page_visual_accuracy",
+          "status": "not_measurable",
+          "threshold": null,
+          "unit": null,
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Repeated fixture chunking produced identical chunk dictionaries.",
+          "name": "determinism",
+          "status": "pass",
+          "threshold": true,
+          "unit": null,
+          "value": true
+        }
+      ],
+      "ocr_accuracy_evaluated": false,
+      "outcome": "REVIEW",
+      "provenance_status_counts": {
+        "structured": 1
+      },
+      "proxy_notice": "Fixture metrics are quality proxies only; they do not prove source-page visual accuracy, OCR accuracy, semantic accuracy, or real aviation-document accuracy.",
+      "source_accuracy_evaluated": false,
+      "source_block_count": 14,
+      "special_content_summary": {
+        "admonition_source_block_count": 6,
+        "chunk_text_mentions_cross_reference_language": true,
+        "cross_reference_source_block_count": 0,
+        "equation_source_block_count": 3,
+        "figure_source_block_count": 1,
+        "source_page_visual_accuracy_evaluated": false,
+        "table_cell_accuracy_evaluated": false,
+        "table_source_block_count": 1
+      },
+      "visual_layout_accuracy_evaluated": false,
+      "warning_count": 1
+    },
+    {
+      "chunk_count": 2,
+      "chunk_size_summary": {
+        "max_chars": 233,
+        "max_words": 36,
+        "mean_chars": 208.5,
+        "mean_words": 32.5,
+        "min_chars": 184,
+        "min_words": 29
+      },
+      "content_type_counts": {
+        "equation": 1,
+        "figure_caption": 1,
+        "paragraph": 6,
+        "section_heading": 2,
+        "table": 1
+      },
+      "coverage_summary": {
+        "coverage_ratio": 1.0,
+        "covered_source_block_count": 11,
+        "duplicate_source_block_ids": [],
+        "duplicate_source_block_reference_count": 0,
+        "invalid_source_block_ids": [],
+        "invalid_source_block_reference_count": 0,
+        "missing_source_block_count": 0,
+        "missing_source_block_ids": []
+      },
+      "determinism_checked": true,
+      "determinism_passed": true,
+      "document_id": "ref-doc",
+      "error_count": 0,
+      "evaluation_scope": "fixture_chunk_quality_proxy",
+      "fixture_name": "references_confidence",
+      "issue_count": 1,
+      "issues": [
+        {
+          "chunk_id": null,
+          "code": "SOURCE_CHECKSUM_NOT_MEASURABLE",
+          "details": {},
+          "message": "Source checksum provenance is unavailable in this fixture.",
+          "metric_name": "chunk_provenance_completeness",
+          "severity": "warning",
+          "source_block_ids": []
+        }
+      ],
+      "manual_review_required": true,
+      "metric_count": 17,
+      "metrics": [
+        {
+          "details": {
+            "covered": 11,
+            "missing_source_block_ids": [],
+            "total": 11
+          },
+          "message": "All fixture source blocks are represented by chunk source_block_ids.",
+          "name": "source_block_coverage",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "invalid_source_block_ids": []
+          },
+          "message": "Chunk source_block_ids resolve against the fixture.",
+          "name": "source_block_reference_integrity",
+          "status": "pass",
+          "threshold": 0,
+          "unit": "count",
+          "value": 0
+        },
+        {
+          "details": {
+            "comparison_count": 10,
+            "inversion_count": 0
+          },
+          "message": "Chunk source block order follows fixture document order.",
+          "name": "reading_order_consistency",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "chunks_with_sections": 2,
+            "crossing_chunk_ids": []
+          },
+          "message": "Chunks remain within explicit fixture section boundaries.",
+          "name": "section_boundary_coherence",
+          "status": "pass",
+          "threshold": 0,
+          "unit": "chunks",
+          "value": 0
+        },
+        {
+          "details": {
+            "too_large_chunk_ids": [],
+            "too_small_chunk_ids": []
+          },
+          "message": "Chunk sizes are inside fixture thresholds.",
+          "name": "chunk_size",
+          "status": "pass",
+          "threshold": {
+            "max_chars": 1200,
+            "min_chars": 1
+          },
+          "unit": "chars",
+          "value": {
+            "max_chars": 233,
+            "max_words": 36,
+            "mean_chars": 208.5,
+            "mean_words": 32.5,
+            "min_chars": 184,
+            "min_words": 29
+          }
+        },
+        {
+          "details": {
+            "duplicate_text_count": 0
+          },
+          "message": "No duplicate normalized chunk text was found.",
+          "name": "duplicate_text_ratio",
+          "status": "pass",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": 0.0
+        },
+        {
+          "details": {
+            "duplicate_source_block_ids": []
+          },
+          "message": "No duplicate source block references were found.",
+          "name": "duplicate_source_reference_ratio",
+          "status": "pass",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": 0.0
+        },
+        {
+          "details": {
+            "comparison_count": 1,
+            "overlap_pair_count": 0
+          },
+          "message": "No exact normalized line overlap was found.",
+          "name": "exact_text_overlap_ratio",
+          "status": "pass",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": 0.0
+        },
+        {
+          "details": {
+            "parser_identity_present": true,
+            "provenance_status_counts": {
+              "structured": 2
+            },
+            "source_checksum_present": false
+          },
+          "message": "Chunks include complete current-model fixture provenance.",
+          "name": "chunk_provenance_completeness",
+          "status": "review",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "covered_source_block_ids": [
+              "table-2"
+            ],
+            "missing_source_block_ids": [],
+            "text_missing_source_block_ids": []
+          },
+          "message": "Explicit fixture table evidence is preserved by chunk IDs and text.",
+          "name": "table_source_preservation",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "covered_source_block_ids": [
+              "figure-caption-3"
+            ],
+            "missing_source_block_ids": [],
+            "text_missing_source_block_ids": []
+          },
+          "message": "Explicit fixture figure evidence is preserved by chunk IDs and text.",
+          "name": "figure_caption_source_preservation",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "covered_source_block_ids": [
+              "equation-4"
+            ],
+            "missing_source_block_ids": [],
+            "text_missing_source_block_ids": []
+          },
+          "message": "Explicit fixture equation evidence is preserved by chunk IDs and text.",
+          "name": "equation_source_preservation",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "covered_source_block_ids": [
+              "warning-1"
+            ],
+            "missing_source_block_ids": [],
+            "text_missing_source_block_ids": []
+          },
+          "message": "Explicit fixture admonition evidence is preserved by chunk IDs and text.",
+          "name": "admonition_source_preservation",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "covered_source_block_ids": [
+              "ref-equation",
+              "ref-external",
+              "ref-section-figure",
+              "ref-table",
+              "ref-unresolved"
+            ],
+            "missing_source_block_ids": [],
+            "text_missing_source_block_ids": []
+          },
+          "message": "Explicit fixture cross_reference evidence is preserved by chunk IDs and text.",
+          "name": "cross_reference_source_preservation",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {},
+          "message": "Fixture chunking does not measure source table-cell visual accuracy.",
+          "name": "table_cell_accuracy",
+          "status": "not_measurable",
+          "threshold": null,
+          "unit": null,
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Fixture chunking does not measure source-page visual accuracy.",
+          "name": "source_page_visual_accuracy",
+          "status": "not_measurable",
+          "threshold": null,
+          "unit": null,
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Repeated fixture chunking produced identical chunk dictionaries.",
+          "name": "determinism",
+          "status": "pass",
+          "threshold": true,
+          "unit": null,
+          "value": true
+        }
+      ],
+      "ocr_accuracy_evaluated": false,
+      "outcome": "REVIEW",
+      "provenance_status_counts": {
+        "structured": 2
+      },
+      "proxy_notice": "Fixture metrics are quality proxies only; they do not prove source-page visual accuracy, OCR accuracy, semantic accuracy, or real aviation-document accuracy.",
+      "source_accuracy_evaluated": false,
+      "source_block_count": 11,
+      "special_content_summary": {
+        "admonition_source_block_count": 1,
+        "chunk_text_mentions_cross_reference_language": true,
+        "cross_reference_source_block_count": 5,
+        "equation_source_block_count": 1,
+        "figure_source_block_count": 1,
+        "source_page_visual_accuracy_evaluated": false,
+        "table_cell_accuracy_evaluated": false,
+        "table_source_block_count": 1
+      },
+      "visual_layout_accuracy_evaluated": false,
+      "warning_count": 1
+    },
+    {
+      "chunk_count": 1,
+      "chunk_size_summary": {
+        "max_chars": 173,
+        "max_words": 20,
+        "mean_chars": 173,
+        "mean_words": 20,
+        "min_chars": 173,
+        "min_words": 20
+      },
+      "content_type_counts": {
+        "paragraph": 3,
+        "section_heading": 1,
+        "unknown": 1
+      },
+      "coverage_summary": {
+        "coverage_ratio": 1.0,
+        "covered_source_block_count": 4,
+        "duplicate_source_block_ids": [],
+        "duplicate_source_block_reference_count": 0,
+        "invalid_source_block_ids": [],
+        "invalid_source_block_reference_count": 0,
+        "missing_source_block_count": 0,
+        "missing_source_block_ids": []
+      },
+      "determinism_checked": true,
+      "determinism_passed": true,
+      "document_id": "explicit-doc-id",
+      "error_count": 0,
+      "evaluation_scope": "fixture_chunk_quality_proxy",
+      "fixture_name": "section_hierarchy",
+      "issue_count": 1,
+      "issues": [
+        {
+          "chunk_id": null,
+          "code": "SOURCE_CHECKSUM_NOT_MEASURABLE",
+          "details": {},
+          "message": "Source checksum provenance is unavailable in this fixture.",
+          "metric_name": "chunk_provenance_completeness",
+          "severity": "warning",
+          "source_block_ids": []
+        }
+      ],
+      "manual_review_required": true,
+      "metric_count": 17,
+      "metrics": [
+        {
+          "details": {
+            "covered": 4,
+            "missing_source_block_ids": [],
+            "total": 4
+          },
+          "message": "All fixture source blocks are represented by chunk source_block_ids.",
+          "name": "source_block_coverage",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "invalid_source_block_ids": []
+          },
+          "message": "Chunk source_block_ids resolve against the fixture.",
+          "name": "source_block_reference_integrity",
+          "status": "pass",
+          "threshold": 0,
+          "unit": "count",
+          "value": 0
+        },
+        {
+          "details": {
+            "comparison_count": 3,
+            "inversion_count": 0
+          },
+          "message": "Chunk source block order follows fixture document order.",
+          "name": "reading_order_consistency",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "chunks_with_sections": 1,
+            "crossing_chunk_ids": []
+          },
+          "message": "Chunks remain within explicit fixture section boundaries.",
+          "name": "section_boundary_coherence",
+          "status": "pass",
+          "threshold": 0,
+          "unit": "chunks",
+          "value": 0
+        },
+        {
+          "details": {
+            "too_large_chunk_ids": [],
+            "too_small_chunk_ids": []
+          },
+          "message": "Chunk sizes are inside fixture thresholds.",
+          "name": "chunk_size",
+          "status": "pass",
+          "threshold": {
+            "max_chars": 1200,
+            "min_chars": 1
+          },
+          "unit": "chars",
+          "value": {
+            "max_chars": 173,
+            "max_words": 20,
+            "mean_chars": 173,
+            "mean_words": 20,
+            "min_chars": 173,
+            "min_words": 20
+          }
+        },
+        {
+          "details": {
+            "duplicate_text_count": 0
+          },
+          "message": "No duplicate normalized chunk text was found.",
+          "name": "duplicate_text_ratio",
+          "status": "pass",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": 0.0
+        },
+        {
+          "details": {
+            "duplicate_source_block_ids": []
+          },
+          "message": "No duplicate source block references were found.",
+          "name": "duplicate_source_reference_ratio",
+          "status": "pass",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": 0.0
+        },
+        {
+          "details": {
+            "comparison_count": 0,
+            "overlap_pair_count": 0
+          },
+          "message": "Overlap is not applicable with fewer than two comparable chunks.",
+          "name": "exact_text_overlap_ratio",
+          "status": "not_applicable",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {
+            "parser_identity_present": true,
+            "provenance_status_counts": {
+              "structured": 1
+            },
+            "source_checksum_present": false
+          },
+          "message": "Chunks include complete current-model fixture provenance.",
+          "name": "chunk_provenance_completeness",
+          "status": "review",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {},
+          "message": "No explicit table fixture entities are present.",
+          "name": "table_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "No explicit figure fixture entities are present.",
+          "name": "figure_caption_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "No explicit equation fixture entities are present.",
+          "name": "equation_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "No explicit admonition fixture entities are present.",
+          "name": "admonition_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "No explicit cross_reference fixture entities are present.",
+          "name": "cross_reference_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Fixture chunking does not measure source table-cell visual accuracy.",
+          "name": "table_cell_accuracy",
+          "status": "not_measurable",
+          "threshold": null,
+          "unit": null,
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Fixture chunking does not measure source-page visual accuracy.",
+          "name": "source_page_visual_accuracy",
+          "status": "not_measurable",
+          "threshold": null,
+          "unit": null,
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Repeated fixture chunking produced identical chunk dictionaries.",
+          "name": "determinism",
+          "status": "pass",
+          "threshold": true,
+          "unit": null,
+          "value": true
+        }
+      ],
+      "ocr_accuracy_evaluated": false,
+      "outcome": "REVIEW",
+      "provenance_status_counts": {
+        "structured": 1
+      },
+      "proxy_notice": "Fixture metrics are quality proxies only; they do not prove source-page visual accuracy, OCR accuracy, semantic accuracy, or real aviation-document accuracy.",
+      "source_accuracy_evaluated": false,
+      "source_block_count": 4,
+      "special_content_summary": {
+        "admonition_source_block_count": 0,
+        "chunk_text_mentions_cross_reference_language": false,
+        "cross_reference_source_block_count": 0,
+        "equation_source_block_count": 0,
+        "figure_source_block_count": 0,
+        "source_page_visual_accuracy_evaluated": false,
+        "table_cell_accuracy_evaluated": false,
+        "table_source_block_count": 0
+      },
+      "visual_layout_accuracy_evaluated": false,
+      "warning_count": 1
+    },
+    {
+      "chunk_count": 1,
+      "chunk_size_summary": {
+        "max_chars": 269,
+        "max_words": 39,
+        "mean_chars": 269,
+        "mean_words": 39,
+        "min_chars": 269,
+        "min_words": 39
+      },
+      "content_type_counts": {
+        "figure_caption": 2,
+        "section_heading": 1,
+        "table": 2
+      },
+      "coverage_summary": {
+        "coverage_ratio": 1.0,
+        "covered_source_block_count": 5,
+        "duplicate_source_block_ids": [],
+        "duplicate_source_block_reference_count": 0,
+        "invalid_source_block_ids": [],
+        "invalid_source_block_reference_count": 0,
+        "missing_source_block_count": 0,
+        "missing_source_block_ids": []
+      },
+      "determinism_checked": true,
+      "determinism_passed": true,
+      "document_id": "entity-doc",
+      "error_count": 0,
+      "evaluation_scope": "fixture_chunk_quality_proxy",
+      "fixture_name": "tables_figures",
+      "issue_count": 1,
+      "issues": [
+        {
+          "chunk_id": null,
+          "code": "SOURCE_CHECKSUM_NOT_MEASURABLE",
+          "details": {},
+          "message": "Source checksum provenance is unavailable in this fixture.",
+          "metric_name": "chunk_provenance_completeness",
+          "severity": "warning",
+          "source_block_ids": []
+        }
+      ],
+      "manual_review_required": true,
+      "metric_count": 17,
+      "metrics": [
+        {
+          "details": {
+            "covered": 5,
+            "missing_source_block_ids": [],
+            "total": 5
+          },
+          "message": "All fixture source blocks are represented by chunk source_block_ids.",
+          "name": "source_block_coverage",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "invalid_source_block_ids": []
+          },
+          "message": "Chunk source_block_ids resolve against the fixture.",
+          "name": "source_block_reference_integrity",
+          "status": "pass",
+          "threshold": 0,
+          "unit": "count",
+          "value": 0
+        },
+        {
+          "details": {
+            "comparison_count": 4,
+            "inversion_count": 0
+          },
+          "message": "Chunk source block order follows fixture document order.",
+          "name": "reading_order_consistency",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "chunks_with_sections": 1,
+            "crossing_chunk_ids": []
+          },
+          "message": "Chunks remain within explicit fixture section boundaries.",
+          "name": "section_boundary_coherence",
+          "status": "pass",
+          "threshold": 0,
+          "unit": "chunks",
+          "value": 0
+        },
+        {
+          "details": {
+            "too_large_chunk_ids": [],
+            "too_small_chunk_ids": []
+          },
+          "message": "Chunk sizes are inside fixture thresholds.",
+          "name": "chunk_size",
+          "status": "pass",
+          "threshold": {
+            "max_chars": 1200,
+            "min_chars": 1
+          },
+          "unit": "chars",
+          "value": {
+            "max_chars": 269,
+            "max_words": 39,
+            "mean_chars": 269,
+            "mean_words": 39,
+            "min_chars": 269,
+            "min_words": 39
+          }
+        },
+        {
+          "details": {
+            "duplicate_text_count": 0
+          },
+          "message": "No duplicate normalized chunk text was found.",
+          "name": "duplicate_text_ratio",
+          "status": "pass",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": 0.0
+        },
+        {
+          "details": {
+            "duplicate_source_block_ids": []
+          },
+          "message": "No duplicate source block references were found.",
+          "name": "duplicate_source_reference_ratio",
+          "status": "pass",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": 0.0
+        },
+        {
+          "details": {
+            "comparison_count": 0,
+            "overlap_pair_count": 0
+          },
+          "message": "Overlap is not applicable with fewer than two comparable chunks.",
+          "name": "exact_text_overlap_ratio",
+          "status": "not_applicable",
+          "threshold": 0.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {
+            "parser_identity_present": true,
+            "provenance_status_counts": {
+              "structured": 1
+            },
+            "source_checksum_present": false
+          },
+          "message": "Chunks include complete current-model fixture provenance.",
+          "name": "chunk_provenance_completeness",
+          "status": "review",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "covered_source_block_ids": [
+              "table-candidate-1",
+              "table-region-1"
+            ],
+            "missing_source_block_ids": [],
+            "text_missing_source_block_ids": []
+          },
+          "message": "Explicit fixture table evidence is preserved by chunk IDs and text.",
+          "name": "table_source_preservation",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {
+            "covered_source_block_ids": [
+              "figure-caption-1",
+              "figure-caption-2"
+            ],
+            "missing_source_block_ids": [],
+            "text_missing_source_block_ids": []
+          },
+          "message": "Explicit fixture figure evidence is preserved by chunk IDs and text.",
+          "name": "figure_caption_source_preservation",
+          "status": "pass",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": 1.0
+        },
+        {
+          "details": {},
+          "message": "No explicit equation fixture entities are present.",
+          "name": "equation_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "No explicit admonition fixture entities are present.",
+          "name": "admonition_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "No explicit cross_reference fixture entities are present.",
+          "name": "cross_reference_source_preservation",
+          "status": "not_applicable",
+          "threshold": 1.0,
+          "unit": "ratio",
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Fixture chunking does not measure source table-cell visual accuracy.",
+          "name": "table_cell_accuracy",
+          "status": "not_measurable",
+          "threshold": null,
+          "unit": null,
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Fixture chunking does not measure source-page visual accuracy.",
+          "name": "source_page_visual_accuracy",
+          "status": "not_measurable",
+          "threshold": null,
+          "unit": null,
+          "value": null
+        },
+        {
+          "details": {},
+          "message": "Repeated fixture chunking produced identical chunk dictionaries.",
+          "name": "determinism",
+          "status": "pass",
+          "threshold": true,
+          "unit": null,
+          "value": true
+        }
+      ],
+      "ocr_accuracy_evaluated": false,
+      "outcome": "REVIEW",
+      "provenance_status_counts": {
+        "structured": 1
+      },
+      "proxy_notice": "Fixture metrics are quality proxies only; they do not prove source-page visual accuracy, OCR accuracy, semantic accuracy, or real aviation-document accuracy.",
+      "source_accuracy_evaluated": false,
+      "source_block_count": 5,
+      "special_content_summary": {
+        "admonition_source_block_count": 0,
+        "chunk_text_mentions_cross_reference_language": true,
+        "cross_reference_source_block_count": 0,
+        "equation_source_block_count": 0,
+        "figure_source_block_count": 2,
+        "source_page_visual_accuracy_evaluated": false,
+        "table_cell_accuracy_evaluated": false,
+        "table_source_block_count": 2
+      },
+      "visual_layout_accuracy_evaluated": false,
+      "warning_count": 1
+    }
+  ],
+  "evaluation_scope": "fixture_chunk_quality_proxy",
+  "fail_count": 0,
+  "ocr_accuracy_evaluated": false,
+  "outcome": "REVIEW",
+  "pass_count": 0,
+  "proxy_notice": "Fixture metrics are quality proxies only; they do not prove source-page visual accuracy, OCR accuracy, semantic accuracy, or real aviation-document accuracy.",
+  "review_count": 5,
+  "source_accuracy_evaluated": false,
+  "visual_layout_accuracy_evaluated": false
+}

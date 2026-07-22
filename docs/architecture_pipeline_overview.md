@@ -65,6 +65,18 @@ AviationRAG validator subprocess
 PASS / REVIEW / FAIL compatibility report
 ```
 
+Optional fixture chunk-quality evaluation follows existing committed fixtures:
+
+```text
+Committed structured-document fixtures
+        ↓
+fixture-only evaluator
+        ↓
+current semantic chunker
+        ↓
+proxy metrics and optional reports
+```
+
 ## 3. Main Packages and Responsibilities
 
 | Package / Module | Responsibility |
@@ -79,6 +91,7 @@ PASS / REVIEW / FAIL compatibility report
 | `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, semantic Markdown, and optional structured-document export helpers. |
 | `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, equation/admonition entity mapper, cross-reference mapper, confidence policy helpers, and deterministic serializers for future external structured-document artifacts. |
 | `techdoc_parser.compatibility` | Offline compatibility gates for downstream consumers; currently runs the AviationRAG structured-document validator by subprocess without importing AviationRAG. |
+| `techdoc_parser.evaluation` | Offline deterministic fixture-only chunk-quality proxy evaluation, JSON/Markdown report serialization, and explicit report-write gating. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
 
@@ -99,6 +112,7 @@ PASS / REVIEW / FAIL compatibility report
 13. Validation report: document and chunk quality findings are reported with info, warning, and error severity.
 14. Ingestion gate decision: validation findings are mapped to `pass`, `review`, or `fail`.
 15. Output package generation: document, chunk, validation, gate, Markdown summary, semantic Markdown, optional structured-document, and manifest artifacts can be exported.
+16. Fixture chunk-quality evaluation: existing committed structured-document fixtures can be converted into in-memory parser objects and evaluated against current semantic chunk output as deterministic quality proxies.
 
 ## 5. Data Flow and Preservation Principle
 
@@ -126,6 +140,7 @@ reports findings and gate decisions but does not modify parser output.
 | Semantic Markdown output | Human-readable semantic view that omits raw text-block duplicates where possible. |
 | StructuredDocument output | Optional `techdoc-structured-document / 0.1.0` JSON artifact with exact source-byte SHA-256 and deterministic bytes. |
 | AviationRAG compatibility report | Optional report-only Phase 13H gate result for a structured-document artifact, manifest, source bytes, warning policy, determinism, and external validator report. |
+| Chunk quality evaluation report | Optional Phase 13I fixture-only proxy report for semantic chunk coverage, ordering, section coherence, provenance, size, duplication/overlap, and explicit special-content source evidence. |
 
 Machine-readable JSON outputs include `schema_version` and parser metadata with
 parser name and parser version.
@@ -147,6 +162,12 @@ The ingestion gate maps reports to:
 
 The CLI does not currently change its process exit code based on validation
 results. Validation status is emitted in the validation and gate artifacts.
+
+Fixture chunk-quality evaluation is a separate report-only tool. It uses
+`PASS`, `REVIEW`, and `FAIL` outcomes with CLI exit codes `0`, `2`, and `1`.
+It is deterministic and non-mutating, but it is intentionally proxy-only:
+source-page visual accuracy, OCR accuracy, semantic accuracy, and real
+aviation-document accuracy are not evaluated.
 
 ## 8. Current MVP Scope
 
@@ -219,6 +240,11 @@ Phase 13H adds formal cross-project compatibility validation as a separate
 offline gate that calls the AviationRAG validator through subprocess only.
 AviationRAG is one intended consumer, but the parser remains independent and
 has no direct runtime dependency on AviationRAG.
+
+Phase 13I adds fixture-only chunk-quality proxy evaluation inside
+`techdoc-parser`; it does not call AviationRAG, generate embeddings, use Astra,
+use FAISS, or authorize ingestion. The recommended follow-up is Phase 13I-b -
+Controlled approved-document source-accuracy pilot.
 
 ## 10. Recommended Near-Term Next Steps
 
