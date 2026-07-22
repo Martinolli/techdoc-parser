@@ -30,11 +30,18 @@ from techdoc_parser.exporters.markdown_exporter import (
     validation_gate_to_markdown,
     validation_report_to_markdown,
 )
+from techdoc_parser.exporters.structured_document import (
+    StructuredDocumentArtifact,
+    compute_source_sha256,
+    export_structured_document,
+    write_structured_document,
+)
 
 __all__ = [
     "chunks_to_json",
     "chunks_to_json_dict",
     "create_output_manifest",
+    "compute_source_sha256",
     "document_to_json",
     "document_to_json_dict",
     "document_to_markdown",
@@ -45,6 +52,7 @@ __all__ = [
     "export_document_markdown",
     "export_document_semantic_markdown",
     "export_output_manifest_json",
+    "export_structured_document",
     "export_validation_gate_markdown",
     "export_validation_decision_json",
     "export_validation_gate_json",
@@ -54,6 +62,8 @@ __all__ = [
     "validation_gate_to_json",
     "validation_gate_to_markdown",
     "output_manifest_to_json",
+    "StructuredDocumentArtifact",
     "validation_report_to_markdown",
     "validation_report_to_json",
+    "write_structured_document",
 ]

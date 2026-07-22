@@ -1,7 +1,7 @@
 # StructuredDocument Parser Model Mapping
 
-Date: 2026-07-21
-Status: Phase 13C through Phase 13F implemented as a Python contract API
+Date: 2026-07-22
+Status: Phase 13C through Phase 13G implemented
 
 ## 1. Purpose
 
@@ -19,6 +19,9 @@ or CLI behavior.
 Phase 13F adds root cross-reference mapping from explicit textual evidence and
 a confidence policy that omits current placeholder confidence values.
 
+Phase 13G exposes the mapper as a pure public construction API and optional
+file-oriented API/CLI artifact without changing current default outputs.
+
 The implementation lives in:
 
 ```text
@@ -35,6 +38,7 @@ map_document_to_structured_document()
 map_document_with_options()
 StructuredDocumentMappingOptions
 map_block_type_to_content_type()
+build_structured_document_artifact()
 ```
 
 ## 2. Source Parser Models
@@ -93,9 +97,10 @@ real documents, generate embeddings, use Astra DB, or use FAISS.
 | `document_id` | caller option | Required explicit caller value. `Document.id` is not used because it is derived from the source path stem. |
 | `source_filename` | `Document.source_path` | Basename only. Absolute machine-specific paths are not serialized. |
 | `document_title` | caller option | Preserved only when explicitly supplied. The filename is not used as a title. |
+| `document_number` | caller option | Preserved only when explicitly supplied. |
 | `canonical_title` | `Document.metadata.title` | Mapped when the parser extracted a PDF metadata title. |
 | `page_count` | mapped page records | `len(mapped_pages)`. |
-| `source_hash` | caller option `source_checksum` | Preserved only when supplied; no checksum is generated. |
+| `source_hash` | caller option or file API source bytes | Pure mapping preserves caller input; file export computes SHA-256 from exact source bytes. |
 | `revision`, `issue`, `effective_date` | caller options | Preserved only when supplied; file names and timestamps are not used. |
 
 ## 6. Page Mapping
@@ -292,20 +297,35 @@ helpers reject booleans, non-numeric values, and out-of-range numbers.
 Formula discovery from PDF layout and broad admonition classification remain
 future parser work.
 
-## 19. Guarantees
+## 19. File Export, Checksums, And Manifest
 
-The mapper is deterministic, import-safe, filesystem-independent, and
-non-mutating. Repeated mapping of the same parser object with the same options
-produces identical contract JSON. The mapper does not invoke current exporters
-or depend on CLI orchestration.
+`export_structured_document()` computes lowercase SHA-256 from the exact input
+file bytes, injects it as `document.source_hash`, writes deterministic JSON
+bytes, and returns source and artifact checksums. The writer uses UTF-8,
+`ensure_ascii=False`, two-space indentation by default, a final newline,
+explicit overwrite, and fail-safe sibling temporary file replacement.
 
-## 20. Backward Compatibility
+When manifest output is also requested, the manifest records
+`outputs.structured_document` and an additive `artifacts[]` entry with artifact
+type, schema identity, media type, source checksum, artifact checksum, and
+document ID. No entry is emitted when structured-document output is absent or
+when artifact writing fails.
+
+## 20. Guarantees
+
+The mapper is deterministic, import-safe, and non-mutating. Repeated mapping of
+the same parser object with the same options produces identical contract JSON.
+The pure mapper does not invoke current exporters or depend on CLI orchestration.
+The file exporter does not include absolute output paths, timestamps, temporary
+filenames, hostnames, usernames, or environment values in artifact content.
+
+## 21. Backward Compatibility
 
 Existing parser public models, constructors, JSON exporters, Markdown exporters,
 validation report exports, gate exports, output manifests, and CLI arguments
-remain unchanged. The structured-document mapper is a Python API only.
+remain unchanged unless the new structured-document output option is supplied.
 
-## 21. Known Gaps
+## 22. Known Gaps
 
 - No true table row, column, cell, merged-cell, or continuation mapping.
 - No figure asset extraction, figure number extraction, or figure-region
@@ -316,20 +336,16 @@ remain unchanged. The structured-document mapper is a Python API only.
   detection.
 - Cross-reference detection is explicit-text only; no PDF links, bookmarks,
   fuzzy matching, external lookup, or fabricated target IDs.
-- No source checksum ownership beyond explicit caller-supplied values.
 - No printed page-label extraction.
 - No character offsets.
 - No confidence semantics beyond omission of placeholder values and validation
   of future real numeric confidence values.
-- No CLI structured-document output.
-- No manifest integration for structured-document artifacts.
 - Heading hierarchy accuracy remains bounded by the current `HeadingBlock`
   evidence.
 
-## 22. Next Phase
+## 23. Next Phase
 
-Phase 13F is implemented as contract-local cross-reference mapping and
-confidence policy. Next work should keep CLI/manifest integration separate from
-entity mapping and should not add true table structure, figure assets, broad
-formula discovery, or confidence fields until the parser has truthful evidence
-for them.
+Phase 13G is implemented as optional file/API/CLI/manifest output. Next work
+should formalize AviationRAG compatibility validation in Phase 13H without
+adding true table structure, figure assets, broad formula discovery, or
+confidence fields until the parser has truthful evidence for them.

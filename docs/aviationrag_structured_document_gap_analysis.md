@@ -1,7 +1,7 @@
 # AviationRAG StructuredDocument Contract Gap Analysis
 
-Repository state reflected: Phase 13F working tree after
-`e9dc24f` (`feat(contract): add equation and admonition evidence`) on `main`,
+Repository state reflected: Phase 13G working tree after
+`e3e280f` (`feat(contract): add references and confidence policy`) on `main`,
 aligned with `origin/main` after `git fetch origin --prune`.
 
 This document was created for Phase 13A analysis and documentation only. Phase
@@ -9,10 +9,11 @@ This document was created for Phase 13A analysis and documentation only. Phase
 `techdoc-structured-document / 0.1.0`. Phase 13C adds a pure parser-model mapper
 for existing document, page, block, source-location, and bounding-box evidence.
 Phases 13D through 13F add section hierarchy, candidate entities, explicit
-textual cross-references, and confidence omission policy. They still do not
-change parser behavior, change extraction or chunking behavior, add CLI
-arguments, modify current output formats, process real documents, or modify
-AviationRAG.
+textual cross-references, and confidence omission policy. Phase 13G adds
+optional API, CLI, deterministic file output, checksum ownership, and manifest
+registration. These phases still do not change parser behavior, change
+extraction or chunking behavior, replace current output formats, process real
+documents, or modify AviationRAG.
 
 ## 8.1 Executive Summary
 
@@ -57,10 +58,10 @@ required for high-fidelity section accuracy, table reconstruction, figure
 regions, page labels, source hashes, PDF link/bookmark capture, and real
 confidence scoring.
 
-Recommended sequence after Phase 13F: add optional CLI/API structured-document
-output, then formalize synthetic compatibility validation against the
-AviationRAG validator, then decide whether parser-core enhancements are needed
-for table structure, source checksums, PDF references, or confidence evidence.
+Recommended sequence after Phase 13G: formalize synthetic compatibility
+validation against the AviationRAG validator, then decide whether parser-core
+enhancements are needed for table structure, PDF references, page labels, or
+confidence evidence.
 
 ## 8.2 Current Parser Pipeline
 
@@ -138,7 +139,7 @@ Mapping statuses used: `direct`, `rename`, `derive_safely`,
 | document | document_id | core.Document | `id` | rename | Map to `document.document_id`. | Medium if ID policy changes from path stem. | techdoc-parser exporter |
 | document | filename | core.Document | `source_path` | derive_safely | Use basename only. | Low. | techdoc-parser exporter |
 | document | canonical_title | core.DocumentMetadata | `title` | rename | Emit title if present, else null only if allowed by policy. | Medium if PDF metadata is poor. | techdoc-parser exporter |
-| document | source_hash/source_checksum | none | none | missing | Add file checksum in a future controlled phase. | High if omitted before strict governance. | techdoc-parser parser/exporter |
+| document | source_hash/source_checksum | `compute_source_sha256()` | source file bytes | implemented-export | Phase 13G computes SHA-256 from exact source bytes in the file export API. | Medium if downstream hashes a different byte stream. | techdoc-parser exporter |
 | document | page_count | core.Document | `len(pages)` | derive_safely | Emit count. | Low. | techdoc-parser exporter |
 | document | revision/issue/effective_date | none | none | missing | Do not derive from filename or timestamp. | High if inferred. | caller or future parser metadata |
 | pages | page_id | core.Page | `page_number` | derive_safely | Deterministic `page-{page_number}` or zero-padded ID. | Low. | techdoc-parser exporter |
@@ -438,15 +439,17 @@ Passing it would not prove heading, table, page-label, or admonition accuracy.
 
 ## 8.18 Existing Output Compatibility
 
-The new structured-document output should be an additional optional output, not
-a replacement for current JSON, Markdown, chunk JSON, manifest, validation
-report, validation summary, gate decision, CLI behavior, or Python API.
+The structured-document output is now an additional optional output, not a
+replacement for current JSON, Markdown, chunk JSON, manifest, validation report,
+validation summary, gate decision, CLI behavior, or Python API.
 
-Recommended future integration:
+Implemented Phase 13G behavior:
 
-- Add exporter API first.
-- Add CLI flag later only after exporter tests and compatibility validation.
-- Add manifest entry only when the structured output is requested.
+- Public pure construction API.
+- Public file export API.
+- Source SHA-256 from exact input bytes.
+- Deterministic UTF-8 JSON bytes with final newline.
+- Add manifest entry only when the structured output is requested and succeeds.
 - Keep current `--output` document JSON shape unchanged.
 - Keep validation report and ingestion-gate behavior report-only.
 
@@ -472,7 +475,8 @@ Rationale:
   from silently inventing parser provenance.
 
 Storage cost is acceptable for JSON records compared with source PDFs and
-embeddings. Retention behavior should not be implemented in Phase 13A.
+embeddings. Phase 13G documents retention guidance but does not create archival
+services.
 
 ## 8.20 Ownership Boundaries
 
@@ -509,7 +513,7 @@ contract permits it.
 | Current document/page/block flattening | export-only | P0 | medium | low | 13C |
 | Source-span object mapping | export-only | P0 | medium | low | 13C |
 | Deterministic page/block indexes | export-only | P0 | medium | low | 13C |
-| Source checksum | model-extension | P0 | medium | low | 13B/13C policy |
+| Source checksum | export-only | P0 | medium | low | 13G completed |
 | Durable section tree | model-extension | P1 | high | medium | 13D |
 | Heading number/title parsing | parser-enhancement | P1 | medium | low | 13D |
 | Exact block membership in sections | model-extension | P1 | high | medium | 13D |
@@ -524,8 +528,9 @@ contract permits it.
 | Confidence omission/validation policy | contract mapper | P1 | medium | low | 13F completed |
 | Real confidence model | model-extension | P1 | medium | low | later |
 | Validator fixture alignment | fixture/test requirement | P0 | low | low | 13H |
-| CLI optional output flag | export-only | P1 | medium | medium | 13G |
-| Retention policy | policy decision | P1 | medium | low | 13G/13H |
+| CLI optional output flag | export-only | P1 | medium | medium | 13G completed |
+| Manifest structured-document registration | export-only | P1 | medium | low | 13G completed |
+| Retention policy | policy decision | P1 | medium | low | 13G completed |
 | Real-document accuracy pilot | fixture/test requirement | P2 | high | low | 13I |
 | Embeddings/Astra/FAISS | out of scope | P3 | high | high | AviationRAG later |
 
@@ -603,6 +608,13 @@ or runtime ingestion.
 Goal: expose the exporter as optional output. Likely files: CLI, exporters,
 README. Constraints: no replacement of current `--output`; manifest entry only
 when output exists. Acceptance: CLI regression proves existing flags unchanged.
+
+Phase 13G status: completed. The parser now exposes
+`build_structured_document_artifact()`, `compute_source_sha256()`,
+`write_structured_document()`, and `export_structured_document()`. The CLI
+supports `--structured-document-output` with required
+`--structured-document-id`, optional metadata flags, explicit overwrite, and
+additive manifest registration. Default output behavior remains unchanged.
 
 ### 13H - Synthetic Compatibility Validation Against AviationRAG
 
@@ -724,7 +736,9 @@ Phase 13F adds root `cross_references` from explicit textual reference phrases
 with exact local resolution only, and defines a confidence policy that omits
 current placeholder values without changing current output behavior.
 
-Recommended next phase: **Phase 13G - Optional CLI/API Structured-Document
-Output** or **Phase 13H - Synthetic Compatibility Validation Against
-AviationRAG**, depending on whether downstream consumers need files first or a
-formal cross-project validator gate first.
+Phase 13G adds optional deterministic structured-document output with source
+checksum ownership and manifest registration without changing current default
+output behavior.
+
+Recommended next phase: **Phase 13H - Synthetic Compatibility Validation
+Against AviationRAG**.

@@ -1,7 +1,7 @@
 # StructuredDocument Section Hierarchy
 
-Date: 2026-07-21
-Status: Phase 13D implemented as a Python contract API
+Date: 2026-07-22
+Status: Phase 13D implemented as a Python contract API; Phase 13G optional export implemented
 
 ## Purpose
 
@@ -12,7 +12,9 @@ returns new contract records.
 
 It does not change parser extraction, heading detection, OCR, reading-order
 detection, block creation, normalization, chunking, current JSON, Markdown,
-manifest, validation, gate, or CLI behavior.
+validation, gate, or default CLI behavior. Phase 13G can now serialize this
+hierarchy into an optional structured-document artifact when explicitly
+requested.
 
 ## Implemented Module
 
@@ -99,3 +101,7 @@ As of Phase 13F, root table, figure-caption, equation, admonition, and
 cross-reference entities reuse the same block-level `section_id` and section
 path assigned by this hierarchy builder when source evidence is assigned to a
 section.
+
+Phase 13G file export preserves these section records deterministically and can
+register the resulting artifact in the output manifest. Formal AviationRAG
+compatibility gating remains Phase 13H.

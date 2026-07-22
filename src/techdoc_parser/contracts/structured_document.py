@@ -150,6 +150,7 @@ class StructuredDocumentMetadata:
     document_id: str
     source_filename: str
     document_title: str | None = None
+    document_number: str | None = None
     canonical_title: str | None = None
     page_count: int | None = None
     source_hash: str | None = None
@@ -162,6 +163,7 @@ class StructuredDocumentMetadata:
         _validate_non_empty_string(self.document_id, "document_id")
         _validate_non_empty_string(self.source_filename, "source_filename")
         _validate_optional_non_empty_string(self.document_title, "document_title")
+        _validate_optional_non_empty_string(self.document_number, "document_number")
         _validate_optional_non_empty_string(self.canonical_title, "canonical_title")
         _validate_optional_non_negative_int(self.page_count, "page_count")
         _validate_optional_non_empty_string(self.source_hash, "source_hash")
@@ -176,6 +178,7 @@ class StructuredDocumentMetadata:
             "source_filename": self.source_filename,
         }
         _add_optional(data, "document_title", self.document_title)
+        _add_optional(data, "document_number", self.document_number)
         _add_optional(data, "canonical_title", self.canonical_title)
         _add_optional(data, "page_count", self.page_count)
         _add_optional(data, "source_hash", self.source_hash)

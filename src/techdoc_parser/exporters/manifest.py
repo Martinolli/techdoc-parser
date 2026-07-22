@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from pathlib import Path
 
 from techdoc_parser.core import Chunk, Document
@@ -21,6 +22,7 @@ def create_output_manifest(
     validation_json_path: str | Path | None = None,
     gate_json_path: str | Path | None = None,
     validation_summary_markdown_path: str | Path | None = None,
+    structured_document_artifact: Mapping[str, object] | None = None,
 ) -> dict[str, object]:
     """Create a JSON-serializable manifest for an exported output package."""
     manifest: dict[str, object] = {
@@ -38,9 +40,12 @@ def create_output_manifest(
         validation_json_path=validation_json_path,
         gate_json_path=gate_json_path,
         validation_summary_markdown_path=validation_summary_markdown_path,
+        structured_document_artifact=structured_document_artifact,
     )
     if outputs:
         manifest["outputs"] = outputs
+    if structured_document_artifact is not None:
+        manifest["artifacts"] = [dict(structured_document_artifact)]
 
     if validation_decision is not None:
         manifest["decision"] = {
@@ -75,6 +80,7 @@ def _outputs(
     validation_json_path: str | Path | None,
     gate_json_path: str | Path | None,
     validation_summary_markdown_path: str | Path | None,
+    structured_document_artifact: Mapping[str, object] | None,
 ) -> dict[str, str]:
     outputs: dict[str, str] = {}
     _add_output(outputs, "document_json", document_json_path)
@@ -86,6 +92,10 @@ def _outputs(
         "validation_summary_markdown",
         validation_summary_markdown_path,
     )
+    if structured_document_artifact is not None:
+        path = structured_document_artifact.get("path")
+        if path is not None:
+            outputs["structured_document"] = str(path)
     return outputs
 
 

@@ -57,6 +57,7 @@ class StructuredDocumentMappingOptions:
 
     document_id: str
     document_title: str | None = None
+    document_number: str | None = None
     revision: str | None = None
     issue: str | None = None
     effective_date: str | None = None
@@ -70,6 +71,7 @@ def map_document_to_structured_document(
     *,
     document_id: str,
     document_title: str | None = None,
+    document_number: str | None = None,
     revision: str | None = None,
     issue: str | None = None,
     effective_date: str | None = None,
@@ -87,6 +89,7 @@ def map_document_to_structured_document(
     options = StructuredDocumentMappingOptions(
         document_id=document_id,
         document_title=document_title,
+        document_number=document_number,
         revision=revision,
         issue=issue,
         effective_date=effective_date,
@@ -95,6 +98,36 @@ def map_document_to_structured_document(
         include_sections=include_sections,
     )
     return map_document_with_options(document, options)
+
+
+def build_structured_document_artifact(
+    document: Document,
+    *,
+    document_id: str,
+    document_title: str | None = None,
+    document_number: str | None = None,
+    revision: str | None = None,
+    issue: str | None = None,
+    effective_date: str | None = None,
+    source_checksum: str | None = None,
+) -> StructuredDocument:
+    """Build the public structured-document artifact from a parsed document.
+
+    This provisional API is a filesystem-independent wrapper around the
+    existing mapper. It requires caller-owned document-control metadata and
+    never infers titles, revisions, dates, or checksums from filenames or file
+    metadata.
+    """
+    return map_document_to_structured_document(
+        document,
+        document_id=document_id,
+        document_title=document_title,
+        document_number=document_number,
+        revision=revision,
+        issue=issue,
+        effective_date=effective_date,
+        source_checksum=source_checksum,
+    )
 
 
 def map_document_with_options(
@@ -187,6 +220,7 @@ def map_document_with_options(
         document_id=options.document_id,
         source_filename=_source_filename(document.source_path),
         document_title=options.document_title,
+        document_number=options.document_number,
         canonical_title=document.metadata.title,
         page_count=len(pages),
         source_hash=options.source_checksum,
@@ -344,6 +378,7 @@ def _is_page_metadata_block(block: TextBlock) -> bool:
 
 __all__ = [
     "StructuredDocumentMappingOptions",
+    "build_structured_document_artifact",
     "map_block_type_to_content_type",
     "map_document_to_structured_document",
     "map_document_with_options",

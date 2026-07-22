@@ -90,18 +90,32 @@ For the detailed output contract audit, see
 
 ## Structured-Document Contract API
 
-An isolated internal contract API for `techdoc-structured-document / 0.1.0` is
-available under `techdoc_parser.contracts`. It defines schema constants,
-contract dataclasses, deterministic JSON serialization helpers, and a pure
-parser-model mapper for document, page, block, source-location, bounding-box,
-heading-derived section hierarchy, and current table/figure-caption candidate
-evidence already present in the parser model. It also maps conservative
-equation evidence, explicit-label admonition evidence, and explicit textual
-cross-reference evidence into internal contract root entities. Current
-placeholder confidence values are intentionally omitted.
+An optional contract API for `techdoc-structured-document / 0.1.0` is available
+under `techdoc_parser.contracts` and `techdoc_parser.exporters`. It defines
+schema constants, contract dataclasses, deterministic JSON serialization
+helpers, a pure parser-model mapper, and a file exporter for explicit
+structured-document artifacts. The mapper covers document, page, block,
+source-location, bounding-box, heading-derived section hierarchy, current
+table/figure-caption candidate evidence, conservative equation evidence,
+explicit-label admonition evidence, and explicit textual cross-reference
+evidence. Current placeholder confidence values are intentionally omitted.
 
-This API is not wired into the CLI or current output package. Existing JSON,
-Markdown, validation, gate, and manifest outputs remain unchanged.
+CLI structured-document output is optional:
+
+```powershell
+techdoc-parse input/synthetic.pdf `
+  --output output/document.json `
+  --structured-document-output output/structured_document.json `
+  --structured-document-id SYNTHETIC-DOC-001
+```
+
+Optional metadata flags are `--document-title`, `--document-number`,
+`--document-revision`, `--document-issue`, and
+`--document-effective-date`. Source SHA-256 is computed automatically from the
+exact input file bytes and stored in the artifact. Existing JSON, Markdown,
+validation, gate, and manifest outputs remain unchanged unless the new option
+is explicitly supplied. No AviationRAG installation is required and direct
+AviationRAG ingestion is not implemented.
 
 ## Documentation
 
@@ -114,6 +128,7 @@ Markdown, validation, gate, and manifest outputs remain unchanged.
 - [Structured-document table and figure-caption mapping](docs/structured_document_tables_figures.md)
 - [Structured-document equation and admonition mapping](docs/structured_document_equations_admonitions.md)
 - [Structured-document cross-reference and confidence policy](docs/structured_document_references_confidence.md)
+- [Structured-document export](docs/structured_document_export.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -138,6 +153,6 @@ Markdown, validation, gate, and manifest outputs remain unchanged.
   not-attempted statuses
 - Confidence fields are omitted unless truthful numeric evidence exists; current
   placeholder `SourceLocation.confidence` values are not promoted
-- `techdoc-structured-document / 0.1.0` has an internal contract API and
-  parser-model mapper, but CLI export and manifest integration are not
-  implemented
+- `techdoc-structured-document / 0.1.0` has an optional API, CLI file export,
+  checksum-backed output, and manifest registration, but formal AviationRAG
+  compatibility gating remains future work

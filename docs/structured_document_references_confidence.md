@@ -1,7 +1,7 @@
 # Structured-Document Cross-Reference And Confidence Policy
 
-Date: 2026-07-21
-Status: Phase 13F implemented as a Python contract API
+Date: 2026-07-22
+Status: Phase 13F implemented as a Python contract API; Phase 13G optional export implemented
 
 ## Purpose
 
@@ -12,8 +12,9 @@ field policy used by structured-document mapping.
 
 The implementation is additive and contract-local. It does not alter PDF
 extraction, OCR, reading order, block creation, chunking, current JSON output,
-Markdown output, manifests, validation reports, validation gates, or CLI
-behavior.
+Markdown output, validation reports, validation gates, or default CLI behavior.
+Phase 13G can write reference records into an optional structured-document
+artifact and register that artifact in the manifest when requested.
 
 ## Source Evidence
 
@@ -106,8 +107,8 @@ tests/test_structured_document_references_confidence.py
 ```
 
 Existing parser output and manifest tests remain responsible for proving that
-current output packages do not gain structured-document root fields unless a
-future scoped phase adds explicit CLI/export integration.
+current output packages do not gain structured-document root fields unless
+explicit CLI/export integration is requested.
 
 ## Remaining Gaps
 
@@ -116,4 +117,4 @@ future scoped phase adds explicit CLI/export integration.
 - External document references are identified but not resolved.
 - Character-offset spans are not available.
 - True confidence models are not implemented.
-- Structured-document CLI and manifest output remain future work.
+- Formal AviationRAG compatibility gating remains Phase 13H.

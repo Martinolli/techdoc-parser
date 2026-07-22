@@ -36,6 +36,22 @@ Ingestion gate decision
 Output package and manifest
 ```
 
+Optional structured-document output follows this additive path:
+
+```text
+Source document
+        ↓
+Current parser pipeline
+        ↓
+StructuredDocument mapper
+        ↓
+StructuredDocument file exporter
+        ↓
+optional manifest registration
+        ↓
+external contract consumer
+```
+
 ## 3. Main Packages and Responsibilities
 
 | Package / Module | Responsibility |
@@ -47,7 +63,7 @@ Output package and manifest
 | `techdoc_parser.normalization` | Text normalization helpers that preserve raw text while storing normalized text separately. |
 | `techdoc_parser.chunking` | Semantic chunk creation, chunk text cleanup, source reference preservation, and section metadata assignment. |
 | `techdoc_parser.validation` | Quality report generation and ingestion gate decision mapping. |
-| `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, and semantic Markdown export helpers. |
+| `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, semantic Markdown, and optional structured-document export helpers. |
 | `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, equation/admonition entity mapper, cross-reference mapper, confidence policy helpers, and deterministic serializers for future external structured-document artifacts. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
@@ -68,7 +84,7 @@ Output package and manifest
 12. Chunk cleanup and section metadata: emitted chunk text is cleaned of furniture lines, and available heading context is stored as section metadata.
 13. Validation report: document and chunk quality findings are reported with info, warning, and error severity.
 14. Ingestion gate decision: validation findings are mapped to `pass`, `review`, or `fail`.
-15. Output package generation: document, chunk, validation, gate, Markdown summary, semantic Markdown, and manifest artifacts can be exported.
+15. Output package generation: document, chunk, validation, gate, Markdown summary, semantic Markdown, optional structured-document, and manifest artifacts can be exported.
 
 ## 5. Data Flow and Preservation Principle
 
@@ -94,6 +110,7 @@ reports findings and gate decisions but does not modify parser output.
 | `validation_summary.md` | Human-readable validation and gate summary for review workflows. |
 | `manifest.json` | Package manifest that records source document, output paths, schema/parser metadata, gate decision, and basic metrics. |
 | Semantic Markdown output | Human-readable semantic view that omits raw text-block duplicates where possible. |
+| StructuredDocument output | Optional `techdoc-structured-document / 0.1.0` JSON artifact with exact source-byte SHA-256 and deterministic bytes. |
 
 Machine-readable JSON outputs include `schema_version` and parser metadata with
 parser name and parser version.
@@ -147,9 +164,9 @@ available for human review.
 
 ### Structured-Document Contract Boundary
 
-Future AviationRAG integration may use a dedicated structured-document export.
-The current implementation is an internal contract layer plus a pure parser
-model mapper:
+Future AviationRAG integration may use the dedicated structured-document export.
+The current implementation is an internal contract layer, pure parser-model
+mapper, and optional file exporter:
 
 ```text
 Current parser models
@@ -165,16 +182,25 @@ Equation and admonition evidence
 Cross-references and confidence policy
         ↓
 StructuredDocument serializer
+        ↓
+StructuredDocument file exporter
+        ↓
+optional manifest registration
 ```
 
 The contract foundation and mapper are implemented under
-`techdoc_parser.contracts`. The mapper covers document, page, block, source-span,
-bounding-box, heading-derived section hierarchy data, current table/figure
-candidate evidence, conservative equation evidence, explicit-label admonition
-evidence, explicit textual cross-references, and confidence omission policy.
-CLI output, manifest integration, runtime ingestion, true table reconstruction,
-figure asset extraction, and formal cross-project compatibility validation are
-not implemented. Current outputs remain unchanged. AviationRAG is one intended
+`techdoc_parser.contracts`; file export is implemented under
+`techdoc_parser.exporters`. The mapper covers document, page, block,
+source-span, bounding-box, heading-derived section hierarchy data, current
+table/figure candidate evidence, conservative equation evidence, explicit-label
+admonition evidence, explicit textual cross-references, and confidence omission
+policy.
+
+Structured-document output is optional and current default outputs remain
+unchanged. Manifest registration is additive and occurs only when both
+structured-document output and manifest output are requested. Runtime ingestion,
+true table reconstruction, figure asset extraction, and formal cross-project
+compatibility validation are not implemented. AviationRAG is one intended
 consumer, but the parser remains independent and has no direct runtime
 dependency on AviationRAG.
 
@@ -184,8 +210,6 @@ dependency on AviationRAG.
   cleanup-readiness reference. Cleanup remains useful but non-blocking.
 - Add optional validation profiles or strictness modes.
 - Add an architecture diagram later if the pipeline grows more complex.
-- Phase 13G: add optional structured-document CLI/manifest output when
-  downstream consumers need files rather than the Python API.
 - Phase 13H: formalize synthetic compatibility validation against AviationRAG.
 - Add a dedicated confidence scoring model only when truthful evidence exists.
 - Add an advanced table extraction adapter for more reliable table structure.

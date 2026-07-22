@@ -4,7 +4,7 @@
     "schema_name": "techdoc-structured-document",
     "schema_version": "0.1.0"
   },
-  "repository_commit": "9ff79fb+phase-13c",
+  "repository_commit": "e3e280f+phase-13g",
   "entities": [
     {
       "target_entity": "root",
@@ -93,14 +93,14 @@
     {
       "target_entity": "document",
       "target_field": "source_hash",
-      "current_source": "StructuredDocumentMappingOptions",
-      "current_field": "source_checksum",
-      "mapping_status": "available_but_not_exported",
-      "required_transformation": "Mapper preserves caller-supplied checksum as source_hash but does not compute one.",
-      "gap_class": "policy decision",
+      "current_source": "techdoc_parser.exporters.structured_document.compute_source_sha256",
+      "current_field": "source file bytes",
+      "mapping_status": "implemented-export",
+      "required_transformation": "File export computes SHA-256 from exact source bytes and mapper preserves it as source_hash.",
+      "gap_class": "implemented-export",
       "priority": "P0",
       "risk": "medium",
-      "notes": "AviationRAG validator warns when source checksum is missing. Implemented in src/techdoc_parser/contracts/structured_document_mapper.py."
+      "notes": "Pure construction still preserves caller-supplied checksums only; file export owns checksum computation."
     },
     {
       "target_entity": "document",
@@ -615,5 +615,12 @@
     "reference_mapper_module": "src/techdoc_parser/contracts/structured_document_references.py",
     "confidence_policy_module": "src/techdoc_parser/contracts/structured_document_confidence.py",
     "notes": "Maps explicit textual cross-references with resolved, unresolved, external, ambiguous, and not_attempted status policy; omits placeholder confidence values; no CLI, manifest, current-output, runtime AviationRAG, PDF link/bookmark, fuzzy matching, or external lookup integration."
+  },
+  "phase_13g": {
+    "status": "implemented",
+    "exporter_module": "src/techdoc_parser/exporters/structured_document.py",
+    "cli_option": "--structured-document-output",
+    "manifest_registration": "additive artifacts entry only when requested and written successfully",
+    "notes": "Adds optional deterministic structured-document output, source SHA-256 ownership, artifact SHA-256 metadata, explicit overwrite, and manifest registration; no default output changes, runtime AviationRAG dependency, corpus processing, ingestion, embeddings, Astra, or FAISS integration."
   }
 }

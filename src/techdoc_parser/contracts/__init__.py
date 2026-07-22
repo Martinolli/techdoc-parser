@@ -41,6 +41,7 @@ from techdoc_parser.contracts.structured_document_hierarchy import (
 )
 from techdoc_parser.contracts.structured_document_mapper import (
     StructuredDocumentMappingOptions,
+    build_structured_document_artifact,
     map_block_type_to_content_type,
     map_document_to_structured_document,
     map_document_with_options,
@@ -70,6 +71,7 @@ __all__ = [
     "SectionHierarchyResult",
     "add_confidence_if_available",
     "build_structured_document",
+    "build_structured_document_artifact",
     "enrich_structured_document_hierarchy",
     "is_supported_structured_document_version",
     "map_block_type_to_content_type",

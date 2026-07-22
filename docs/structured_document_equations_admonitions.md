@@ -1,7 +1,7 @@
 # Structured-Document Equation And Admonition Mapping
 
-Date: 2026-07-21
-Status: Phase 13E2 implemented as a Python contract API
+Date: 2026-07-22
+Status: Phase 13E2 implemented as a Python contract API; Phase 13G optional export implemented
 
 ## Purpose
 
@@ -11,8 +11,9 @@ internal `techdoc-structured-document / 0.1.0` contract object.
 
 The implementation is additive and contract-local. It does not alter PDF
 extraction, OCR, reading order, block creation, chunking, current JSON output,
-Markdown output, manifests, validation reports, validation gates, or CLI
-behavior.
+Markdown output, validation reports, validation gates, or default CLI behavior.
+Phase 13G can write this evidence to an optional structured-document artifact
+and register that artifact in the manifest when requested.
 
 ## Source Evidence
 
@@ -88,8 +89,8 @@ tests/test_structured_document_equations_admonitions.py
 ```
 
 Existing parser output and manifest tests remain responsible for proving that
-current output packages do not gain structured-document root fields unless a
-future scoped phase adds explicit CLI/export integration.
+current output packages do not gain structured-document root fields unless
+explicit CLI/export integration is requested.
 
 ## Remaining Gaps
 
@@ -101,4 +102,4 @@ future scoped phase adds explicit CLI/export integration.
 - Safety severity inference is not implemented.
 - Cross-reference mapping and confidence policy are handled separately by Phase
   13F.
-- Structured-document CLI and manifest output remain future work.
+- Formal AviationRAG compatibility gating remains Phase 13H.
