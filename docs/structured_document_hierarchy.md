@@ -104,4 +104,4 @@ section.
 
 Phase 13G file export preserves these section records deterministically and can
 register the resulting artifact in the output manifest. Formal AviationRAG
-compatibility gating remains Phase 13H.
+compatibility gating is implemented in Phase 13H.

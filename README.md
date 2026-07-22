@@ -117,6 +117,27 @@ validation, gate, and manifest outputs remain unchanged unless the new option
 is explicitly supplied. No AviationRAG installation is required and direct
 AviationRAG ingestion is not implemented.
 
+## AviationRAG Compatibility Gate
+
+An optional offline compatibility gate can validate a Phase 13G
+structured-document artifact and manifest against a local AviationRAG checkout
+through a subprocess adapter:
+
+```powershell
+python tools/compatibility/run-aviationrag-compatibility-gate.py `
+  --artifact output/structured_document.json `
+  --manifest output/manifest.json `
+  --source input/synthetic.pdf `
+  --aviationrag-root "C:\Users\Aspire5 15 i7 4G2050\ProjectRAG\AviationRAG" `
+  --comparison-artifact output/structured_document_repeat.json
+```
+
+The gate is report-only and exits `0` for `PASS`, `2` for `REVIEW`, and `1`
+for `FAIL`. Compatibility report writing is optional and requires
+`--allow-report-write`. The gate does not import AviationRAG into parser
+runtime modules, modify AviationRAG, run ingestion, generate embeddings, use
+Astra, or use FAISS.
+
 ## Documentation
 
 - [Architecture and pipeline overview](docs/architecture_pipeline_overview.md)
@@ -129,6 +150,7 @@ AviationRAG ingestion is not implemented.
 - [Structured-document equation and admonition mapping](docs/structured_document_equations_admonitions.md)
 - [Structured-document cross-reference and confidence policy](docs/structured_document_references_confidence.md)
 - [Structured-document export](docs/structured_document_export.md)
+- [AviationRAG compatibility gate](docs/aviationrag_compatibility_gate.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -154,5 +176,5 @@ AviationRAG ingestion is not implemented.
 - Confidence fields are omitted unless truthful numeric evidence exists; current
   placeholder `SourceLocation.confidence` values are not promoted
 - `techdoc-structured-document / 0.1.0` has an optional API, CLI file export,
-  checksum-backed output, and manifest registration, but formal AviationRAG
-  compatibility gating remains future work
+  checksum-backed output, manifest registration, and a formal offline
+  AviationRAG compatibility gate, but parser accuracy pilots remain future work

@@ -1,8 +1,8 @@
 # StructuredDocument Contract Foundation
 
 Date: 2026-07-22
-Status: Foundation, mapper, entity mapping, references, confidence policy, and optional file export implemented
-Phase: 13B foundation; 13C mapper; 13D section hierarchy; 13E1 tables/figures; 13E2 equations/admonitions; 13F references/confidence policy; 13G optional API/CLI/manifest export
+Status: Foundation, mapper, entity mapping, references, confidence policy, optional file export, and offline compatibility gate implemented
+Phase: 13B foundation; 13C mapper; 13D section hierarchy; 13E1 tables/figures; 13E2 equations/admonitions; 13F references/confidence policy; 13G optional API/CLI/manifest export; 13H AviationRAG compatibility gate
 
 This document describes the internal foundation for emitting
 `techdoc-structured-document / 0.1.0` records, the Phase 13C parser-model
@@ -22,7 +22,7 @@ runtime or CLI.
 
 ## 2. Non-Scope
 
-Phase 13B through Phase 13G does not:
+Phase 13B through Phase 13H does not:
 
 - Create structured-document files unless explicitly requested.
 - Replace current CLI output files or manifest behavior.
@@ -33,6 +33,23 @@ Phase 13B through Phase 13G does not:
   scores, table cells, figure assets, figure regions, mathematical meaning,
   safety severity, or false cross-reference targets.
 - Detect new headings or repair parser heading levels.
+
+## 2.7 Phase 13H AviationRAG Compatibility Gate
+
+Phase 13H adds an isolated compatibility package and standalone CLI:
+
+```text
+src/techdoc_parser/compatibility/aviationrag_gate.py
+tools/compatibility/run-aviationrag-compatibility-gate.py
+```
+
+The gate validates an already written structured-document artifact and manifest
+against source bytes, manifest checksum records, metadata consistency,
+cross-reference status rules, confidence field policy, deterministic output
+evidence, and the external AviationRAG structured-document validator. The
+AviationRAG validator is called only through `subprocess`; normal parser
+modules do not import AviationRAG and no files are written inside the
+AviationRAG repository.
 
 ## 2.6 Phase 13G Optional File Export
 
@@ -310,7 +327,9 @@ The current parser model, JSON exporters, Markdown exporters, validation
 exports, gate exports, and default CLI behavior remain unchanged. Existing
 `document.json` does not gain `schema_name` or structured-document root fields.
 `manifest.json` shape is unchanged unless a structured-document artifact is
-explicitly requested and successfully written.
+explicitly requested and successfully written. The Phase 13H compatibility
+report is a separate optional report and is not added to the normal output
+package by default.
 
 ## 14. Fixture
 
@@ -322,6 +341,9 @@ tests/fixtures/structured_document/mapped_structured_document_with_sections.json
 tests/fixtures/structured_document/mapped_structured_document_with_tables_figures.json
 tests/fixtures/structured_document/mapped_structured_document_with_equations_admonitions.json
 tests/fixtures/structured_document/mapped_structured_document_with_references_confidence.json
+tests/fixtures/compatibility/aviationrag_validator_pass.json
+tests/fixtures/compatibility/aviationrag_validator_warning.json
+tests/fixtures/compatibility/aviationrag_validator_fail.json
 ```
 
 It is intentionally not derived from real source material. Legacy fixtures
@@ -346,7 +368,10 @@ Phase 13F completed contract-local cross-reference mapping and confidence
 policy.
 
 Phase 13G completed optional API, deterministic file output, checksum ownership,
-and manifest registration without creating output by default. Recommended next
-work is synthetic AviationRAG compatibility validation as a formal phase, true
-table structure/parser enhancements, or formula discovery as a separate scoped
-phase.
+and manifest registration without creating output by default.
+
+Phase 13H completed formal offline AviationRAG compatibility gating without
+adding a runtime dependency, changing parser defaults, modifying AviationRAG, or
+performing ingestion. Recommended next work is a controlled approved-document
+accuracy pilot, true table structure/parser enhancements, or formula discovery
+as a separate scoped phase.

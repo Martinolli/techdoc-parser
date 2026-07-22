@@ -1,7 +1,7 @@
 # StructuredDocument Parser Model Mapping
 
 Date: 2026-07-22
-Status: Phase 13C through Phase 13G implemented
+Status: Phase 13C through Phase 13H implemented
 
 ## 1. Purpose
 
@@ -22,6 +22,11 @@ a confidence policy that omits current placeholder confidence values.
 Phase 13G exposes the mapper as a pure public construction API and optional
 file-oriented API/CLI artifact without changing current default outputs.
 
+Phase 13H adds a separate offline AviationRAG compatibility gate over the
+written artifact and manifest. It validates checksums, manifest registration,
+metadata consistency, references, confidence fields, table-count interpretation,
+determinism evidence, and the external AviationRAG validator report.
+
 The implementation lives in:
 
 ```text
@@ -29,6 +34,7 @@ src/techdoc_parser/contracts/structured_document_mapper.py
 src/techdoc_parser/contracts/structured_document_hierarchy.py
 src/techdoc_parser/contracts/structured_document_references.py
 src/techdoc_parser/contracts/structured_document_confidence.py
+src/techdoc_parser/compatibility/aviationrag_gate.py
 ```
 
 It is available through `techdoc_parser.contracts` as:
@@ -318,6 +324,8 @@ the same parser object with the same options produces identical contract JSON.
 The pure mapper does not invoke current exporters or depend on CLI orchestration.
 The file exporter does not include absolute output paths, timestamps, temporary
 filenames, hostnames, usernames, or environment values in artifact content.
+The compatibility gate omits raw validator stdout and stderr from its report so
+temporary validator report paths are not serialized.
 
 ## 21. Backward Compatibility
 
@@ -345,7 +353,7 @@ remain unchanged unless the new structured-document output option is supplied.
 
 ## 23. Next Phase
 
-Phase 13G is implemented as optional file/API/CLI/manifest output. Next work
-should formalize AviationRAG compatibility validation in Phase 13H without
-adding true table structure, figure assets, broad formula discovery, or
-confidence fields until the parser has truthful evidence for them.
+Phase 13H is implemented as an offline compatibility gate. Next work should be
+a controlled approved-document accuracy pilot or narrow parser enhancements
+such as true table structure, page labels, PDF links/bookmarks, formula
+discovery, or confidence fields only when the parser has truthful evidence.

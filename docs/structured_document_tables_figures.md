@@ -100,4 +100,4 @@ explicit CLI/export integration is requested.
 - Cross-reference root entity mapping is handled separately by Phase 13F.
 - Equation and admonition root entity mapping is handled separately by Phase
   13E2.
-- Formal AviationRAG compatibility gating remains Phase 13H.
+- Formal AviationRAG compatibility gating is implemented in Phase 13H.

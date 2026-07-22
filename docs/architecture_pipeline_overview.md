@@ -52,6 +52,19 @@ optional manifest registration
 external contract consumer
 ```
 
+Optional AviationRAG compatibility validation follows the written artifact and
+manifest:
+
+```text
+StructuredDocument artifact + manifest + source bytes
+        ↓
+techdoc_parser.compatibility gate
+        ↓
+AviationRAG validator subprocess
+        ↓
+PASS / REVIEW / FAIL compatibility report
+```
+
 ## 3. Main Packages and Responsibilities
 
 | Package / Module | Responsibility |
@@ -65,6 +78,7 @@ external contract consumer
 | `techdoc_parser.validation` | Quality report generation and ingestion gate decision mapping. |
 | `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, semantic Markdown, and optional structured-document export helpers. |
 | `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, equation/admonition entity mapper, cross-reference mapper, confidence policy helpers, and deterministic serializers for future external structured-document artifacts. |
+| `techdoc_parser.compatibility` | Offline compatibility gates for downstream consumers; currently runs the AviationRAG structured-document validator by subprocess without importing AviationRAG. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
 
@@ -111,6 +125,7 @@ reports findings and gate decisions but does not modify parser output.
 | `manifest.json` | Package manifest that records source document, output paths, schema/parser metadata, gate decision, and basic metrics. |
 | Semantic Markdown output | Human-readable semantic view that omits raw text-block duplicates where possible. |
 | StructuredDocument output | Optional `techdoc-structured-document / 0.1.0` JSON artifact with exact source-byte SHA-256 and deterministic bytes. |
+| AviationRAG compatibility report | Optional report-only Phase 13H gate result for a structured-document artifact, manifest, source bytes, warning policy, determinism, and external validator report. |
 
 Machine-readable JSON outputs include `schema_version` and parser metadata with
 parser name and parser version.
@@ -199,10 +214,11 @@ policy.
 Structured-document output is optional and current default outputs remain
 unchanged. Manifest registration is additive and occurs only when both
 structured-document output and manifest output are requested. Runtime ingestion,
-true table reconstruction, figure asset extraction, and formal cross-project
-compatibility validation are not implemented. AviationRAG is one intended
-consumer, but the parser remains independent and has no direct runtime
-dependency on AviationRAG.
+true table reconstruction, and figure asset extraction are not implemented.
+Phase 13H adds formal cross-project compatibility validation as a separate
+offline gate that calls the AviationRAG validator through subprocess only.
+AviationRAG is one intended consumer, but the parser remains independent and
+has no direct runtime dependency on AviationRAG.
 
 ## 10. Recommended Near-Term Next Steps
 
@@ -210,6 +226,6 @@ dependency on AviationRAG.
   cleanup-readiness reference. Cleanup remains useful but non-blocking.
 - Add optional validation profiles or strictness modes.
 - Add an architecture diagram later if the pipeline grows more complex.
-- Phase 13H: formalize synthetic compatibility validation against AviationRAG.
+- Phase 13I: run a controlled approved-document accuracy pilot.
 - Add a dedicated confidence scoring model only when truthful evidence exists.
 - Add an advanced table extraction adapter for more reliable table structure.

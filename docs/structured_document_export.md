@@ -1,7 +1,7 @@
 # StructuredDocument Export
 
 Date: 2026-07-22
-Status: Phase 13G implemented
+Status: Phase 13G implemented; Phase 13H compatibility gate implemented
 
 ## 1. Purpose
 
@@ -159,13 +159,29 @@ JSON output, Markdown output, validation reports, ingestion gates, and manifest
 shape without a structured-document artifact remain unchanged.
 
 The output is intended for validated downstream consumers such as AviationRAG,
-but `techdoc-parser` does not import AviationRAG, run the AviationRAG validator
-as part of normal export, upload artifacts, generate embeddings, or perform RAG
-ingestion.
+but normal export does not import AviationRAG, run the AviationRAG validator,
+upload artifacts, generate embeddings, or perform RAG ingestion.
 
-## 13. Known Limitations
+## 13. AviationRAG Compatibility Gate
 
-- Formal AviationRAG compatibility gating remains Phase 13H.
+Phase 13H adds a separate offline gate:
+
+```text
+tools/compatibility/run-aviationrag-compatibility-gate.py
+```
+
+The gate accepts an explicitly written structured-document artifact, manifest,
+source file, local AviationRAG root, and optional comparison artifact. It runs
+the AviationRAG validator through a subprocess, checks manifest registration,
+source and artifact checksums, metadata consistency, warning approval,
+cross-reference integrity, confidence fields, table-count interpretation, and
+determinism.
+
+The gate remains outside normal export and writes no report unless
+`--report` and `--allow-report-write` are supplied.
+
+## 14. Known Limitations
+
 - Real parser accuracy evaluation remains Phase 13I.
 - Printed page-label extraction is not implemented.
 - Full table reconstruction is not implemented.

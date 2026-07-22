@@ -1,6 +1,6 @@
 # AviationRAG StructuredDocument Contract Gap Analysis
 
-Repository state reflected: Phase 13G working tree after
+Repository state reflected: Phase 13H working tree after
 `e3e280f` (`feat(contract): add references and confidence policy`) on `main`,
 aligned with `origin/main` after `git fetch origin --prune`.
 
@@ -11,9 +11,10 @@ for existing document, page, block, source-location, and bounding-box evidence.
 Phases 13D through 13F add section hierarchy, candidate entities, explicit
 textual cross-references, and confidence omission policy. Phase 13G adds
 optional API, CLI, deterministic file output, checksum ownership, and manifest
-registration. These phases still do not change parser behavior, change
-extraction or chunking behavior, replace current output formats, process real
-documents, or modify AviationRAG.
+registration. Phase 13H adds a formal offline AviationRAG compatibility gate.
+These phases still do not change parser behavior, change extraction or chunking
+behavior, replace current output formats, process real documents, or modify
+AviationRAG.
 
 ## 8.1 Executive Summary
 
@@ -58,10 +59,9 @@ required for high-fidelity section accuracy, table reconstruction, figure
 regions, page labels, source hashes, PDF link/bookmark capture, and real
 confidence scoring.
 
-Recommended sequence after Phase 13G: formalize synthetic compatibility
-validation against the AviationRAG validator, then decide whether parser-core
-enhancements are needed for table structure, PDF references, page labels, or
-confidence evidence.
+Recommended sequence after Phase 13H: run a controlled approved-document
+accuracy pilot, then decide whether parser-core enhancements are needed for
+table structure, PDF references, page labels, or confidence evidence.
 
 ## 8.2 Current Parser Pipeline
 
@@ -623,6 +623,14 @@ local copy or documented fixture-compatible expectations. Constraints: do not
 import AviationRAG as runtime dependency; do not modify AviationRAG. Acceptance:
 synthetic validation command or equivalent test passes in a controlled way.
 
+Phase 13H status: completed as an offline compatibility gate. The gate accepts
+a structured-document artifact, manifest, exact source bytes, local AviationRAG
+root, and optional comparison artifact. It checks manifest registration,
+source/artifact checksums, metadata consistency, validator errors and warning
+approval, table-count interpretation, cross-reference integrity, confidence
+fields, and determinism. AviationRAG is called only by subprocess and the gate
+writes no files inside AviationRAG.
+
 ### 13I - Controlled Approved-Document Accuracy Pilot
 
 Goal: manually review accuracy on approved non-proprietary or explicitly
@@ -740,5 +748,9 @@ Phase 13G adds optional deterministic structured-document output with source
 checksum ownership and manifest registration without changing current default
 output behavior.
 
-Recommended next phase: **Phase 13H - Synthetic Compatibility Validation
-Against AviationRAG**.
+Phase 13H adds formal offline AviationRAG compatibility gating without adding a
+runtime AviationRAG dependency, changing parser defaults, or performing
+ingestion.
+
+Recommended next phase: **Phase 13I - Controlled Approved-Document Accuracy
+Pilot**.

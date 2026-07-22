@@ -4,7 +4,7 @@
     "schema_name": "techdoc-structured-document",
     "schema_version": "0.1.0"
   },
-  "repository_commit": "e3e280f+phase-13g",
+  "repository_commit": "fa1d9af+phase-13h",
   "entities": [
     {
       "target_entity": "root",
@@ -587,12 +587,12 @@
       "target_field": "structured_document_validator_compatibility",
       "current_source": "AviationRAG structured_document_validator.py",
       "current_field": "validate_structured_document",
-      "mapping_status": "not_applicable",
-      "required_transformation": "Use as external compatibility gate in a later synthetic validation phase.",
-      "gap_class": "fixture/test requirement",
+      "mapping_status": "implemented-gate",
+      "required_transformation": "Use through the Phase 13H subprocess compatibility gate.",
+      "gap_class": "implemented-compatibility-gate",
       "priority": "P0",
       "risk": "low",
-      "notes": "Do not import AviationRAG as a techdoc-parser runtime dependency."
+      "notes": "Implemented in src/techdoc_parser/compatibility/aviationrag_gate.py and tools/compatibility/run-aviationrag-compatibility-gate.py; no runtime AviationRAG dependency."
     }
   ],
   "phase_13c": {
@@ -622,5 +622,12 @@
     "cli_option": "--structured-document-output",
     "manifest_registration": "additive artifacts entry only when requested and written successfully",
     "notes": "Adds optional deterministic structured-document output, source SHA-256 ownership, artifact SHA-256 metadata, explicit overwrite, and manifest registration; no default output changes, runtime AviationRAG dependency, corpus processing, ingestion, embeddings, Astra, or FAISS integration."
+  },
+  "phase_13h": {
+    "status": "implemented",
+    "gate_module": "src/techdoc_parser/compatibility/aviationrag_gate.py",
+    "cli_tool": "tools/compatibility/run-aviationrag-compatibility-gate.py",
+    "validator_execution": "subprocess only",
+    "notes": "Validates structured-document artifacts, manifests, source and artifact checksums, metadata consistency, warning policy, table-count interpretation, cross-reference integrity, confidence fields, determinism, and the external AviationRAG validator report; no AviationRAG runtime import, repository modification, ingestion, embeddings, Astra, FAISS, or proprietary corpus processing."
   }
 }

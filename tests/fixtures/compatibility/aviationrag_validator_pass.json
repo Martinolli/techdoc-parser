@@ -1,0 +1,19 @@
+{
+  "schema_name": "techdoc-structured-document",
+  "schema_version": "0.1.0",
+  "document_id": "compat-doc",
+  "is_valid": true,
+  "error_count": 0,
+  "warning_count": 0,
+  "summary": {
+    "page_count": 1,
+    "block_count": 2,
+    "section_count": 1,
+    "table_count": 1,
+    "figure_count": 0,
+    "equation_count": 0,
+    "admonition_count": 0,
+    "cross_reference_count": 1
+  },
+  "issues": []
+}

@@ -1,0 +1,27 @@
+{
+  "schema_name": "techdoc-structured-document",
+  "schema_version": "0.1.0",
+  "document_id": "compat-doc",
+  "is_valid": false,
+  "error_count": 1,
+  "warning_count": 0,
+  "summary": {
+    "page_count": 1,
+    "block_count": 2,
+    "section_count": 1,
+    "table_count": 1,
+    "figure_count": 0,
+    "equation_count": 0,
+    "admonition_count": 0,
+    "cross_reference_count": 1
+  },
+  "issues": [
+    {
+      "code": "BLOCK_SOURCE_SPAN_INVALID",
+      "severity": "error",
+      "message": "Synthetic failure report for compatibility tests.",
+      "path": "$.blocks[1].source_span",
+      "entity_id": "table-1"
+    }
+  ]
+}

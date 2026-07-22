@@ -102,4 +102,4 @@ explicit CLI/export integration is requested.
 - Safety severity inference is not implemented.
 - Cross-reference mapping and confidence policy are handled separately by Phase
   13F.
-- Formal AviationRAG compatibility gating remains Phase 13H.
+- Formal AviationRAG compatibility gating is implemented in Phase 13H.
