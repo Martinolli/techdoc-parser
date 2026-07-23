@@ -201,6 +201,34 @@ separate corrected evaluator-policy v2 rerun. The corrected rerun is
 pages and no final `FAIL`, and still requires human visual review before any
 page can receive final `PASS`.
 
+Phase 13I-c3 adds owner visual-review and P0 acceptance tooling. Generate local
+review pages with explicit write permission:
+
+```powershell
+python tools/evaluation/run-p0-visual-review.py `
+  --input-dir input `
+  --plan tests/fixtures/pilot_corpus/p0_source_accuracy_plan.json `
+  --automated-report output/evaluation/source_accuracy_p0_c2e/source_accuracy_p0_policy_v2_run1.json `
+  --evidence-dir output/evaluation/source_accuracy_p0_review `
+  --all-p0 `
+  --generate-review-package `
+  --allow-local-write
+```
+
+Merge completed local checklists:
+
+```powershell
+python tools/evaluation/run-p0-visual-review.py `
+  --plan tests/fixtures/pilot_corpus/p0_source_accuracy_plan.json `
+  --automated-report output/evaluation/source_accuracy_p0_c2e/source_accuracy_p0_policy_v2_run1.json `
+  --evidence-dir output/evaluation/source_accuracy_p0_review `
+  --all-p0 `
+  --merge-checklists
+```
+
+Visual review is required for pilot acceptance. No checklist is auto-approved,
+and local review evidence remains ignored under `output/`.
+
 ## P0 Failure Triage
 
 Phase 13I-c1 adds diagnosis-only triage for selected P0 source-accuracy
@@ -248,6 +276,7 @@ visual confirmation is still pending. See
 - [Source-accuracy evaluation policy v2](docs/source_accuracy_evaluation_policy_v2.md)
 - [P0 source-accuracy pilot result](docs/p0_source_accuracy_pilot.md)
 - [P0 failure root-cause analysis](docs/p0_failure_root_cause_analysis.md)
+- [P0 visual review and acceptance](docs/p0_visual_review_and_acceptance.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations

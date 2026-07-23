@@ -1,0 +1,975 @@
+{
+  "accepted_limitation_codes": [],
+  "blocking_finding_codes": [],
+  "confirmed_defect_counts": {},
+  "corrective_phase_recommendations": [
+    "complete_remaining_owner_visual_reviews"
+  ],
+  "document_outcomes": {
+    "aircraft_stability_control": "INCOMPLETE",
+    "aircraft_system_safety": "INCOMPLETE",
+    "airworthiness_certification_operations": "INCOMPLETE",
+    "cirrus_sr22_maintenance_manual": "INCOMPLETE",
+    "faa_order_4040_26b": "INCOMPLETE",
+    "flight_test_rm_ag_300": "INCOMPLETE",
+    "introduction_flight_test_engineering": "INCOMPLETE",
+    "mil_std_882e": "INCOMPLETE"
+  },
+  "outcome": "INCOMPLETE",
+  "page_results": [
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "PASS",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "aircraft_stability_control",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "aircraft_stability_control",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 3,
+      "pdf_page_index": 2,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "aircraft_stability_control",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 10,
+      "pdf_page_index": 9,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "PASS",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "aircraft_stability_control",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 48,
+      "pdf_page_index": 47,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "aircraft_system_safety",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 3,
+      "pdf_page_index": 2,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "aircraft_system_safety",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 18,
+      "pdf_page_index": 17,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "aircraft_system_safety",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 52,
+      "pdf_page_index": 51,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "aircraft_system_safety",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 106,
+      "pdf_page_index": 105,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "airworthiness_certification_operations",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "airworthiness_certification_operations",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 22,
+      "pdf_page_index": 21,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "airworthiness_certification_operations",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 44,
+      "pdf_page_index": 43,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "airworthiness_certification_operations",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 60,
+      "pdf_page_index": 59,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "cirrus_sr22_maintenance_manual",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "cirrus_sr22_maintenance_manual",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 3,
+      "pdf_page_index": 2,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "cirrus_sr22_maintenance_manual",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 7,
+      "pdf_page_index": 6,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "cirrus_sr22_maintenance_manual",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 468,
+      "pdf_page_index": 467,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "faa_order_4040_26b",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "faa_order_4040_26b",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 7,
+      "pdf_page_index": 6,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "faa_order_4040_26b",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 29,
+      "pdf_page_index": 28,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "faa_order_4040_26b",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 38,
+      "pdf_page_index": 37,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "flight_test_rm_ag_300",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "flight_test_rm_ag_300",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 4,
+      "pdf_page_index": 3,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "flight_test_rm_ag_300",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 33,
+      "pdf_page_index": 32,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "flight_test_rm_ag_300",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 131,
+      "pdf_page_index": 130,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "introduction_flight_test_engineering",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "introduction_flight_test_engineering",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 23,
+      "pdf_page_index": 22,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "introduction_flight_test_engineering",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 145,
+      "pdf_page_index": 144,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "introduction_flight_test_engineering",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 453,
+      "pdf_page_index": 452,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "mil_std_882e",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "mil_std_882e",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 14,
+      "pdf_page_index": 13,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "mil_std_882e",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 17,
+      "pdf_page_index": 16,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    },
+    {
+      "accepted_limitation_codes": [],
+      "automated_outcome": "REVIEW",
+      "checklist_statuses": {
+        "admonition_exact": "pending",
+        "chunks_coherent": "pending",
+        "cross_references_preserved": "pending",
+        "equation_preserved": "pending",
+        "fabricated_content_absent": "pending",
+        "figure_caption_correct": "pending",
+        "headings_correct": "pending",
+        "page_provenance_correct": "pending",
+        "reading_order_correct": "pending",
+        "section_assignment_correct": "pending",
+        "table_evidence_usable": "pending",
+        "text_complete": "pending",
+        "text_exact_enough": "pending"
+      },
+      "document_key": "mil_std_882e",
+      "final_outcome": "REVIEW",
+      "generalized_finding_codes": [
+        "VISUAL_REVIEW_PENDING"
+      ],
+      "page_number": 33,
+      "pdf_page_index": 32,
+      "review_status": "pending",
+      "reviewer_role": "owner_reviewer",
+      "visual_review_outcome": "REVIEW"
+    }
+  ],
+  "privacy": {
+    "full_document_accuracy_evaluated": false,
+    "ocr_run": false,
+    "rendered_images_committed": false,
+    "sanitized": true,
+    "source_text_committed": false
+  },
+  "summary": {
+    "blocked_pages": 0,
+    "completed_pages": 0,
+    "completion_percentage": 0.0,
+    "document_count": 8,
+    "page_count": 32,
+    "page_outcome_counts": {
+      "REVIEW": 32
+    },
+    "pages_with_all_applicable_checks_passed": 0,
+    "pages_with_failed_checks": 0,
+    "pages_with_review_checks": 0,
+    "pending_pages": 32,
+    "second_review_pages": 0
+  },
+  "visual_review_counts": {
+    "pending": 32
+  },
+  "visual_review_scope": "owner_visual_review_p0_pages"
+}

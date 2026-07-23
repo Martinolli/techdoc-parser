@@ -134,6 +134,49 @@ Corrected deterministic report hashes:
 - Markdown:
   `47CB106B7845B35CD27A39FDE2F343FBFD008912775DD132B67293D89997BD33`
 
+## Owner Visual Review and Acceptance Status
+
+Phase 13I-c3 adds the owner visual-review and P0 pilot-acceptance workflow on
+top of the corrected policy-v2 evidence. It does not alter the historical
+policy-v1 result, the corrected policy-v2 automated result, or the Phase
+13I-c1 triage findings.
+
+Current visual-review progress:
+
+- Pages total: 32.
+- Completed: 0.
+- Pending: 32.
+- Second review: 0.
+- Blocked: 0.
+- Completion percentage: 0.0.
+
+Current page outcomes after pending visual-review merge:
+
+- Final `PASS`: 0.
+- Final `REVIEW`: 32.
+- Final `FAIL`: 0.
+
+Document outcomes:
+
+| Document key | Outcome | Confirmed defects | Accepted limitations | Pending items |
+| --- | --- | ---: | --- | ---: |
+| `aircraft_stability_control` | `INCOMPLETE` | 0 | none | 4 |
+| `aircraft_system_safety` | `INCOMPLETE` | 0 | none | 4 |
+| `airworthiness_certification_operations` | `INCOMPLETE` | 0 | none | 4 |
+| `cirrus_sr22_maintenance_manual` | `INCOMPLETE` | 0 | none | 4 |
+| `faa_order_4040_26b` | `INCOMPLETE` | 0 | none | 4 |
+| `flight_test_rm_ag_300` | `INCOMPLETE` | 0 | none | 4 |
+| `introduction_flight_test_engineering` | `INCOMPLETE` | 0 | none | 4 |
+| `mil_std_882e` | `INCOMPLETE` | 0 | none | 4 |
+
+Corpus acceptance status: `INCOMPLETE`.
+
+No parser defect has been visually confirmed. No candidate-level table,
+figure-interpretation, equation-layout, or source-proxy limitation has been
+formally accepted by visual review. Pending owner review remains the blocking
+item before P0 pilot acceptance, targeted parser correction, or AviationRAG
+persisted chunk mapping.
+
 ## Determinism
 
 Two ignored reruns produced byte-identical sanitized reports:

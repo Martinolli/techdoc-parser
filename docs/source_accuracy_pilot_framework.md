@@ -92,6 +92,75 @@ Policy v2 can remove false automated `FAIL` outcomes, but it cannot grant final
 text completeness, reading order, table/figure/equation/admonition evidence,
 chunk coherence, and absence of fabricated content.
 
+## Owner Visual-Review Workflow
+
+Phase 13I-c3 separates automated source-proxy evidence from owner visual
+evidence. The workflow is:
+
+1. Load the approved 32-page P0 plan.
+2. Load a corrected `p0-source-accuracy / 2.0` automated report.
+3. Generate ignored local review packages only with `--allow-local-write`.
+4. Record explicit owner checklist decisions in local `review_checklist.json`
+   files.
+5. Validate checklist identity, status values, required fields, sanitized notes,
+   absence of protected data fields, and absence of absolute paths.
+6. Merge visual decisions additively with automated page results.
+7. Derive page, document, and corpus acceptance outcomes.
+8. Write sanitized reports only with `--allow-report-write`.
+
+No checklist is auto-approved. Missing checklists and pending required fields
+remain pending and block final `PASS`.
+
+## Checklist Governance
+
+Each page checklist records document key, zero-based PDF page index, one-based
+page number, optional short reviewer identifier, review status, required
+checklist fields, generalized visual finding codes, and sanitized notes.
+Allowed review statuses are `pending`, `completed`, `needs_second_review`, and
+`blocked`. Allowed checklist values are `pass`, `review`, `fail`,
+`not_applicable`, and `pending`.
+
+Checklist payloads reject unknown fields, protected source-derived fields,
+absolute paths, oversized notes, source text payloads, rendered-image paths,
+table contents, equation text, and personal contact information. Committed
+summary fixtures may state only the generic reviewer role.
+
+## Conflict Handling
+
+Visual decisions do not overwrite automated evidence. Conflicts such as
+automated `PASS` with visual `FAIL`, automated `REVIEW` with visual `PASS`, or
+source-proxy uncertainty with visually correct parser behavior are recorded as
+separate conflict findings. Final outcomes prioritize visually confirmed
+critical or major defects while preserving the automated outcome and metrics.
+
+## Acceptance Model
+
+Page outcomes are `PASS`, `REVIEW`, or `FAIL`. Document outcomes are
+`ACCEPTED`, `ACCEPTED_WITH_LIMITATIONS`, `REJECTED`, or `INCOMPLETE`. Corpus
+outcomes use the same acceptance vocabulary. `INCOMPLETE` is mandatory while
+any required visual check remains pending.
+
+Document `ACCEPTED` requires all P0 pages final `PASS` or formally accepted
+`REVIEW`, no unresolved critical or major defect, and documented limitations.
+`ACCEPTED_WITH_LIMITATIONS` requires no final `FAIL` and explicit owner
+acceptance of the remaining limitations. `REJECTED` applies to unresolved final
+`FAIL`, systematic defects, or source-protection/evidence failure.
+
+## Second-Review Policy
+
+`needs_second_review` records ambiguous multi-column order, complex equations,
+large tables, safety-critical admonition questions, automation/reviewer
+disagreement, or uncertain figure-caption association. It is not a workflow
+system and cannot produce final `PASS`.
+
+## Downstream Authorization Conditions
+
+Downstream persisted chunk mapping should proceed only after corpus acceptance
+criteria are satisfied, or after the owner explicitly accepts documented
+limitations with manual downstream controls. Phase 13I-c3 does not modify
+AviationRAG, generate embeddings, access Astra DB, access FAISS, or evaluate
+full-document accuracy.
+
 ## Commands
 
 List approved P0 pages:

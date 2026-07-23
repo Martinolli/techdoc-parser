@@ -116,9 +116,13 @@ evaluation policy v2
         ↓
 corrected P0 rerun
         ↓
-visual review
+owner visual review
         ↓
-pilot acceptance
+page-level final outcomes
+        ↓
+P0 pilot acceptance decision
+        ↓
+targeted correction or downstream approval
 ```
 
 ## 3. Main Packages and Responsibilities
@@ -135,7 +139,7 @@ pilot acceptance
 | `techdoc_parser.exporters` | JSON, Markdown, validation, gate, chunk, manifest, semantic Markdown, and optional structured-document export helpers. |
 | `techdoc_parser.contracts` | Isolated versioned contract models, parser-model mapper, table/figure-caption entity mapper, equation/admonition entity mapper, cross-reference mapper, confidence policy helpers, and deterministic serializers for future external structured-document artifacts. |
 | `techdoc_parser.compatibility` | Offline compatibility gates for downstream consumers; currently runs the AviationRAG structured-document validator by subprocess without importing AviationRAG. |
-| `techdoc_parser.evaluation` | Offline deterministic fixture-only chunk-quality proxy evaluation, approved pilot-corpus inventory planning, controlled approved-P0 source-accuracy evaluation, source-accuracy policy v2 correction, P0 failure triage, JSON/Markdown report serialization, and explicit report/evidence-write gating. |
+| `techdoc_parser.evaluation` | Offline deterministic fixture-only chunk-quality proxy evaluation, approved pilot-corpus inventory planning, controlled approved-P0 source-accuracy evaluation, source-accuracy policy v2 correction, P0 failure triage, owner visual-review merge and acceptance reporting, JSON/Markdown report serialization, and explicit report/evidence-write gating. |
 | `techdoc_parser.cli` | `techdoc-parse` command-line interface for producing parser output packages. |
 | `techdoc_parser.version` | Export contract metadata including schema version, parser name, and parser version. |
 
@@ -161,6 +165,11 @@ pilot acceptance
 18. Approved P0 source-accuracy evaluation: local ignored PDFs can be scored on the committed representative P0 page plan with automated source proxies and optional human visual checklists, without OCR, parser repair, full-document accuracy scoring, downstream ingestion, or AviationRAG modification.
 19. P0 failure triage: selected P0 pilot findings can be classified by pipeline stage and root-cause taxonomy before any corrective phase, without changing extraction, reading order, normalization, structure mapping, chunking, evaluator policy, StructuredDocument output, or the original P0 baseline.
 20. Source-accuracy policy v2 rerun: evaluator-policy defects proven by triage can be corrected and rerun with explicit policy identity, without changing parser extraction, reading order behavior, chunk generation, StructuredDocument mapping, source PDFs, dependencies, or downstream systems.
+21. Owner visual review and P0 acceptance: corrected policy-v2 evidence can be
+    merged with explicit owner checklists to derive page-level final outcomes,
+    document outcomes, and corpus acceptance without changing parser behavior,
+    OCR behavior, source PDFs, chunk generation, StructuredDocument mapping, or
+    AviationRAG.
 
 ## 5. Data Flow and Preservation Principle
 
@@ -193,6 +202,7 @@ reports findings and gate decisions but does not modify parser output.
 | P0 source-accuracy pilot report | Optional Phase 13I-b2 sanitized aggregate report for approved representative P0 pages only; full local evidence remains ignored under `output/evaluation/source_accuracy_p0/`. |
 | P0 failure triage report | Optional Phase 13I-c1 diagnosis-only sanitized report for selected P0 failures; full local evidence remains ignored under `output/evaluation/p0_failure_triage/`. |
 | Corrected source-accuracy policy report | Optional Phase 13I-c2E sanitized corrected rerun report with `p0-source-accuracy` policy version 2.0 identity; parser output is unchanged. |
+| P0 visual-review acceptance report | Optional Phase 13I-c3 sanitized owner-review and acceptance report for approved P0 pages; local rendered pages and checklists remain ignored under `output/evaluation/source_accuracy_p0_review/`. |
 
 Machine-readable JSON outputs include `schema_version` and parser metadata with
 parser name and parser version.
