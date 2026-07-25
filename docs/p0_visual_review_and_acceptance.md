@@ -206,3 +206,51 @@ AviationRAG persisted chunk mapping should resume only after P0 acceptance
 criteria are satisfied or the owner explicitly accepts documented limitations
 with downstream manual controls. Phase 13I-c3 does not modify AviationRAG,
 generate embeddings, access Astra DB, or access FAISS.
+
+## Final Owner-Review Closure
+
+Phase 13I-b3 closes the local owner-review cycle. All 32 P0 representative
+pages are complete: 32 completed, 0 pending, 0 second review, and 0 blocked.
+Completion is 100 percent.
+
+Final page outcomes:
+
+| Outcome | Count |
+| --- | ---: |
+| PASS | 28 |
+| REVIEW | 4 |
+| FAIL | 0 |
+
+Final document outcomes:
+
+| Document key | Outcome |
+| --- | --- |
+| `aircraft_stability_control` | `ACCEPTED_WITH_LIMITATIONS` |
+| `aircraft_system_safety` | `ACCEPTED_WITH_LIMITATIONS` |
+| `airworthiness_certification_operations` | `ACCEPTED` |
+| `cirrus_sr22_maintenance_manual` | `ACCEPTED` |
+| `faa_order_4040_26b` | `ACCEPTED` |
+| `flight_test_rm_ag_300` | `ACCEPTED` |
+| `introduction_flight_test_engineering` | `ACCEPTED_WITH_LIMITATIONS` |
+| `mil_std_882e` | `ACCEPTED` |
+
+Final active accepted limitations:
+
+- `CHUNK_SECTION_CROSSING_REVIEW`
+- `DUPLICATE_TEXT_LINES`
+- `TABLE_CANDIDATE_ONLY`
+
+The closure removes stale `VISUAL_REVIEW_PENDING` and
+`VISUAL_CHECK_PENDING` codes from the current accepted-limitation list, while
+preserving them as historical review-state findings. The obsolete
+`second_review_or_formal_limitation_acceptance` recommendation is removed
+because second-review count is 0.
+
+The confirmed nonblocking issue
+`TABLE_FALSE_POSITIVE_ON_FIGURE_PAGE` is recorded for
+`aircraft_system_safety`, page 52. It is a minor content-type
+misclassification accepted for the pilot with deferred refinement.
+
+Controlled downstream schema design is authorized. Full-corpus ingestion,
+embedding regeneration, Astra rebuild, FAISS rebuild, and production retrieval
+activation are not authorized.

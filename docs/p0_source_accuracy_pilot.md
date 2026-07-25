@@ -201,3 +201,44 @@ Two ignored reruns produced byte-identical sanitized reports:
 No extracted source text, rendered pages, source hashes, table contents,
 equations, proprietary procedures, or local evidence files are included in this
 committed summary.
+
+## Final Owner Acceptance
+
+Phase 13I-b3 formally closes the P0 representative-page pilot after completion
+of all local owner visual reviews.
+
+Final owner-review result:
+
+| PASS | REVIEW | FAIL |
+| ---: | ---: | ---: |
+| 28 | 4 | 0 |
+
+Final pilot outcome: `ACCEPTED_WITH_LIMITATIONS`.
+
+Confirmed blocking findings: `0`.
+
+Confirmed nonblocking issue:
+
+- `TABLE_FALSE_POSITIVE_ON_FIGURE_PAGE`: minor
+  `CONTENT_TYPE_MISCLASSIFICATION` on `aircraft_system_safety`, page 52,
+  accepted for pilot with deferred refinement.
+
+Final active accepted limitations:
+
+- `CHUNK_SECTION_CROSSING_REVIEW`
+- `DUPLICATE_TEXT_LINES`
+- `TABLE_CANDIDATE_ONLY`
+
+Authorization boundaries:
+
+- Controlled downstream schema design is authorized.
+- Controlled local sample-persistence dry run is authorized.
+- Full-corpus ingestion is not authorized.
+- Embedding regeneration is not authorized.
+- Astra rebuild is not authorized.
+- FAISS rebuild is not authorized.
+
+Historical policy-v1, policy-v2, and root-cause triage results remain preserved.
+Parser extraction, OCR, reading order, block creation, normalization, structure
+detection, chunk generation, StructuredDocument output, dependencies, and CLI
+behavior were unchanged.

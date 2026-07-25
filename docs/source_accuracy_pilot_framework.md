@@ -244,3 +244,34 @@ The current implementation may parse a full PDF operationally because the
 existing parser loader does not provide a page-selection API. Only approved P0
 pages are scored, and the aggregate report records
 `full_document_accuracy_evaluated: false`.
+
+## Pilot Closure Rules
+
+Phase 13I-b3 adds a closure step after owner visual review is complete. Closure
+requires the approved 32 P0 representative pages, 0 pending pages, 0
+second-review pages, 0 blocked pages, and 0 final `FAIL` pages.
+
+Current closure output separates:
+
+- `historical_automated_findings`
+- `historical_review_findings`
+- `current_accepted_limitations`
+- `current_confirmed_nonblocking_issues`
+- `current_blocking_findings`
+- `resolved_review_state_findings`
+
+Stale review-state codes such as `VISUAL_REVIEW_PENDING` and
+`VISUAL_CHECK_PENDING` are removed from active accepted limitations when review
+completion is 100 percent. Historical occurrences remain preserved separately.
+The obsolete `second_review_or_formal_limitation_acceptance` recommendation is
+removed when the second-review count is 0.
+
+Accepted limitations must be explicit, sanitized, and nonblocking for pilot
+closure. Historical automated warnings do not automatically remain active
+accepted limitations. The closure authorizes controlled downstream schema
+design and a controlled local sample-persistence dry run only.
+
+The representative-page pilot does not establish full-document accuracy,
+OCR accuracy, P1/P2 accuracy, or full-corpus readiness. Full-corpus ingestion,
+embedding regeneration, Astra rebuild, FAISS rebuild, and production retrieval
+activation require a separate future authorization.

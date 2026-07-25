@@ -229,6 +229,22 @@ python tools/evaluation/run-p0-visual-review.py `
 Visual review is required for pilot acceptance. No checklist is auto-approved,
 and local review evidence remains ignored under `output/`.
 
+Phase 13I-b3 formally closes the representative-page P0 pilot:
+
+```text
+P0 representative-page pilot: ACCEPTED_WITH_LIMITATIONS
+
+32 pages reviewed
+28 PASS
+4 REVIEW
+0 FAIL
+```
+
+Source PDFs remain local and ignored. Full-document accuracy was not
+established. The next authorized work is downstream persisted `ChunkRecord`
+mapping design and a controlled local sample-persistence dry run, not
+production ingestion, embeddings, Astra rebuild, or FAISS rebuild.
+
 ## P0 Failure Triage
 
 Phase 13I-c1 adds diagnosis-only triage for selected P0 source-accuracy
@@ -277,6 +293,7 @@ visual confirmation is still pending. See
 - [P0 source-accuracy pilot result](docs/p0_source_accuracy_pilot.md)
 - [P0 failure root-cause analysis](docs/p0_failure_root_cause_analysis.md)
 - [P0 visual review and acceptance](docs/p0_visual_review_and_acceptance.md)
+- [P0 pilot final acceptance](docs/p0_pilot_final_acceptance.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
@@ -303,14 +320,14 @@ visual confirmation is still pending. See
   placeholder `SourceLocation.confidence` values are not promoted
 - `techdoc-structured-document / 0.1.0` has an optional API, CLI file export,
   checksum-backed output, manifest registration, and a formal offline
-  AviationRAG compatibility gate, but parser accuracy pilots remain future work
+  AviationRAG compatibility gate
 - Fixture chunk-quality evaluation is proxy-only and does not prove source-page,
   OCR, semantic, or real aviation-document accuracy
 - Approved pilot-corpus inventory is planning-only and does not evaluate source
   accuracy, run OCR, or authorize downstream ingestion
-- The controlled P0 source-accuracy pilot currently fails on the approved P0
-  sample. It is report-only; it does not repair parser behavior, evaluate OCR,
-  or prove full-document accuracy
+- The controlled P0 representative-page pilot is accepted with limitations
+  after owner visual review. It is report-only; it does not repair parser
+  behavior, evaluate OCR, or prove full-document accuracy
 - P0 failure triage is diagnosis-only. It identifies evaluator-policy defects,
   source-proxy limitations, expected multi-representation, layout limitations,
   and findings still requiring visual confirmation before any parser repair

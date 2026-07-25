@@ -1,0 +1,166 @@
+{
+  "accepted_limitations": [
+    {
+      "affected_document_keys": [],
+      "affected_pages": [],
+      "category": "CHUNK_BOUNDARY_LIMITATION",
+      "code": "CHUNK_SECTION_CROSSING_REVIEW",
+      "corrective_status": "deferred_refinement",
+      "disposition": "accepted_for_pilot",
+      "downstream_control": "Retain source-page provenance and do not infer final section boundaries from representative-page review alone.",
+      "message": "Chunk section-crossing review remains accepted for the pilot.",
+      "severity": "minor"
+    },
+    {
+      "affected_document_keys": [],
+      "affected_pages": [],
+      "category": "PARSER_OR_SOURCE_PROXY_TEXT_LIMITATION",
+      "code": "DUPLICATE_TEXT_LINES",
+      "corrective_status": "deferred_refinement",
+      "disposition": "accepted_for_pilot",
+      "downstream_control": "Do not treat duplicate-line evidence alone as a blocking parser defect after completed owner review.",
+      "message": "Duplicate-line evidence remains accepted for the P0 pilot.",
+      "severity": "minor"
+    },
+    {
+      "affected_document_keys": [],
+      "affected_pages": [],
+      "category": "TABLE_CAPABILITY_LIMITATION",
+      "code": "TABLE_CANDIDATE_ONLY",
+      "corrective_status": "deferred_refinement",
+      "disposition": "accepted_for_pilot",
+      "downstream_control": "Treat candidate table evidence as a review signal, not proof of reconstructed tabular content.",
+      "message": "Candidate-level table evidence remains an accepted limitation.",
+      "severity": "minor"
+    }
+  ],
+  "authorized_next_work": [
+    "AviationRAG persisted ChunkRecord mapping design",
+    "controlled local sample-persistence dry run"
+  ],
+  "blocking_finding_codes": [],
+  "confirmed_nonblocking_issues": [
+    {
+      "affected_document_keys": [
+        "aircraft_system_safety"
+      ],
+      "affected_pages": [
+        52
+      ],
+      "category": "CONTENT_TYPE_MISCLASSIFICATION",
+      "code": "TABLE_FALSE_POSITIVE_ON_FIGURE_PAGE",
+      "corrective_status": "deferred_refinement",
+      "disposition": "accepted_for_pilot",
+      "downstream_control": "Do not treat candidate table classification alone as proof of tabular content. Preserve source blocks and figure evidence for downstream review.",
+      "message": "A reviewed horizontal figure page was classified with one table block even though owner review accepted the figure content.",
+      "severity": "minor"
+    }
+  ],
+  "corrective_backlog": [
+    "CHUNK_SECTION_CROSSING_REVIEW: active_accepted_limitation",
+    "DUPLICATE_TEXT_LINES: active_accepted_limitation",
+    "TABLE_CANDIDATE_ONLY: active_accepted_limitation",
+    "TABLE_FALSE_POSITIVE_ON_FIGURE_PAGE: confirmed_nonblocking_issue"
+  ],
+  "document_outcomes": {
+    "aircraft_stability_control": "ACCEPTED_WITH_LIMITATIONS",
+    "aircraft_system_safety": "ACCEPTED_WITH_LIMITATIONS",
+    "airworthiness_certification_operations": "ACCEPTED",
+    "cirrus_sr22_maintenance_manual": "ACCEPTED",
+    "faa_order_4040_26b": "ACCEPTED",
+    "flight_test_rm_ag_300": "ACCEPTED",
+    "introduction_flight_test_engineering": "ACCEPTED_WITH_LIMITATIONS",
+    "mil_std_882e": "ACCEPTED"
+  },
+  "downstream_authorizations": {
+    "astra_rebuild_authorized": false,
+    "controlled_downstream_use_authorized": true,
+    "faiss_rebuild_authorized": false,
+    "full_corpus_ingestion_authorized": false,
+    "full_document_accuracy_established": false,
+    "real_embedding_rebuild_authorized": false
+  },
+  "historical_automated_findings": {
+    "CHUNK_SECTION_CROSSING_REVIEW": 3,
+    "CROSS_REFERENCE_EVIDENCE_NOT_AUTOMATED": 2,
+    "DUPLICATE_TEXT_LINES": 2,
+    "READING_ORDER_INVERSION": 3,
+    "READING_ORDER_VISUAL_REVIEW_REQUIRED": 3,
+    "TABLE_CANDIDATE_ONLY": 1,
+    "TABLE_EVIDENCE_NOT_AUTOMATED": 1
+  },
+  "historical_outcomes": {
+    "owner_visual_review": {
+      "FAIL": 0,
+      "PASS": 28,
+      "REVIEW": 4,
+      "outcome": "ACCEPTED_WITH_LIMITATIONS"
+    },
+    "policy_v1": {
+      "FAIL": 25,
+      "PASS": 0,
+      "REVIEW": 7,
+      "outcome": "REJECTED"
+    },
+    "policy_v2_automated": {
+      "FAIL": 0,
+      "PASS": 2,
+      "REVIEW": 30,
+      "outcome": "REVIEW"
+    }
+  },
+  "historical_review_findings": {
+    "VISUAL_CHECK_PENDING": 34,
+    "VISUAL_REVIEW_PENDING": 36
+  },
+  "not_authorized_work": [
+    "full corpus reprocessing",
+    "production migration",
+    "embedding regeneration",
+    "Astra reset/rebuild",
+    "FAISS reset/rebuild",
+    "production retrieval activation"
+  ],
+  "outcome": "ACCEPTED_WITH_LIMITATIONS",
+  "page_outcome_counts": {
+    "FAIL": 0,
+    "PASS": 28,
+    "REVIEW": 4
+  },
+  "privacy": {
+    "absolute_paths_included": false,
+    "full_document_accuracy_established": false,
+    "ocr_accuracy_established": false,
+    "p1_p2_pages_reviewed": false,
+    "rendered_images_committed": false,
+    "reviewer_identity_included": false,
+    "source_text_committed": false
+  },
+  "removed_obsolete_recommendations": [
+    "second_review_or_formal_limitation_acceptance"
+  ],
+  "resolved_review_state_findings": [
+    "VISUAL_REVIEW_PENDING",
+    "VISUAL_CHECK_PENDING"
+  ],
+  "review_completion_percentage": 100.0,
+  "schema_name": "p0-pilot-closure",
+  "schema_version": "1.0",
+  "summary": {
+    "accepted_limitation_count": 3,
+    "blocked_pages": 0,
+    "completed_pages": 32,
+    "confirmed_nonblocking_issue_count": 1,
+    "document_count": 8,
+    "final_page_outcomes": {
+      "FAIL": 0,
+      "PASS": 28,
+      "REVIEW": 4
+    },
+    "full_corpus_ingestion_authorized": false,
+    "page_count": 32,
+    "pending_pages": 0,
+    "review_completion_state": "complete",
+    "second_review_pages": 0
+  }
+}

@@ -333,6 +333,24 @@ permission, and does not change parser behavior, source PDFs, OCR, reading
 order, normalization, entity detection, chunking, StructuredDocument output,
 evaluator policy, or the original b2 results.
 
+Phase 13I-b3 closes the P0 owner visual-review pilot without parser changes:
+
+```text
+P0 owner review complete
+        ↓
+pilot closure
+        ↓
+ACCEPTED_WITH_LIMITATIONS
+        ↓
+controlled downstream schema design
+```
+
+The final closure records 32 reviewed P0 pages, 28 `PASS`, 4 `REVIEW`, 0
+`FAIL`, 0 blocking findings, and accepted limitations. No parser correction was
+performed. Full-corpus processing remains unauthorized. The next design activity
+is AviationRAG persisted `ChunkRecord` mapping, followed by a controlled local
+sample-persistence dry run only after that design is accepted.
+
 ## 10. Recommended Near-Term Next Steps
 
 - Use `docs/legacy_repository_structure_audit.md` as the current repository
@@ -341,5 +359,7 @@ evaluator policy, or the original b2 results.
 - Add an architecture diagram later if the pipeline grows more complex.
 - Complete Phase 13I-c2E evaluator-policy correction, then rerun the 10-case
   triage subset and the original 32-page P0 source-accuracy pilot.
+- Return to AviationRAG for persisted `ChunkRecord` mapping design; do not
+  begin embeddings, Astra, FAISS, or full-corpus ingestion from this closure.
 - Add a dedicated confidence scoring model only when truthful evidence exists.
 - Add an advanced table extraction adapter for more reliable table structure.
