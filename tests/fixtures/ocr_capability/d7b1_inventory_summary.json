@@ -1,0 +1,48 @@
+{
+  "available_ocr_language_models": [
+    "eng",
+    "osd"
+  ],
+  "blocking_gap_codes": [
+    "OCR_ENGINE_NOT_INTEGRATED",
+    "FORCED_OCR_NOT_SUPPORTED",
+    "SELECTIVE_PAGE_OCR_NOT_SUPPORTED",
+    "OCR_PAGE_PROVENANCE_NOT_RECORDED",
+    "OCR_PROCESSED_PAGES_NOT_RECORDED",
+    "OCR_MANIFEST_METADATA_MISSING",
+    "RAW_OCR_OUTPUT_NOT_PRESERVED",
+    "OCR_NORMALIZATION_NOT_SEPARATED",
+    "GREEK_LANGUAGE_MODEL_UNAVAILABLE",
+    "DETERMINISTIC_OCR_CONFIGURATION_UNDEFINED"
+  ],
+  "d7a_current_blocking_code": "NO_SUPPORTED_OCR_EXECUTION_PATH",
+  "d7a_relationship": "D.7a remains blocked until a supported OCR execution path records engine identity, processed pages, provenance, and manifest metadata.",
+  "engine_candidate_statuses": {
+    "tesseract": "AVAILABLE_NOT_INTEGRATED"
+  },
+  "installed_executables": {
+    "tesseract": "tesseract v5.3.0.20221214"
+  },
+  "installed_ocr_related_packages": {
+    "PyMuPDF": "1.27.2.3"
+  },
+  "inventory_schema_name": "techdoc-parser-ocr-capability-inventory",
+  "inventory_schema_version": "0.1",
+  "overall_outcome": "ENGINE_INSTALLED_BUT_NOT_INTEGRATED",
+  "recommended_next_action": "IMPLEMENT_ADAPTER_FOR_INSTALLED_ENGINE",
+  "rendering": {
+    "PNG_output_available": true,
+    "deterministic_dpi_control_available": true,
+    "page_range_control_available": true,
+    "page_rendering_available": true,
+    "rendering_backend_candidates": [
+      "PyMuPDF"
+    ]
+  },
+  "repository_capability_counts": {
+    "absent": 1,
+    "detection_only": 1,
+    "implemented": 0,
+    "partial": 1
+  }
+}

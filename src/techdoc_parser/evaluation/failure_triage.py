@@ -234,8 +234,7 @@ def load_p0_failure_triage_plan(
         page_key = (case.document_key, case.pdf_page_index)
         if page_key in page_keys:
             raise ValueError(
-                f"Duplicate selected P0 page: {case.document_key} "
-                f"p{case.page_number}."
+                f"Duplicate selected P0 page: {case.document_key} p{case.page_number}."
             )
         if approved_index and page_key not in approved_index:
             raise ValueError(
@@ -545,10 +544,7 @@ def failure_triage_result_to_markdown(result: FailureTriageResult) -> str:
         "",
         "## Cases",
         "",
-        (
-            "| Case | Document | Page | Original outcome | "
-            "Root causes | Triage status |"
-        ),
+        ("| Case | Document | Page | Original outcome | Root causes | Triage status |"),
         "| --- | --- | ---: | --- | --- | --- |",
     ]
     for case in result.cases:

@@ -25,6 +25,9 @@ output, AviationRAG, embeddings, vector stores, or downstream retrieval.
   `OWNER_REVIEW_REQUIRED`.
 - `PASS`, `FAIL`, or `ACCEPTED_WITH_LIMITATIONS` require explicit completed
   owner review evidence.
+- Before D.7a OCR execution, the OCR engine identity, engine version, OCR mode,
+  language/model selection, processed pages, per-page failures, page provenance,
+  and manifest metadata must be recorded.
 
 ## Evidence Model
 
@@ -49,5 +52,7 @@ wording. Local review packages can be written only with explicit
 
 `techdoc-parser` currently supports native PDF text extraction and flags pages
 that require OCR. It does not expose a documented parser OCR runner or CLI path.
+D.7b-1 found a local Tesseract executable and PyMuPDF rendering capability, but
+no repository OCR execution adapter or OCR manifest/provenance integration.
 D.7a therefore records `NO_SUPPORTED_OCR_EXECUTION_PATH` until an approved OCR
 capability is added in a separate authorized phase.

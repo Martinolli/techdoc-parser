@@ -832,9 +832,7 @@ def _recommended_phase(field_name: str) -> str:
 
 
 def _visual_finding_id(decision: VisualReviewDecision, sequence: int) -> str:
-    return (
-        f"{decision.document_key}:p{decision.pdf_page_index}:" f"visual:{sequence:03d}"
-    )
+    return f"{decision.document_key}:p{decision.pdf_page_index}:visual:{sequence:03d}"
 
 
 def _completion_percentage(pages: Sequence[SourceAccuracyPageResult]) -> float:

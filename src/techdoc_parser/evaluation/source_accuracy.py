@@ -962,8 +962,7 @@ def _text_fidelity_metrics(
                 severity="major",
                 code="NO_NATIVE_TEXT_PROXY",
                 message=(
-                    "Source page has no direct native text proxy; OCR is out "
-                    "of scope."
+                    "Source page has no direct native text proxy; OCR is out of scope."
                 ),
                 metric_name="raw_character_coverage",
                 requires_manual_review=True,
@@ -1299,7 +1298,7 @@ def _entity_metrics(
                 severity="minor",
                 code="TABLE_CANDIDATE_ONLY",
                 message=(
-                    "Table evidence is candidate-level; cells are not " "reconstructed."
+                    "Table evidence is candidate-level; cells are not reconstructed."
                 ),
                 metric_name="table_cell_accuracy",
                 requires_manual_review=True,

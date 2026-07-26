@@ -29,8 +29,7 @@ def write_engineering_ocr_reports(
     """Write sanitized aggregate reports only with explicit permission."""
     if (json_path is not None or markdown_path is not None) and not allow_report_write:
         raise PermissionError(
-            "Engineering OCR-fidelity report writing requires "
-            "allow_report_write=True."
+            "Engineering OCR-fidelity report writing requires allow_report_write=True."
         )
     written: list[Path] = []
     if json_path is not None:
@@ -61,8 +60,7 @@ def write_engineering_ocr_review_package(
     """Write local review assets only when explicitly allowed."""
     if not allow_local_write:
         raise PermissionError(
-            "Engineering OCR-fidelity review package requires "
-            "allow_local_write=True."
+            "Engineering OCR-fidelity review package requires allow_local_write=True."
         )
     root = Path(output_dir)
     source = Path(source_path) if source_path is not None else None

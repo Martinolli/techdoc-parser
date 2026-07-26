@@ -157,9 +157,7 @@ def _print_summary(result: FailureTriageResult) -> None:
         f"{result.root_cause_counts.get('NEEDS_VISUAL_CONFIRMATION', 0)}"
     )
     print(f"Findings by pipeline stage: {dict(result.pipeline_stage_counts)}")
-    print(
-        "Recommended corrective phases: " f"{dict(result.corrective_recommendations)}"
-    )
+    print(f"Recommended corrective phases: {dict(result.corrective_recommendations)}")
 
 
 def _exit_code(outcome: str, *, strict: bool) -> int:

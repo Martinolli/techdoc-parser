@@ -263,6 +263,12 @@ native/OCR text artifacts when available; otherwise it returns `BLOCKED` with
 `NO_SUPPORTED_OCR_EXECUTION_PATH`. Owner review remains required before any
 final OCR-fidelity `PASS`, `FAIL`, or accepted-limitation claim.
 
+D.7a OCR fidelity framework: implemented. D.7b-1 capability inventory:
+completed. OCR execution capability: `ENGINE_INSTALLED_BUT_NOT_INTEGRATED`
+because Tesseract is available locally, but no supported repository OCR adapter,
+forced-OCR mode, selective-page OCR mode, page-provenance recording, or OCR
+manifest integration exists.
+
 ## P0 Failure Triage
 
 Phase 13I-c1 adds diagnosis-only triage for selected P0 source-accuracy
