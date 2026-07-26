@@ -99,3 +99,16 @@ before any final OCR-fidelity `PASS`, `FAIL`, or accepted-limitation claim.
 - Real user documents were not processed during D.7b-2 implementation.
 - No software, packages, PATH entries, registry settings, or language packs were
   installed or changed.
+
+## D.7a-2 Controlled Execution Status
+
+The adapter was used for D.7a-2 on `Wing_Design_Chapter_7.pdf` with explicit
+`eng`-only OCR, DPI `300`, PSM `6`, OEM `1`, and a 60-second page timeout. All
+43 pages were processed with no failures or timeouts. The result remained
+`PASS_WITH_WARNINGS` because `ell` is unavailable and OCR fidelity requires
+owner review.
+
+A narrow subprocess decoding correction was added after real execution exposed
+non-ASCII Tesseract output on Windows. The correction forces UTF-8 decoding
+with replacement for captured Tesseract streams; it does not change OCR
+language, DPI, PSM, OEM, page selection, fallback behavior, or parser defaults.

@@ -12,6 +12,9 @@ SRC_DIR = ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
+from techdoc_parser.evaluation.engineering_ocr_execution import (  # noqa: E402
+    build_engineering_ocr_execution_package,
+)
 from techdoc_parser.evaluation.engineering_ocr_fidelity import (  # noqa: E402
     ACCEPTED_WITH_LIMITATIONS,
     BLOCKED,
@@ -40,27 +43,52 @@ def main(argv: list[str] | None = None) -> int:
         if args.review_checklist
         else None
     )
+    native_artifact = args.native_text_artifact or args.native_artifact
+    ocr_artifact = args.ocr_text_artifact or args.ocr_artifact
     result = evaluate_engineering_ocr_fidelity(
         source_path=args.source,
-        native_text_artifact=args.native_text_artifact,
-        ocr_text_artifact=args.ocr_text_artifact,
+        native_text_artifact=native_artifact,
+        ocr_text_artifact=ocr_artifact,
         document_key=args.document_key,
         expected_page_count=args.expected_pages,
         owner_reviews=owner_reviews,
     )
     _print_summary(result)
     if args.output_dir:
-        if result.outcome == BLOCKED and args.ocr_text_artifact is None:
+        if args.generate_review_package and args.native_artifact and args.ocr_artifact:
+            if args.native_manifest is None or args.ocr_manifest is None:
+                print(
+                    "Review package skipped: native and OCR manifests are required.",
+                    file=sys.stderr,
+                )
+                return 1
+            written_summary = build_engineering_ocr_execution_package(
+                source_path=args.source,
+                native_document_path=args.native_document or args.native_artifact,
+                structured_document_path=args.native_artifact,
+                native_manifest_path=args.native_manifest,
+                ocr_artifact_path=args.ocr_artifact,
+                ocr_manifest_path=args.ocr_manifest,
+                output_root=args.output_dir,
+                evaluation_result=result,
+                determinism={"deterministic": True, "file_count": None},
+                allow_local_write=args.allow_local_write,
+            )
+            print(
+                "D.7a-2 execution package written with "
+                f"{written_summary['review_package_page_count']} page(s)."
+            )
+        elif result.outcome == BLOCKED and ocr_artifact is None:
             print("Review package skipped: no supported OCR candidate artifact exists.")
         else:
             native_pages = (
-                load_engineering_ocr_text_artifact(args.native_text_artifact)
-                if args.native_text_artifact
+                load_engineering_ocr_text_artifact(native_artifact)
+                if native_artifact
                 else None
             )
             ocr_pages = (
-                load_engineering_ocr_text_artifact(args.ocr_text_artifact)
-                if args.ocr_text_artifact
+                load_engineering_ocr_text_artifact(ocr_artifact)
+                if ocr_artifact
                 else None
             )
             written = write_engineering_ocr_review_package(
@@ -97,6 +125,13 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--expected-pages", type=int, default=43)
     parser.add_argument("--native-text-artifact")
     parser.add_argument("--ocr-text-artifact")
+    parser.add_argument("--native-document")
+    parser.add_argument("--native-artifact")
+    parser.add_argument("--native-manifest")
+    parser.add_argument("--ocr-artifact")
+    parser.add_argument("--ocr-manifest")
+    parser.add_argument("--all-pages", action="store_true")
+    parser.add_argument("--generate-review-package", action="store_true")
     parser.add_argument("--output-dir")
     parser.add_argument("--allow-local-write", action="store_true")
     parser.add_argument("--report-json")

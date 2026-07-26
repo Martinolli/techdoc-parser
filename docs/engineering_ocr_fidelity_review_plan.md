@@ -83,6 +83,18 @@ Remaining limitations:
 Recommended next action: use the controlled adapter only for explicit approved
 artifacts, then run D.7a comparison and owner review.
 
+## D.7a-2 Execution Status
+
+D.7a-2 verified `Wing_Design_Chapter_7.pdf`, generated the native parser
+baseline, generated the native StructuredDocument artifact and parser manifest,
+executed controlled `eng`-only OCR on all 43 pages, verified deterministic OCR
+outputs across two identical runs, generated a 43-page local owner-review
+package, and stopped at `OWNER_REVIEW_REQUIRED`.
+
+All generated checklists remain `pending`. Final OCR acceptance, Greek
+fidelity, mathematical fidelity, and engineering OCR fidelity are not
+established.
+
 ## Exclusions
 
 - No source PDF edits, copies, or commits.

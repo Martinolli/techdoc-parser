@@ -288,6 +288,14 @@ supplied OCR text artifact, but D.7a still does not run OCR and owner review is
 required before any final OCR-fidelity claim. The local `ell` Tesseract language
 model is unavailable; `eng+ell` requests fail rather than falling back to `eng`.
 
+D.7a-2 executed the controlled `eng` OCR baseline for
+`Wing_Design_Chapter_7.pdf`: source checksum verified, native baseline and
+StructuredDocument generated, all 43 pages OCR-processed, deterministic OCR
+outputs verified across two identical runs, and a 43-page local owner-review
+package generated under ignored `output/`. All checklists remain pending and
+the corpus outcome is `OWNER_REVIEW_REQUIRED`. Greek fidelity and mathematical
+fidelity remain unestablished; no source/OCR text or page images are committed.
+
 ## P0 Failure Triage
 
 Phase 13I-c1 adds diagnosis-only triage for selected P0 source-accuracy
@@ -340,6 +348,7 @@ visual confirmation is still pending. See
 - [Engineering OCR fidelity policy](docs/engineering_ocr_fidelity_policy.md)
 - [D.7a engineering OCR fidelity review plan](docs/engineering_ocr_fidelity_review_plan.md)
 - [Controlled Tesseract OCR adapter](docs/CONTROLLED_TESSERACT_OCR_ADAPTER.md)
+- [Wing design engineering OCR execution](docs/WING_DESIGN_ENGINEERING_OCR_EXECUTION.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations

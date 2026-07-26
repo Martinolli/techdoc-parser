@@ -62,3 +62,15 @@ The local environment does not report the Tesseract `ell` language model. The
 adapter fails rather than falling back when a requested language is unavailable.
 Greek-symbol and mathematical-expression fidelity remain limitations until
 review evidence proves otherwise.
+
+## D.7a-2 Execution Configuration
+
+D.7a-2 used the D.7b-2 controlled adapter to create a supplied OCR artifact for
+`Wing_Design_Chapter_7.pdf`. Configuration: language `eng`, DPI `300`, PSM `6`,
+OEM `1`, timeout `60` seconds per page, PyMuPDF rendering `1.27.2.3`, and
+Tesseract `v5.3.0.20221214`.
+
+The D.7a evaluator consumed the native StructuredDocument artifact and the OCR
+artifact without running OCR itself. The result is `OWNER_REVIEW_REQUIRED` with
+43 pending page reviews. `ell` remained unavailable; Greek fidelity and
+mathematical fidelity remain unestablished.

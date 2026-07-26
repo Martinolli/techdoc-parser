@@ -1,0 +1,75 @@
+{
+  "artifact_sha256": "105b5be4ecc1a8af988b615d4296b1d777e3ccb16a3e2404382043b2794d2154",
+  "automated_outcome_counts": {
+    "REVIEW": 43
+  },
+  "available_languages": [
+    "eng",
+    "osd"
+  ],
+  "corpus_outcome": "OWNER_REVIEW_REQUIRED",
+  "determinism_result": {
+    "deterministic": true,
+    "file_count": 174,
+    "mismatched_files": []
+  },
+  "document_key": "wing_design_chapter_7",
+  "dpi": 300,
+  "failed_page_count": 0,
+  "manifest_sha256": "5e9ee90b5f4265f913f9f93bc80d861b0bf5d203364ecd9c1dfbda12fee41077",
+  "native_parser_version": "0.1.0",
+  "ocr_adapter": "controlled-tesseract-cli",
+  "ocr_adapter_version": "0.1.0",
+  "oem": 1,
+  "owner_review_status": "pending",
+  "page_count": 43,
+  "pending_checklist_count": 43,
+  "processed_page_count": 43,
+  "profile_counts": {
+    "figure_heavy": 26,
+    "formula_heavy": 27,
+    "greek_symbol_heavy": 19,
+    "hybrid": 26,
+    "mixed_layout": 43,
+    "multi_column": 38,
+    "native_text": 43,
+    "table_candidate": 25
+  },
+  "psm": 6,
+  "render_backend": "PyMuPDF",
+  "render_backend_version": "1.27.2.3",
+  "requested_languages": [
+    "eng"
+  ],
+  "review_package_page_count": 43,
+  "review_priority_counts": {
+    "critical": 34,
+    "high": 9
+  },
+  "schema_name": "techdoc-engineering-ocr-execution-summary",
+  "schema_version": "0.1.0",
+  "source_filename": "Wing_Design_Chapter_7.pdf",
+  "source_sha256": "a93852fafbfb929719513e73174bac3d2e71b0ecfd1fdaa91e8551e3b59326cd",
+  "structured_document_schema": "techdoc-structured-document",
+  "structured_document_schema_version": "0.1.0",
+  "tesseract_version": "tesseract v5.3.0.20221214",
+  "timed_out_page_count": 0,
+  "warning_code_counts": {
+    "GREEK_FIDELITY_NOT_ESTABLISHED": 20,
+    "GREEK_LANGUAGE_MODEL_UNAVAILABLE": 1,
+    "MATHEMATICAL_FIDELITY_NOT_ESTABLISHED": 28,
+    "OCR_EXTRA_TOKEN_REVIEW": 43,
+    "OCR_STDERR_REPORTED": 3,
+    "OCR_TEXT_COVERAGE_LOW": 42,
+    "OWNER_REVIEW_PENDING": 43,
+    "OWNER_REVIEW_REQUIRED_FOR_FIDELITY_ACCEPTANCE": 44,
+    "POSSIBLE_LINE_COLLAPSE": 29,
+    "POSSIBLE_LINE_FRAGMENTATION": 1,
+    "POSSIBLE_SYMBOL_SUBSTITUTION_GREEK_SMALL_LETTER_ALPHA": 6,
+    "POSSIBLE_SYMBOL_SUBSTITUTION_GREEK_SMALL_LETTER_BETA": 3,
+    "POSSIBLE_SYMBOL_SUBSTITUTION_GREEK_SMALL_LETTER_DELTA": 1,
+    "POSSIBLE_SYMBOL_SUBSTITUTION_GREEK_SMALL_LETTER_GAMMA": 1,
+    "POSSIBLE_SYMBOL_SUBSTITUTION_LESS-THAN_OR_EQUAL_TO": 1,
+    "POSSIBLE_SYMBOL_SUBSTITUTION_MINUS_SIGN": 8
+  }
+}

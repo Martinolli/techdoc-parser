@@ -271,6 +271,8 @@ def test_subprocess_runner_uses_shell_false(monkeypatch: pytest.MonkeyPatch) -> 
         captured["command"] = command
         captured["shell"] = kwargs.get("shell")
         captured["text"] = kwargs.get("text")
+        captured["encoding"] = kwargs.get("encoding")
+        captured["errors"] = kwargs.get("errors")
         return TesseractProcessResult(0, "ok", "")
 
     monkeypatch.setattr("techdoc_parser.ocr.tesseract_adapter.subprocess.run", fake_run)
@@ -281,6 +283,8 @@ def test_subprocess_runner_uses_shell_false(monkeypatch: pytest.MonkeyPatch) -> 
     assert captured["command"] == ["tesseract", "--version"]
     assert captured["shell"] is False
     assert captured["text"] is True
+    assert captured["encoding"] == "utf-8"
+    assert captured["errors"] == "replace"
 
 
 def test_committed_expected_ocr_fixtures_are_valid() -> None:

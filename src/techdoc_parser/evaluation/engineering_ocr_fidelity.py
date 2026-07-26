@@ -1005,6 +1005,8 @@ def _load_page_text_artifact(path_value: str | Path) -> dict[int, str]:
 
 def _page_text_from_json(data: object) -> dict[int, str]:
     if isinstance(data, Mapping):
+        if data.get("schema_name") == "techdoc-structured-document":
+            return _page_text_from_structured_document_json(data)
         raw_pages = data.get("pages")
         if isinstance(raw_pages, Sequence) and not isinstance(
             raw_pages,
@@ -1028,6 +1030,32 @@ def _page_text_from_json(data: object) -> dict[int, str]:
             if str(key).isdigit() and isinstance(value, str)
         }
     raise ValueError("Text artifact JSON must be an object.")
+
+
+def _page_text_from_structured_document_json(
+    data: Mapping[str, object],
+) -> dict[int, str]:
+    raw_blocks = data.get("blocks")
+    if not isinstance(raw_blocks, Sequence) or isinstance(raw_blocks, str | bytes):
+        return {}
+    grouped: dict[int, list[tuple[int, str]]] = {}
+    for raw_block in raw_blocks:
+        if not isinstance(raw_block, Mapping):
+            continue
+        page_number = raw_block.get("page_number")
+        text = raw_block.get("text")
+        if not isinstance(page_number, int) or not isinstance(text, str):
+            continue
+        block_index = raw_block.get("document_block_index")
+        grouped.setdefault(page_number, []).append(
+            (block_index if isinstance(block_index, int) else 0, text)
+        )
+    return {
+        page_number: "\n".join(
+            text for _, text in sorted(blocks, key=lambda item: item[0]) if text
+        )
+        for page_number, blocks in sorted(grouped.items())
+    }
 
 
 def _observed_page_count(

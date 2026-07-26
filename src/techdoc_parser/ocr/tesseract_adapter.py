@@ -269,13 +269,12 @@ def _run_pages(
             try:
                 completed = runner(command, request.timeout_seconds)
                 status = PROCESSED if completed.returncode == 0 else FAILED
-                raw_text = completed.stdout
+                raw_text = completed.stdout or ""
                 normalized_text = _normalize_ocr_text(raw_text)
-                page_warnings = list(_page_warnings(completed.stderr, normalized_text))
+                stderr = completed.stderr or ""
+                page_warnings = list(_page_warnings(stderr, normalized_text))
                 page_errors = () if status == PROCESSED else (OCR_PAGE_FAILED,)
-                stderr_excerpt = (
-                    _sanitize_excerpt(completed.stderr) if completed.stderr else None
-                )
+                stderr_excerpt = _sanitize_excerpt(stderr) if stderr else None
                 exit_code = completed.returncode
             except subprocess.TimeoutExpired:
                 status = TIMED_OUT
@@ -347,6 +346,8 @@ def _run_subprocess(
         check=False,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         timeout=timeout_seconds,
         shell=False,
     )
