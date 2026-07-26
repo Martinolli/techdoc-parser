@@ -215,6 +215,26 @@ class OcrCapabilityInventoryTests(unittest.TestCase):
         self.assertIn(FORCED_OCR_NOT_SUPPORTED, candidate.blocking_gap_codes)
         self.assertFalse(candidate.forced_ocr_supported)
 
+    def test_controlled_adapter_available_with_greek_language_limitation(self):
+        tesseract = OcrExecutableCapability(
+            executable_name="tesseract",
+            installed=True,
+            version="tesseract 5.5.0",
+            version_probe_status="ok",
+            capability_role="OCR engine",
+            supported_languages=("eng", "osd"),
+        )
+
+        candidate = assess_ocr_engine_candidates(
+            repository_capabilities=(_repo_adapter(implemented=True),),
+            python_packages=(),
+            executables=(tesseract,),
+        )[0]
+
+        self.assertEqual(candidate.candidate_status, SUPPORTED_AND_AVAILABLE)
+        self.assertIn(GREEK_LANGUAGE_MODEL_UNAVAILABLE, candidate.blocking_gap_codes)
+        self.assertEqual(candidate.greek_support_status, "no")
+
     def test_language_listing_failure_keeps_greek_unknown(self):
         tesseract = OcrExecutableCapability(
             executable_name="tesseract",

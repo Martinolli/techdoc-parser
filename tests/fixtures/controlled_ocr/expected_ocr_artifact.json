@@ -1,0 +1,100 @@
+{
+  "adapter": {
+    "name": "controlled-tesseract-cli",
+    "version": "0.1.0"
+  },
+  "engine": {
+    "available_languages": [
+      "eng",
+      "osd"
+    ],
+    "name": "tesseract",
+    "requested_languages": [
+      "eng"
+    ],
+    "version": "tesseract 5.3.0"
+  },
+  "errors": [],
+  "failed_pages": [],
+  "limitations": [
+    "OCR fidelity is not established by adapter execution alone.",
+    "Greek symbol fidelity requires owner review.",
+    "Mathematical expression fidelity requires owner review.",
+    "The Tesseract ell language model is unavailable in the local environment."
+  ],
+  "outcome": "PASS_WITH_WARNINGS",
+  "pages": [
+    {
+      "errors": [],
+      "exit_code": 0,
+      "normalized_ocr_text": "Fictional lift note beta = 2\n",
+      "ocr_text": "Fictional lift note beta = 2\n",
+      "page_number": 1,
+      "pdf_page_index": 0,
+      "provenance": {
+        "normalized_ocr_sha256": "2d0beec90d895aa15b80cef3288147f1172138ab4c3b7c92c38f6a061f6ecf91",
+        "ocr_engine": "tesseract",
+        "ocr_engine_version": "tesseract 5.3.0",
+        "ocr_languages": [
+          "eng"
+        ],
+        "ocr_mode": "ocr_all_pages",
+        "oem": 1,
+        "page_number": 1,
+        "pdf_page_index": 0,
+        "psm": 6,
+        "raw_ocr_sha256": "2d0beec90d895aa15b80cef3288147f1172138ab4c3b7c92c38f6a061f6ecf91",
+        "rendered_image_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+        "rendering_dpi": 300,
+        "rendering_engine": "PyMuPDF",
+        "source_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+        "source_size_bytes": 1234
+      },
+      "raw_ocr_text": "Fictional lift note beta = 2\n",
+      "status": "processed",
+      "stderr_excerpt": null,
+      "text": "Fictional lift note beta = 2\n",
+      "warnings": []
+    }
+  ],
+  "processed_pages": [
+    1
+  ],
+  "request": {
+    "document_id": "synthetic_controlled_ocr",
+    "dpi": 300,
+    "languages": [
+      "eng"
+    ],
+    "mode": "ocr_all_pages",
+    "oem": 1,
+    "preserve_rendered_pages": false,
+    "psm": 6,
+    "selected_pages": null,
+    "strict": true,
+    "timeout_seconds": 30
+  },
+  "requested_pages": [
+    1
+  ],
+  "safety": {
+    "aviationrag_activity": false,
+    "default_parser_behavior_changed": false,
+    "embeddings_or_vector_store_activity": false,
+    "structured_document_schema_changed": false
+  },
+  "schema_name": "techdoc-ocr-document",
+  "schema_version": "0.1.0",
+  "skipped_pages": [],
+  "source": {
+    "filename": "synthetic_controlled_ocr.pdf",
+    "observed_page_count": 1,
+    "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "size_bytes": 1234
+  },
+  "warnings": [
+    "GREEK_FIDELITY_NOT_ESTABLISHED",
+    "GREEK_LANGUAGE_MODEL_UNAVAILABLE",
+    "MATHEMATICAL_FIDELITY_NOT_ESTABLISHED"
+  ]
+}

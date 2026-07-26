@@ -264,10 +264,29 @@ native/OCR text artifacts when available; otherwise it returns `BLOCKED` with
 final OCR-fidelity `PASS`, `FAIL`, or accepted-limitation claim.
 
 D.7a OCR fidelity framework: implemented. D.7b-1 capability inventory:
-completed. OCR execution capability: `ENGINE_INSTALLED_BUT_NOT_INTEGRATED`
-because Tesseract is available locally, but no supported repository OCR adapter,
-forced-OCR mode, selective-page OCR mode, page-provenance recording, or OCR
-manifest integration exists.
+completed. D.7b-2 controlled Tesseract OCR adapter: implemented as an explicit
+evaluation artifact path only. It uses PyMuPDF rendering and the local
+Tesseract CLI when directly invoked:
+
+```powershell
+python tools/ocr/run-controlled-tesseract-ocr.py `
+  --source <approved-or-synthetic-pdf> `
+  --document-id <portable-id> `
+  --mode ocr_all_pages `
+  --language eng `
+  --dpi 300 `
+  --psm 6 `
+  --oem 1 `
+  --output-dir output/evaluation/controlled_ocr/<run-id> `
+  --allow-output-write `
+  --strict
+```
+
+The default parser CLI and StructuredDocument schema are unchanged. Raw OCR and
+normalized OCR are separate. D.7a can consume the controlled OCR artifact as a
+supplied OCR text artifact, but D.7a still does not run OCR and owner review is
+required before any final OCR-fidelity claim. The local `ell` Tesseract language
+model is unavailable; `eng+ell` requests fail rather than falling back to `eng`.
 
 ## P0 Failure Triage
 
@@ -320,6 +339,7 @@ visual confirmation is still pending. See
 - [P0 pilot final acceptance](docs/p0_pilot_final_acceptance.md)
 - [Engineering OCR fidelity policy](docs/engineering_ocr_fidelity_policy.md)
 - [D.7a engineering OCR fidelity review plan](docs/engineering_ocr_fidelity_review_plan.md)
+- [Controlled Tesseract OCR adapter](docs/CONTROLLED_TESSERACT_OCR_ADAPTER.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations

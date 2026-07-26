@@ -452,20 +452,38 @@ def inspect_repository_ocr_capabilities(
         if "ocr_capability_inventory" not in location
         and "run-ocr-capability-inventory" not in location
     )
+    explicit_controlled_adapter = any(
+        location.startswith("src/techdoc_parser/ocr/")
+        or location == "tools/ocr/run-controlled-tesseract-ocr.py"
+        for location in adapter_locations
+    )
     capabilities.append(
         OcrRepositoryCapability(
             capability_id="parser_ocr_execution_adapter",
             capability_type="implemented_adapter",
             evidence_locations=adapter_locations,
             implementation_status="implemented" if adapter_locations else "absent",
-            supported_modes=("ocr_execution",) if adapter_locations else (),
-            manifest_support=False,
-            page_provenance_support=False,
+            supported_modes=(
+                (
+                    "ocr_all_pages",
+                    "ocr_selected_pages",
+                )
+                if explicit_controlled_adapter
+                else ("ocr_execution",)
+                if adapter_locations
+                else ()
+            ),
+            manifest_support=explicit_controlled_adapter,
+            page_provenance_support=explicit_controlled_adapter,
             notes=(
                 (
                     "No production parser OCR execution adapter was found."
                     if not adapter_locations
-                    else "Production OCR execution adapter references were found."
+                    else (
+                        "Explicit controlled OCR adapter references were found."
+                        if explicit_controlled_adapter
+                        else "Production OCR execution adapter references were found."
+                    )
                 ),
             ),
         )
@@ -801,7 +819,7 @@ def _assess_tesseract_candidate(
         adapter_present=adapter_present,
         manifest_present=manifest_present,
         page_provenance_present=page_provenance_present,
-        gaps=gaps,
+        gaps=gaps - {GREEK_LANGUAGE_MODEL_UNAVAILABLE},
     )
     return OcrEngineCandidateAssessment(
         engine_id="tesseract",
@@ -900,16 +918,17 @@ def _common_candidate_gaps(
         gaps.add(OCR_MANIFEST_METADATA_MISSING)
     if not page_provenance_present:
         gaps.add(OCR_PAGE_PROVENANCE_NOT_RECORDED)
-    gaps.update(
-        {
-            FORCED_OCR_NOT_SUPPORTED,
-            SELECTIVE_PAGE_OCR_NOT_SUPPORTED,
-            OCR_PROCESSED_PAGES_NOT_RECORDED,
-            RAW_OCR_OUTPUT_NOT_PRESERVED,
-            OCR_NORMALIZATION_NOT_SEPARATED,
-            DETERMINISTIC_OCR_CONFIGURATION_UNDEFINED,
-        }
-    )
+    if not adapter_present:
+        gaps.update(
+            {
+                FORCED_OCR_NOT_SUPPORTED,
+                SELECTIVE_PAGE_OCR_NOT_SUPPORTED,
+                OCR_PROCESSED_PAGES_NOT_RECORDED,
+                RAW_OCR_OUTPUT_NOT_PRESERVED,
+                OCR_NORMALIZATION_NOT_SEPARATED,
+                DETERMINISTIC_OCR_CONFIGURATION_UNDEFINED,
+            }
+        )
     return gaps
 
 
@@ -968,6 +987,8 @@ def _is_documentation_path(path: str) -> bool:
 def _looks_like_adapter(text: str) -> bool:
     lowered = text.lower()
     adapter_markers = (
+        "run_controlled_tesseract_ocr",
+        "controlled-tesseract-cli",
         "pytesseract.image_to_string",
         "tesserocr.",
         "easyocr.reader",

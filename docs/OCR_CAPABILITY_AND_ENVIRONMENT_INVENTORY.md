@@ -4,14 +4,16 @@
 
 D.7b-1 inventories repository OCR references and local OCR/rendering capability
 without running OCR recognition, processing the wing-design chapter, installing
-software, downloading packages, or changing parser behavior.
+software, downloading packages, or changing parser behavior. D.7b-2 adds an
+explicit controlled Tesseract adapter; this document now records the updated
+repository capability while preserving the D.7b-1 inventory findings.
 
 ## Relationship to D.7a
 
 D.7a is implemented as a controlled OCR-fidelity evaluator. It can compare
-supplied native/OCR text artifacts, but its current blocking code remains
-`NO_SUPPORTED_OCR_EXECUTION_PATH` because the parser has no supported OCR
-execution path.
+supplied native/OCR text artifacts, including D.7b-2 controlled OCR document
+artifacts. D.7a still does not run OCR. Owner review remains required before
+any final OCR-fidelity acceptance claim.
 
 ## Scope
 
@@ -21,10 +23,12 @@ listing, and local PDF-rendering capability.
 
 ## Prohibited Actions
 
-No OCR recognition was run. No source document was processed. No software,
-Python package, OCR model, or language pack was installed or downloaded. No
-parser CLI behavior, StructuredDocument output, manifest behavior, source PDF,
-or AviationRAG file was changed.
+D.7b-1 ran no OCR recognition and processed no source document. D.7b-2 ran
+only synthetic smoke OCR after implementation. No real user document was
+processed. No software, Python package, OCR model, or language pack was
+installed or downloaded. No default parser CLI behavior, StructuredDocument
+output, current parser manifest behavior, source PDF, or AviationRAG file was
+changed.
 
 ## Repository OCR References
 
@@ -34,7 +38,7 @@ Repository references fall into these groups:
 | --- | --- |
 | warning_or_detection_only | Existing parser and validation paths can flag pages that require OCR. |
 | declared_integration | D.7a has a report-only comparator for supplied OCR artifacts. |
-| implemented_adapter | No production parser OCR execution adapter was found. |
+| implemented_adapter | D.7b-2 adds `techdoc_parser.ocr` and `tools/ocr/run-controlled-tesseract-ocr.py` as an explicit controlled adapter. |
 | optional_dependency | `pyproject.toml` declares `PyMuPDF` only; no OCR wrapper or engine dependency is declared. |
 | test_fixture_only | OCR text appears in synthetic tests and fixtures only. |
 | documentation_only | README, TODO, and docs describe OCR as out of scope or blocked. |
@@ -43,7 +47,8 @@ Repository references fall into these groups:
 
 `requires_ocr` and related warnings identify pages where native text extraction
 is insufficient. They do not rasterize pages, invoke an OCR engine, produce OCR
-text, record processed pages, or create engine provenance.
+text, record processed pages, or create engine provenance. D.7b-2 OCR
+execution is separate and only runs through the explicit controlled OCR tool.
 
 ## Python Package Inventory
 
@@ -85,7 +90,7 @@ capability. D.7b-1 did not render the wing-design chapter.
 
 | Engine | Available | Adapter | Forced OCR | Selective pages | Provenance | Manifest | Candidate status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| tesseract | true | false | false | false | false | false | AVAILABLE_NOT_INTEGRATED |
+| tesseract | true | true | true | true | true | true | SUPPORTED_AND_AVAILABLE except `ell` limitation |
 
 ## Language/Model Availability
 
@@ -100,35 +105,41 @@ mathematical Greek-symbol fidelity.
 
 ## Forced OCR Capability
 
-Forced OCR is not supported by the current repository CLI or parser API.
+Forced OCR is not supported by the default parser CLI or parser API. Explicit
+full-page controlled OCR is supported only through
+`tools/ocr/run-controlled-tesseract-ocr.py --mode ocr_all_pages`.
 
 ## Selective-Page OCR Capability
 
-Selective-page OCR is not supported by the current repository CLI or parser API.
+Selective-page OCR is not supported by the default parser CLI or parser API.
+Explicit controlled selected-page OCR is supported only through
+`tools/ocr/run-controlled-tesseract-ocr.py --mode ocr_selected_pages --pages`.
 
 ## Page-Provenance Capability
 
-D.7a page evidence can carry page provenance for supplied artifacts, but no
-parser OCR execution adapter records OCR-processed page lists or per-page OCR
-failures.
+D.7b-2 controlled OCR artifacts record processed page lists, failed page lists,
+per-page failures, rendering checksums, raw OCR checksums, normalized OCR
+checksums, engine identity, engine version, OCR mode, languages, `psm`, and
+`oem`.
 
 ## Manifest/Version Recording Capability
 
-Current output manifest support exists for parser artifacts, but there is no OCR
-manifest contract for engine identity, engine version, OCR mode, language/model
-selection, processed pages, or per-page failures.
+Current output manifest support exists for parser artifacts and remains
+unchanged. D.7b-2 adds a separate `techdoc-ocr-manifest / 0.1.0` contract for
+controlled OCR artifacts, including engine identity, engine version, OCR mode,
+language/model selection, processed pages, failed pages, limitations, and
+artifact checksums.
 
 ## Raw Versus Normalized OCR Output
 
-The repository does not currently preserve raw OCR output separately from any
-future normalized OCR text because no OCR execution path exists.
+D.7b-2 preserves raw OCR text separately from normalized OCR text in per-page
+files and in `ocr_document.json`.
 
 ## Deterministic Configuration
 
-Tesseract version and local language identifiers are recordable. A deterministic
-repository configuration for rasterization DPI, OCR mode, language selection,
-processed pages, raw output retention, and normalized output separation remains
-undefined.
+Tesseract version and local language identifiers are recordable. D.7b-2 records
+deterministic rasterization DPI, OCR mode, language selection, selected pages,
+raw output retention, normalized output separation, and checksum provenance.
 
 ## Local Licensing Metadata
 
@@ -138,56 +149,53 @@ executable license was not asserted from local metadata.
 
 ## Deployment Considerations
 
-An OCR execution path would need explicit deployment documentation for engine
-installation, language packs, version recording, deterministic rendering/OCR
-configuration, and privacy-safe provenance. No deployment change was made in
-D.7b-1.
+D.7b-2 added repository documentation for the explicit adapter. It did not
+install Tesseract, install language packs, change PATH, change registry values,
+or change deployment infrastructure.
 
 ## Capability Matrix
 
 | Capability | Status |
 | --- | --- |
 | Engine available locally | yes |
-| Repository adapter exists | no |
-| Explicit OCR opt-in possible | no |
-| Forced OCR possible | no |
-| Selective-page OCR possible | no |
-| Page-by-page execution possible | no |
+| Repository adapter exists | yes, explicit controlled adapter only |
+| Explicit OCR opt-in possible | yes |
+| Forced OCR possible | yes, explicit `ocr_all_pages` only |
+| Selective-page OCR possible | yes, explicit `ocr_selected_pages` only |
+| Page-by-page execution possible | yes |
 | Unicode output possible | yes |
 | Greek language/model available | no |
 | Engine/version recordable | yes |
-| Processed-page list recordable | no |
-| Per-page failure recordable | no |
-| Raw OCR output preservable | no |
-| Normalized output separable | no |
-| Page provenance preservable | no |
+| Processed-page list recordable | yes |
+| Per-page failure recordable | yes |
+| Raw OCR output preservable | yes |
+| Normalized output separable | yes |
+| Page provenance preservable | yes |
 | StructuredDocument integration exists | no |
-| Manifest integration exists | no |
-| Deterministic configuration possible | partial |
+| Manifest integration exists | yes, separate OCR manifest only |
+| Deterministic configuration possible | yes for recorded adapter settings |
 | Network/model download required | no |
 | License metadata locally available | partial |
-| Suitable for D.7a without changes | no |
+| Suitable for D.7a without changes | yes as a supplied OCR artifact, with owner review still required |
 
 ## Blocking Gaps
 
-- `OCR_ENGINE_NOT_INTEGRATED`
-- `FORCED_OCR_NOT_SUPPORTED`
-- `SELECTIVE_PAGE_OCR_NOT_SUPPORTED`
-- `OCR_PAGE_PROVENANCE_NOT_RECORDED`
-- `OCR_PROCESSED_PAGES_NOT_RECORDED`
-- `OCR_MANIFEST_METADATA_MISSING`
-- `RAW_OCR_OUTPUT_NOT_PRESERVED`
-- `OCR_NORMALIZATION_NOT_SEPARATED`
 - `GREEK_LANGUAGE_MODEL_UNAVAILABLE`
-- `DETERMINISTIC_OCR_CONFIGURATION_UNDEFINED`
+- `GREEK_FIDELITY_NOT_ESTABLISHED`
+- `MATHEMATICAL_FIDELITY_NOT_ESTABLISHED`
+- `OWNER_REVIEW_REQUIRED_FOR_FIDELITY_ACCEPTANCE`
 
 ## Overall Outcome
 
-`ENGINE_INSTALLED_BUT_NOT_INTEGRATED`
+`EXISTING_SUPPORTED_ENGINE_AVAILABLE` for explicit controlled `eng` OCR, with
+recorded limitations for unavailable `ell` and unestablished OCR fidelity.
 
 ## Recommended Next Action
 
-`IMPLEMENT_ADAPTER_FOR_INSTALLED_ENGINE`
+Use the controlled adapter only through explicit invocation. Do not claim OCR
+fidelity until D.7a comparison and owner review are completed. Do not request
+`eng+ell` until the `ell` language model is installed through a separately
+approved environment change.
 
 ## What D.7b-1 Established
 
@@ -196,16 +204,25 @@ PyMuPDF rendering is available, but the repository does not have a supported OCR
 adapter, forced-OCR mode, selective-page OCR mode, OCR provenance recording, or
 OCR manifest metadata.
 
+## What D.7b-2 Established
+
+D.7b-2 established an explicit controlled adapter for the local Tesseract CLI
+with PyMuPDF rendering, full-page OCR, selected-page OCR, raw and normalized OCR
+separation, page provenance, a separate OCR document artifact, a separate OCR
+manifest, synthetic regression tests, and a synthetic-only smoke path.
+
 ## What D.7b-1 Did Not Establish
 
 D.7b-1 did not establish OCR fidelity, Greek-symbol accuracy, source-page
 accuracy, parser correctness on OCR text, owner acceptance, deployment
 readiness, or downstream AviationRAG ingestion readiness.
 
+D.7b-2 also did not establish OCR fidelity, Greek-symbol accuracy,
+mathematical-expression accuracy, real-document readiness, owner acceptance, or
+downstream AviationRAG ingestion readiness.
+
 ## Preconditions for D.7b-2 or D.7a Rerun
 
-D.7b-2 should implement a controlled adapter for the installed engine before a
-D.7a rerun. The adapter must record engine identity, engine version, OCR mode,
-language/model selection, processed pages, per-page failures, raw OCR output,
-normalized output, page provenance, and manifest metadata before D.7a execution
-can be unblocked.
+D.7a can now be rerun only if an explicitly approved OCR artifact is supplied.
+The evaluator must still not run OCR itself, and owner review remains required
+before any final D.7a OCR-fidelity disposition.

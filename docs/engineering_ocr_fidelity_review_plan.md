@@ -17,11 +17,12 @@ python tools/evaluation/run-engineering-ocr-fidelity.py `
   --strict
 ```
 
-If approved OCR text artifacts exist, add:
+If an approved controlled OCR artifact exists, add it as the supplied OCR
+artifact:
 
 ```powershell
   --native-text-artifact <native-baseline-json-or-dir> `
-  --ocr-text-artifact <ocr-candidate-json-or-dir> `
+  --ocr-text-artifact output/evaluation/controlled_ocr/<run-id>/ocr_document.json `
   --output-dir output/evaluation/engineering_ocr_fidelity/review_package `
   --allow-local-write
 ```
@@ -43,47 +44,49 @@ Each field starts as `pending`. Valid values are `pass`, `review`, `fail`,
 
 ## Expected Current Result
 
-The current expected result is `BLOCKED` with
-`NO_SUPPORTED_OCR_EXECUTION_PATH`, because the parser has no documented OCR
-runner. This is a capability gap, not a failed OCR-fidelity claim.
+Without a supplied OCR artifact, the expected result remains `BLOCKED` with
+`NO_SUPPORTED_OCR_EXECUTION_PATH`. With an approved D.7b-2 controlled OCR
+artifact, D.7a can compare supplied text, but the expected disposition remains
+`OWNER_REVIEW_REQUIRED` until owner checklist evidence is completed.
 
-## D.7b-1 OCR Capability Inventory
+## D.7b-1 and D.7b-2 OCR Capability Status
 
-D.7b-1 completed a read-only OCR capability and environment inventory. The
-capability outcome is `ENGINE_INSTALLED_BUT_NOT_INTEGRATED`: Tesseract is
-available locally, with `eng` and `osd` language/model identifiers reported, but
-`ell` was not reported and the repository has no supported OCR execution
-adapter.
+D.7b-1 completed a read-only OCR capability and environment inventory. D.7b-2
+adds an explicit controlled adapter for the installed local Tesseract CLI.
+Tesseract is available locally, with `eng` and `osd` language/model identifiers
+reported. `ell` was not reported and remains a limitation.
 
 Engine candidates:
 
 | Engine | Available | Adapter | Candidate status |
 | --- | --- | --- | --- |
-| tesseract | true | false | AVAILABLE_NOT_INTEGRATED |
+| tesseract | true | true | SUPPORTED_AND_AVAILABLE for explicit `eng` OCR, with limitations |
 
-Blocking gaps:
+Implemented by D.7b-2:
 
-- `OCR_ENGINE_NOT_INTEGRATED`
-- `FORCED_OCR_NOT_SUPPORTED`
-- `SELECTIVE_PAGE_OCR_NOT_SUPPORTED`
-- `OCR_PAGE_PROVENANCE_NOT_RECORDED`
-- `OCR_PROCESSED_PAGES_NOT_RECORDED`
-- `OCR_MANIFEST_METADATA_MISSING`
-- `RAW_OCR_OUTPUT_NOT_PRESERVED`
-- `OCR_NORMALIZATION_NOT_SEPARATED`
+- explicit OCR opt-in
+- full-page OCR mode
+- selected-page OCR mode
+- processed and failed page lists
+- raw OCR output preservation
+- normalized OCR output separation
+- per-page provenance
+- OCR manifest metadata
+
+Remaining limitations:
+
 - `GREEK_LANGUAGE_MODEL_UNAVAILABLE`
-- `DETERMINISTIC_OCR_CONFIGURATION_UNDEFINED`
+- `GREEK_FIDELITY_NOT_ESTABLISHED`
+- `MATHEMATICAL_FIDELITY_NOT_ESTABLISHED`
+- `OWNER_REVIEW_REQUIRED_FOR_FIDELITY_ACCEPTANCE`
 
-Recommended next action: `IMPLEMENT_ADAPTER_FOR_INSTALLED_ENGINE`.
-
-D.7a remains blocked until a supported execution path can record engine
-identity, version, mode, language/model selection, processed pages, page
-provenance, and OCR manifest metadata.
+Recommended next action: use the controlled adapter only for explicit approved
+artifacts, then run D.7a comparison and owner review.
 
 ## Exclusions
 
 - No source PDF edits, copies, or commits.
-- No OCR implementation or dependency installation.
+- No default parser OCR implementation or dependency installation.
 - No AviationRAG source changes or test execution.
 - No embeddings, AstraDB, FAISS, retrieval, or ingestion changes.
 - No final OCR-fidelity acceptance before completed owner review.

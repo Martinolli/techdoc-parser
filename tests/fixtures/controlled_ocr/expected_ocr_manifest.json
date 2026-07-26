@@ -1,0 +1,71 @@
+{
+  "adapter": {
+    "name": "controlled-tesseract-cli",
+    "version": "0.1.0"
+  },
+  "artifact": {
+    "content_type": "application/json",
+    "path": "ocr_document.json",
+    "schema_name": "techdoc-ocr-document",
+    "schema_version": "0.1.0",
+    "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+  },
+  "configuration": {
+    "document_id": "synthetic_controlled_ocr",
+    "dpi": 300,
+    "mode": "ocr_all_pages",
+    "oem": 1,
+    "psm": 6,
+    "selected_pages": null,
+    "strict": true,
+    "timeout_seconds": 30
+  },
+  "engine": {
+    "available_languages": [
+      "eng",
+      "osd"
+    ],
+    "name": "tesseract",
+    "requested_languages": [
+      "eng"
+    ],
+    "version": "tesseract 5.3.0"
+  },
+  "errors": [],
+  "limitations": [
+    "OCR fidelity is not established by adapter execution alone.",
+    "Greek symbol fidelity requires owner review.",
+    "Mathematical expression fidelity requires owner review.",
+    "The Tesseract ell language model is unavailable in the local environment."
+  ],
+  "outcome": "PASS_WITH_WARNINGS",
+  "pages": {
+    "failed": [],
+    "processed": [
+      1
+    ],
+    "requested": [
+      1
+    ],
+    "skipped": []
+  },
+  "safety": {
+    "aviationrag_activity": false,
+    "default_parser_behavior_changed": false,
+    "embeddings_or_vector_store_activity": false,
+    "structured_document_schema_changed": false
+  },
+  "schema_name": "techdoc-ocr-manifest",
+  "schema_version": "0.1.0",
+  "source": {
+    "filename": "synthetic_controlled_ocr.pdf",
+    "observed_page_count": 1,
+    "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "size_bytes": 1234
+  },
+  "warnings": [
+    "GREEK_FIDELITY_NOT_ESTABLISHED",
+    "GREEK_LANGUAGE_MODEL_UNAVAILABLE",
+    "MATHEMATICAL_FIDELITY_NOT_ESTABLISHED"
+  ]
+}

@@ -18,7 +18,8 @@ output, AviationRAG, embeddings, vector stores, or downstream retrieval.
 ## Execution Rules
 
 - The evaluator does not run OCR.
-- The evaluator may compare supplied native-text and OCR-text artifacts.
+- The evaluator may compare supplied native-text and OCR-text artifacts,
+  including a D.7b-2 `techdoc-ocr-document / 0.1.0` artifact.
 - If no supported parser OCR execution path or supplied OCR artifact exists, the
   result is `BLOCKED`.
 - If automated comparison runs but owner review is pending, the result is
@@ -51,8 +52,13 @@ wording. Local review packages can be written only with explicit
 ## Current Capability Finding
 
 `techdoc-parser` currently supports native PDF text extraction and flags pages
-that require OCR. It does not expose a documented parser OCR runner or CLI path.
-D.7b-1 found a local Tesseract executable and PyMuPDF rendering capability, but
-no repository OCR execution adapter or OCR manifest/provenance integration.
-D.7a therefore records `NO_SUPPORTED_OCR_EXECUTION_PATH` until an approved OCR
-capability is added in a separate authorized phase.
+that require OCR. D.7b-2 adds a separate explicit controlled Tesseract adapter
+that can produce supplied OCR artifacts for D.7a comparison. The evaluator still
+does not run OCR, the default parser path is unchanged, and owner review remains
+required before any final OCR-fidelity `PASS`, `FAIL`, or
+`ACCEPTED_WITH_LIMITATIONS` claim.
+
+The local environment does not report the Tesseract `ell` language model. The
+adapter fails rather than falling back when a requested language is unavailable.
+Greek-symbol and mathematical-expression fidelity remain limitations until
+review evidence proves otherwise.
