@@ -1,0 +1,21 @@
+{
+  "scope": "controlled_engineering_ocr_fidelity",
+  "policy_name": "engineering-ocr-fidelity",
+  "policy_version": "0.1",
+  "source": {
+    "document_key": "wing_design_chapter_7",
+    "filename": "Wing_Design_Chapter_7.pdf",
+    "expected_page_count": 43
+  },
+  "review_model": {
+    "owner_review_required": true,
+    "d7a_2_owner_review_performed_by_codex": false,
+    "default_checklist_status": "pending"
+  },
+  "constraints": {
+    "ocr_run_by_evaluator": false,
+    "source_pdf_modified": false,
+    "aviationrag_modified": false,
+    "embeddings_or_vector_store_used": false
+  }
+}

@@ -245,6 +245,24 @@ established. The next authorized work is downstream persisted `ChunkRecord`
 mapping design and a controlled local sample-persistence dry run, not
 production ingestion, embeddings, Astra rebuild, or FAISS rebuild.
 
+Phase D.7a adds a controlled engineering OCR-fidelity evaluator for
+`Wing_Design_Chapter_7.pdf`:
+
+```powershell
+python tools/evaluation/run-engineering-ocr-fidelity.py `
+  --source input/Wing_Design_Chapter_7.pdf `
+  --expected-pages 43 `
+  --report-json output/evaluation/engineering_ocr_fidelity/d7a_report.json `
+  --report-markdown output/evaluation/engineering_ocr_fidelity/d7a_report.md `
+  --allow-report-write `
+  --strict
+```
+
+The evaluator does not run OCR or implement OCR. It compares supplied
+native/OCR text artifacts when available; otherwise it returns `BLOCKED` with
+`NO_SUPPORTED_OCR_EXECUTION_PATH`. Owner review remains required before any
+final OCR-fidelity `PASS`, `FAIL`, or accepted-limitation claim.
+
 ## P0 Failure Triage
 
 Phase 13I-c1 adds diagnosis-only triage for selected P0 source-accuracy
@@ -294,6 +312,8 @@ visual confirmation is still pending. See
 - [P0 failure root-cause analysis](docs/p0_failure_root_cause_analysis.md)
 - [P0 visual review and acceptance](docs/p0_visual_review_and_acceptance.md)
 - [P0 pilot final acceptance](docs/p0_pilot_final_acceptance.md)
+- [Engineering OCR fidelity policy](docs/engineering_ocr_fidelity_policy.md)
+- [D.7a engineering OCR fidelity review plan](docs/engineering_ocr_fidelity_review_plan.md)
 - [Planned AviationRAG structured-document contract gap analysis](docs/aviationrag_structured_document_gap_analysis.md)
 
 ## Current Limitations
